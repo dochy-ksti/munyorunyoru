@@ -1,0 +1,139 @@
+Munyorunyoru is a indent-based simple markup language.
+
+type-name argument|param-name argument|param-name...
+    type-name argument|param-name argument|param-name...
+
+Child items must be indented. Indents must be tab(ASCII code 9).
+Separaters are single whitespace and '|'(ASCII code 124). Two whitespaces are recognized as the argument starts with one whitespace.
+Argument is a chunk. You can separate it in your code if you want.
+Arguments are optional.
+
+    type-name|param-name|param-name arg|...
+
+*Line continuation
+
+    name argument\
+    continuation of the argument...
+
+Backslash with line-break means argument\ncontinuation. Two arguments are separated with 'LF'(ASCII Code 10) and tabs are ignored.
+
+    name argument\
+continuation...
+
+Tabs are ignored, which means it's no problem when indents are unaligned. 
+
+    name argument\
+     continuation of the argument...
+
+If the newline starts with whitespace, the continuation starts with whitespace.
+
+    name argument|
+    continuation
+
+'|' with line-break means argumentcontinuation. Nothing separates them. Tabs are ignored.
+
+    type-name argument
+    |param-name argument
+    |param-name argument...
+
+Lines starts with '|' are continuation of the previous line. The param belongs to the last type in the prior lines. Tabs are ignored.
+
+    name argument\
+    |param-name arg...
+
+When the previous line has a backslash with line-break, the argument ends with 'LF'.
+
+    name argument|
+    |param-name arg...
+
+This has the same meaning with
+
+    name argument
+    |param-name arg...
+
+*Default type and empty line type
+
+    >default-type-name
+
+Lines start with '>'(ASCII code 62) define default-types.
+When default-type is defined, typenames can be omitted.
+
+    argument|param-name arg...
+
+If you want to specify the typename, you need '>\'.
+
+    >\type-name argument|param-name...
+
+With '>|':
+
+    >|empty-line-type-name
+
+you can define empty-line-type.
+
+    type-name argument...
+
+    type-name argument...
+
+That's recognized as
+
+    type-name argument...
+    empty-line-type
+    type-name argument...
+
+You can define both with
+
+    >default-type-name|empty-line-type-name
+
+This affects only the current level.
+
+    >munyo|manyo
+    argument
+
+    argument
+        menyo
+monyo
+
+This is recognized as
+
+    >munyo|manyo
+    munyo argument
+    manyo
+    munyo argument
+        menyo
+monyo
+
+Child and parent levels aren't affected.
+
+If you double the '>'
+
+    >>default-type-name|empty-line-type-name
+
+The default and empty-line types are defined in the current and descendant levels.
+
+    >>munyo|manyo
+    munyo argument
+    manyo
+    munyo argument
+        munyo menyo
+monyo
+
+The child level is also affected.
+
+When you use '>' multiple times in the current level, it's overwritten.
+
+    >munyo|manyo
+    argument
+
+    >penyo|ponyo
+    argument
+
+That's recognized as:
+
+    >munyo|manyo
+    munyo argument
+    manyo
+    >penyo|ponyo
+    penyo argument
+    ponyo
+
+When it's overwritten with an empty item
