@@ -263,7 +263,7 @@ tama argument
 '\' and '|' are special characters. If you want to use them in the raw text, use '\\' and '\|'. They are considered normal characters '\' and '|'.
 '>','>>' are special characters when they are used on the start of the line. You can use '\>' and '\>>' at the start of the line.
 '\r','\n','\t' are supported. They are ASCII code 13, 10, 9 respectively.
-The usages of '\' which doesn't discribed in this specification is not valid.
+The usages of '\' which aren't discribed in this specification is not valid.
 
 *Miscellaneous
 
