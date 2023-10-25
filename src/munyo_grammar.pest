@@ -27,7 +27,7 @@ new_line ={ "\n" | "\r\n" | "\r" | EOI }
 param_item = { "|" ~ content }
 
 main_line = {
-    tabs ~ line_start_symbol? ~ content ~ param_item* ~ line_end
+    line_start_symbol? ~ content ~ param_item* ~ line_end
 }
 
 continued_line = {
@@ -54,13 +54,13 @@ line_start_symbol = {
 }
 
 empty_line = {
-	tabs* ~ new_line
+	new_line
 }
 
 commented_line = {
-	tabs* ~ "||" ~ comment_char* ~ new_line
+	"||" ~ comment_char* ~ new_line
 }
 
 file = {
-	(main_line | empty_line | commented_line)*
+	SOI ~ (tabs ~ (main_line | empty_line | commented_line))*
 }
