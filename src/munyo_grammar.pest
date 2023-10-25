@@ -1,0 +1,50 @@
+char = {
+    !("\\" | "|" | "\t" | "\r" | "\n") ~ ANY
+}
+
+char_seq = @{
+    char+
+}
+
+escaped = {
+    "\\\\" | "\\|" | "\\n" | "\\t" | "\\r"
+}
+
+content = {
+    (char_seq | escaped)+
+}
+
+tabs = {
+    \t*
+}
+
+new_line ={ "\n" | "\r\n" | "\r" }
+
+param_item = { "|" ~ content }
+
+main_line = {
+    tabs ~ line_start_symbol? ~ content ~ param_item* ~ line_end
+}
+
+continued_line = {
+    tabs ~ content ~ param_item* ~ line_end
+}
+
+continuation = {
+    tabs ~ param_item+ ~ line_end
+}
+
+line_end = {
+    normal_end ! backslash_end | single_bar | triple_bars | double_bars
+}
+
+triple_bars = { "|||" ~ ANY* ~ new_line ~ continued_line }
+double_bars = { "||" ~ ANY* ~ new_line ~ continuation? }
+single_bar = {"|" ~ new_line ~ continued_line }
+normal_end = { new_line ~ continuation? }
+backslash_end = { "\" ~ new_line ~ continued_line }
+
+line_start_symbol = {
+    ">>>" | ">>" | ">\\" | ">" |
+    "\\>>>" | "\\>>" | "\\>"
+}
