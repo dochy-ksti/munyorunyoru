@@ -12,9 +12,9 @@ impl LinePeeker{
     }
 
     pub(crate) fn next(&mut self) -> Option<&str>{
-        self.prev = self.current;
+        self.prev = self.current.take();
         self.current = self.iter.next();
-        self.current.map(|s| s.as_str())
+        self.current.as_ref().map(|s| s.as_str())
     }
 
     pub(crate) fn modify_current(&mut self, modifier : impl Fn(Option<String>, Option<String>) -> Option<String>){
