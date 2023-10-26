@@ -1,26 +1,35 @@
 use std::sync::OnceLock;
 
-use pest::{Parser, iterators::Pairs};
+use pest::{iterators::{Pairs, Pair}, Parser};
 use pest_derive::Parser;
-use regex::Regex;
 
-use crate::error::MunyoResult;
+use crate::error::{MunyoResult, parse_error::ParseError};
+
+use super::state_machine::StateMachine;
 
 #[derive(Parser)]
 #[grammar = "munyo_grammar.pest"]
 pub struct MunyoParser;
 
-pub(crate) fn process_file_text(text: String) -> MunyoResult<()> {
-    let pairs = MunyoParser::parse(Rule::file, &text)?;
+pub(crate) fn process_file_text(text: String) -> Result<(), ParseError> {
+    let mut pairs = MunyoParser::parse(Rule::file, &text);
     //let text = format!("{:#?}", pairs);
     //std::fs::write("sample_output.txt", text)?;
 
-	let pair = pairs.next().unwrap();
-	let hoge = pair.into_inner();
-	parse_file(pairs.next())
-    Ok(())
+    let pair = pairs.next().unwrap();
+
+    return parse_file(pair.into_inner());
 }
 
-fn parse_file(pairs : Pairs<'_, Rule>) -> MunyoResult<()>{
-	Ok(())
+fn report(pair : Pair<'_, Rule>, message : String) -> ParseError{
+	let line_col = pair.line_col();
+	ParseError(line_col.0, line_col.1, message)
+}
+
+fn parse_file(mut pairs: Pairs<'_, Rule>) -> Result<(), ParseError> {
+	let mut state = StateMachine::new();
+	let tabs = pairs.next().unwrap();
+	let hoge =  state.indent(tabs.as_str().len()).e(&tabs)?;
+
+    Ok(())
 }

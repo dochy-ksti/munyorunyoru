@@ -3,6 +3,7 @@ use std::fmt::{Debug, Display, Formatter};
 use anyhow::anyhow;
 
 pub(crate) mod read_file_error;
+pub(crate) mod parse_error;
 
 pub use read_file_error::ReadFileError;
 
