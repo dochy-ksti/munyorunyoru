@@ -1,0 +1,71 @@
+Text hoge
+    Text hoge|param huga
+        Text hoge|  param huga|param2
+Text|param|param2 hego
+
+||commented empty line
+Text
+|continuation
+Text|param|| comment
+    |continuation
+    Text|param|| comment
+|continuation
+Text|
+|pseudo-continuation
+Text param|||
+|pseudo-continuation
+Text\
+ some text|param
+|continuation
+Text\|| commenting...
+ some text|param
+|continuation
+
+>>double|empty
+hogehoge
+
+>>|emp
+No Default
+
+>>doub|
+hugahuga
+
+>>|
+Non Default
+
+
+>>ma|mo
+huga
+
+>single|em
+hegohego
+
+>|em
+Nono Default
+
+>sing|
+penyopenyo|param huga
+
+>|
+Nonon Default
+
+>hu|katu
+pumapuma
+
+>>Cantoverwrite|emem
+mumu
+
+    Children affected
+
+        Grandchildren affected
+
+    >>overwrite
+    nyanya
+
+        childitem dayo
+
+    >reoverwrite|maho
+    mahomaho
+    
+tako hachiro
+
