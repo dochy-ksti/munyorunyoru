@@ -9,7 +9,7 @@ impl ParseError{
 	}
 }
 
-trait ParseErrorHelper<T>{
+pub(crate) trait ParseErrorHelper<T>{
 	fn oe<R : RuleType>(self, pair : &Pair<'_, R>) -> Result<T, ParseError>;
 }
 

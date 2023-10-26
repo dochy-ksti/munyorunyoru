@@ -18,7 +18,7 @@ Text\
  some text|param
 |continuation
 Text\|| commenting...
- some text|param
+ some\| t\\ext|param
 |continuation
 
 >>double|empty

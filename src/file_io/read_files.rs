@@ -36,7 +36,7 @@ where
                         Ok(_) => {}
                         Err(e) => {
                             sender
-                                .send_blocking(Err(ReadFileError::Parse(path, format!("{e}"))))
+                                .send_blocking(Err(ReadFileError::Parse(path, e.0, e.1, e.2)))
                                 .expect("async_channel::send_blocking failed");
                         }
                     });
