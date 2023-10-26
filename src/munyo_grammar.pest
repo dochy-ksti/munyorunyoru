@@ -10,6 +10,10 @@ char_seq = @{
     char+
 }
 
+comment_text = _{
+    comment_char*
+}
+
 escaped = {
     "\\\\" | "\\|" | "\\n" | "\\t" | "\\r"
 }
@@ -31,7 +35,15 @@ main_line = {
 }
 
 continued_line = {
-    tabs ~ content ~ param_item* ~ line_end
+    tabs ~ (continued_line_with_content | continued_line_without_content)
+}
+
+continued_line_with_content = {
+    content ~ param_item* ~ line_end
+}
+
+continued_line_without_content = {
+    param_item+ ~ line_end
 }
 
 continuation = {
@@ -39,14 +51,15 @@ continuation = {
 }
 
 line_end = {
-    normal_end | backslash_end | single_bar | triple_bars | double_bars
+    normal_end | backslash_comment_end | backslash_end | single_bar | triple_bars | double_bars
 }
 
-triple_bars = { "|||" ~ comment_char* ~ new_line ~ continued_line }
-double_bars = { "||" ~ comment_char* ~ new_line ~ continuation? }
+triple_bars = { "|||" ~ comment_text ~ new_line ~ continued_line }
+double_bars = { "||" ~ comment_text ~ new_line ~ continuation? }
 single_bar = {"|" ~ new_line ~ continued_line }
 normal_end = { new_line ~ continuation? }
-backslash_end = { "\" ~ new_line ~ continued_line }
+backslash_end = { "\\" ~ new_line ~ continued_line }
+backslash_comment_end = { "\\||" ~ comment_text ~ new_line ~ continued_line }
 
 line_start_symbol = {
     ">>>" | ">>" | ">\\" | ">" |

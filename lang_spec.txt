@@ -10,6 +10,10 @@ Arguments are optional.
 
 	type-name|param-name|param-name arg|...
 
+'param-name' can have preceding whitespaces.
+
+	type-name argument|   param-name argument|...
+
 *Line continuation
 
 	name argument\
@@ -62,16 +66,21 @@ If you want to end with '|', and write comments after that, you can use '|||'
 	munyo arg||| comment
 	continuation
 
+If you want to end with '\', and write comments after that, you can use '\||'
+
+	munyo arg\|| comment
+	continuation
+
 *Default type and empty line type
 
 	>default-type-name
 
 Lines start with '>'(ASCII code 62) define default-types.
-When default-type is defined, typenames can be omitted.
+When default-type is defined, typenames must be omitted.
 
 	argument|param-name arg...
 
-If you want to specify the typename, you need '>\'.
+If you want to specify the typename in this context, you need '>\'.
 
 	>\type-name argument|param-name...
 
@@ -106,9 +115,9 @@ monyo
 
 This is recognized as
 
-	>munyo|manyo
+	>munyo|emp
 	munyo argument
-	manyo
+	emp
 	munyo argument
 		menyo
 monyo
@@ -121,7 +130,7 @@ When you double the '>':
 
 the default and empty-line types are defined in the current and descendant levels.
 
-	>>munyo|manyo
+	>>munyo|emp
 	argument
 
 		menyo
@@ -130,11 +139,11 @@ monyo
 
 This is recognized as:
 
-	>>munyo|manyo
+	>>munyo|emp
 	munyo argument
-	manyo
+	emp
 		munyo menyo|| When an empty-line item is defined and there's an item after an empty line with an indent, it's considered as a child of the empty-line item.
-		manyo|| Empty-line items are aligned with the last line's indent level. How many tabs the line has are not relevant.
+		emp|| Empty-line items are aligned with the last line's indent level. How many tabs the line has are not relevant.
 monyo
 
 The child level is also affected, but the parent level is unaffected.
@@ -161,28 +170,29 @@ You can overwrite them with empty items.
 	>munyo|manyo
 	munyo argument
 	manyo
-	>|ponyo
-	argument|| Probably syntax error
+	>|ponyo|| Default item is canceled.
+	argument|| <- default item doesn't occur. It's probably syntax error
 	ponyo
 
 	>munyo|manyo
 	munyo argument
 	manyo
 	>penyo|
+	|| ↑ empty-line item is canceled.
 	penyo argument
 
-	|| ↑ No empty-line item appeared here because it was canceled.
+	|| ↑ No empty-line item occured
 
 When there's no item but comments in a line, it's not considered an empty line.
 
-	>|manyo
-
+	>|emp
+	
 	||This line has comments, so no empty-line items appear here.
 
 This is recognized as:
 
-	>|manyo
-	manyo
+	>|emp
+	emp
 	||This line has comments, so no empty item appear here.
 
 When '>>' is used multiple times, it's overwritten or stacked.
@@ -260,9 +270,10 @@ tama argument
 
 *Special characters
 
-'\' and '|' are special characters. If you want to use them in the raw text, use '\\' and '\|'. They are considered normal characters '\' and '|'.
+'\' and '|' are special characters. If you want to use them in a raw text, use '\\' and '\|'. They are considered normal characters '\' and '|'.
 '>','>>' are special characters when they are used on the start of the line. You can use '\>' and '\>>' at the start of the line.
 '\r','\n','\t' are supported. They are ASCII code 13, 10, 9 respectively.
+'>>>' and '\>>>' on the start of a line are reserved.
 The usages of '\' which aren't discribed in this specification is not valid.
 
 *Miscellaneous
@@ -272,11 +283,13 @@ When default type is defined, you can't construct default item without arguments
 || ↑ An empty line isn't considered as a default-type item with no arguments.
 
 |param-name arguments|...
-|| ↑ Lines start with '|' is not considered as a default-type item with no arguments with params. It's line continuation.
+|| ↑ Lines that start with '|' is not considered as a default-type item with no arguments with params. It's a line continuation.
 
 You can use these.
 
 >\default-type-name
+|| ↑ No argument
 
 >\default-type-name|param-name arguments
+|| ↑ No argument with a param
 

@@ -1,0 +1,19 @@
+Text hoge
+    Text hoge|param huga
+        Text hoge|  param huga|param2
+Text|param|param2 hego
+
+||commented empty line
+Text
+|continuation
+Text|param|| comment
+    |continuation
+    Text|param|| comment
+|continuation
+Text|
+|pseudo-continuation
+Text param|||
+|pseudo-continuation
+Text\
+ some text|param
+|continuation
