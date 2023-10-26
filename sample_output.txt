@@ -1,0 +1,2054 @@
+[
+    Pair {
+        rule: file,
+        span: Span {
+            str: "Text hoge\r\n    Text hoge|param huga\r\n        Text hoge|  param huga|param2\r\nText|param|param2 hego\r\n\r\n||commented empty line\r\nText\r\n|continuation\r\nText|param|| comment\r\n    |continuation\r\n    Text|param|| comment\r\n|continuation\r\nText|\r\n|pseudo-continuation\r\nText param|||\r\n|pseudo-continuation\r\nText\\\r\n some text|param\r\n|continuation\r\nText\\|| commenting...\r\n some text|param\r\n|continuation\r\n\r\n>>double|empty\r\nhogehoge\r\n\r\n",
+            start: 0,
+            end: 421,
+        },
+        inner: [
+            Pair {
+                rule: tabs,
+                span: Span {
+                    str: "",
+                    start: 0,
+                    end: 0,
+                },
+                inner: [],
+            },
+            Pair {
+                rule: main_line,
+                span: Span {
+                    str: "Text hoge\r\n",
+                    start: 0,
+                    end: 11,
+                },
+                inner: [
+                    Pair {
+                        rule: content,
+                        span: Span {
+                            str: "Text hoge",
+                            start: 0,
+                            end: 9,
+                        },
+                        inner: [
+                            Pair {
+                                rule: char_seq,
+                                span: Span {
+                                    str: "Text hoge",
+                                    start: 0,
+                                    end: 9,
+                                },
+                                inner: [],
+                            },
+                        ],
+                    },
+                    Pair {
+                        rule: line_end,
+                        span: Span {
+                            str: "\r\n",
+                            start: 9,
+                            end: 11,
+                        },
+                        inner: [
+                            Pair {
+                                rule: normal_end,
+                                span: Span {
+                                    str: "\r\n",
+                                    start: 9,
+                                    end: 11,
+                                },
+                                inner: [
+                                    Pair {
+                                        rule: new_line,
+                                        span: Span {
+                                            str: "\r\n",
+                                            start: 9,
+                                            end: 11,
+                                        },
+                                        inner: [],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            Pair {
+                rule: tabs,
+                span: Span {
+                    str: "",
+                    start: 11,
+                    end: 11,
+                },
+                inner: [],
+            },
+            Pair {
+                rule: main_line,
+                span: Span {
+                    str: "    Text hoge|param huga\r\n",
+                    start: 11,
+                    end: 37,
+                },
+                inner: [
+                    Pair {
+                        rule: content,
+                        span: Span {
+                            str: "    Text hoge",
+                            start: 11,
+                            end: 24,
+                        },
+                        inner: [
+                            Pair {
+                                rule: char_seq,
+                                span: Span {
+                                    str: "    Text hoge",
+                                    start: 11,
+                                    end: 24,
+                                },
+                                inner: [],
+                            },
+                        ],
+                    },
+                    Pair {
+                        rule: param_item,
+                        span: Span {
+                            str: "|param huga",
+                            start: 24,
+                            end: 35,
+                        },
+                        inner: [
+                            Pair {
+                                rule: content,
+                                span: Span {
+                                    str: "param huga",
+                                    start: 25,
+                                    end: 35,
+                                },
+                                inner: [
+                                    Pair {
+                                        rule: char_seq,
+                                        span: Span {
+                                            str: "param huga",
+                                            start: 25,
+                                            end: 35,
+                                        },
+                                        inner: [],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    Pair {
+                        rule: line_end,
+                        span: Span {
+                            str: "\r\n",
+                            start: 35,
+                            end: 37,
+                        },
+                        inner: [
+                            Pair {
+                                rule: normal_end,
+                                span: Span {
+                                    str: "\r\n",
+                                    start: 35,
+                                    end: 37,
+                                },
+                                inner: [
+                                    Pair {
+                                        rule: new_line,
+                                        span: Span {
+                                            str: "\r\n",
+                                            start: 35,
+                                            end: 37,
+                                        },
+                                        inner: [],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            Pair {
+                rule: tabs,
+                span: Span {
+                    str: "",
+                    start: 37,
+                    end: 37,
+                },
+                inner: [],
+            },
+            Pair {
+                rule: main_line,
+                span: Span {
+                    str: "        Text hoge|  param huga|param2\r\n",
+                    start: 37,
+                    end: 76,
+                },
+                inner: [
+                    Pair {
+                        rule: content,
+                        span: Span {
+                            str: "        Text hoge",
+                            start: 37,
+                            end: 54,
+                        },
+                        inner: [
+                            Pair {
+                                rule: char_seq,
+                                span: Span {
+                                    str: "        Text hoge",
+                                    start: 37,
+                                    end: 54,
+                                },
+                                inner: [],
+                            },
+                        ],
+                    },
+                    Pair {
+                        rule: param_item,
+                        span: Span {
+                            str: "|  param huga",
+                            start: 54,
+                            end: 67,
+                        },
+                        inner: [
+                            Pair {
+                                rule: content,
+                                span: Span {
+                                    str: "  param huga",
+                                    start: 55,
+                                    end: 67,
+                                },
+                                inner: [
+                                    Pair {
+                                        rule: char_seq,
+                                        span: Span {
+                                            str: "  param huga",
+                                            start: 55,
+                                            end: 67,
+                                        },
+                                        inner: [],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    Pair {
+                        rule: param_item,
+                        span: Span {
+                            str: "|param2",
+                            start: 67,
+                            end: 74,
+                        },
+                        inner: [
+                            Pair {
+                                rule: content,
+                                span: Span {
+                                    str: "param2",
+                                    start: 68,
+                                    end: 74,
+                                },
+                                inner: [
+                                    Pair {
+                                        rule: char_seq,
+                                        span: Span {
+                                            str: "param2",
+                                            start: 68,
+                                            end: 74,
+                                        },
+                                        inner: [],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    Pair {
+                        rule: line_end,
+                        span: Span {
+                            str: "\r\n",
+                            start: 74,
+                            end: 76,
+                        },
+                        inner: [
+                            Pair {
+                                rule: normal_end,
+                                span: Span {
+                                    str: "\r\n",
+                                    start: 74,
+                                    end: 76,
+                                },
+                                inner: [
+                                    Pair {
+                                        rule: new_line,
+                                        span: Span {
+                                            str: "\r\n",
+                                            start: 74,
+                                            end: 76,
+                                        },
+                                        inner: [],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            Pair {
+                rule: tabs,
+                span: Span {
+                    str: "",
+                    start: 76,
+                    end: 76,
+                },
+                inner: [],
+            },
+            Pair {
+                rule: main_line,
+                span: Span {
+                    str: "Text|param|param2 hego\r\n",
+                    start: 76,
+                    end: 100,
+                },
+                inner: [
+                    Pair {
+                        rule: content,
+                        span: Span {
+                            str: "Text",
+                            start: 76,
+                            end: 80,
+                        },
+                        inner: [
+                            Pair {
+                                rule: char_seq,
+                                span: Span {
+                                    str: "Text",
+                                    start: 76,
+                                    end: 80,
+                                },
+                                inner: [],
+                            },
+                        ],
+                    },
+                    Pair {
+                        rule: param_item,
+                        span: Span {
+                            str: "|param",
+                            start: 80,
+                            end: 86,
+                        },
+                        inner: [
+                            Pair {
+                                rule: content,
+                                span: Span {
+                                    str: "param",
+                                    start: 81,
+                                    end: 86,
+                                },
+                                inner: [
+                                    Pair {
+                                        rule: char_seq,
+                                        span: Span {
+                                            str: "param",
+                                            start: 81,
+                                            end: 86,
+                                        },
+                                        inner: [],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    Pair {
+                        rule: param_item,
+                        span: Span {
+                            str: "|param2 hego",
+                            start: 86,
+                            end: 98,
+                        },
+                        inner: [
+                            Pair {
+                                rule: content,
+                                span: Span {
+                                    str: "param2 hego",
+                                    start: 87,
+                                    end: 98,
+                                },
+                                inner: [
+                                    Pair {
+                                        rule: char_seq,
+                                        span: Span {
+                                            str: "param2 hego",
+                                            start: 87,
+                                            end: 98,
+                                        },
+                                        inner: [],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    Pair {
+                        rule: line_end,
+                        span: Span {
+                            str: "\r\n",
+                            start: 98,
+                            end: 100,
+                        },
+                        inner: [
+                            Pair {
+                                rule: normal_end,
+                                span: Span {
+                                    str: "\r\n",
+                                    start: 98,
+                                    end: 100,
+                                },
+                                inner: [
+                                    Pair {
+                                        rule: new_line,
+                                        span: Span {
+                                            str: "\r\n",
+                                            start: 98,
+                                            end: 100,
+                                        },
+                                        inner: [],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            Pair {
+                rule: tabs,
+                span: Span {
+                    str: "",
+                    start: 100,
+                    end: 100,
+                },
+                inner: [],
+            },
+            Pair {
+                rule: empty_line,
+                span: Span {
+                    str: "\r\n",
+                    start: 100,
+                    end: 102,
+                },
+                inner: [
+                    Pair {
+                        rule: new_line,
+                        span: Span {
+                            str: "\r\n",
+                            start: 100,
+                            end: 102,
+                        },
+                        inner: [],
+                    },
+                ],
+            },
+            Pair {
+                rule: tabs,
+                span: Span {
+                    str: "",
+                    start: 102,
+                    end: 102,
+                },
+                inner: [],
+            },
+            Pair {
+                rule: commented_line,
+                span: Span {
+                    str: "||commented empty line\r\n",
+                    start: 102,
+                    end: 126,
+                },
+                inner: [
+                    Pair {
+                        rule: new_line,
+                        span: Span {
+                            str: "\r\n",
+                            start: 124,
+                            end: 126,
+                        },
+                        inner: [],
+                    },
+                ],
+            },
+            Pair {
+                rule: tabs,
+                span: Span {
+                    str: "",
+                    start: 126,
+                    end: 126,
+                },
+                inner: [],
+            },
+            Pair {
+                rule: main_line,
+                span: Span {
+                    str: "Text\r\n|continuation\r\n",
+                    start: 126,
+                    end: 147,
+                },
+                inner: [
+                    Pair {
+                        rule: content,
+                        span: Span {
+                            str: "Text",
+                            start: 126,
+                            end: 130,
+                        },
+                        inner: [
+                            Pair {
+                                rule: char_seq,
+                                span: Span {
+                                    str: "Text",
+                                    start: 126,
+                                    end: 130,
+                                },
+                                inner: [],
+                            },
+                        ],
+                    },
+                    Pair {
+                        rule: line_end,
+                        span: Span {
+                            str: "\r\n|continuation\r\n",
+                            start: 130,
+                            end: 147,
+                        },
+                        inner: [
+                            Pair {
+                                rule: normal_end,
+                                span: Span {
+                                    str: "\r\n|continuation\r\n",
+                                    start: 130,
+                                    end: 147,
+                                },
+                                inner: [
+                                    Pair {
+                                        rule: new_line,
+                                        span: Span {
+                                            str: "\r\n",
+                                            start: 130,
+                                            end: 132,
+                                        },
+                                        inner: [],
+                                    },
+                                    Pair {
+                                        rule: continuation,
+                                        span: Span {
+                                            str: "|continuation\r\n",
+                                            start: 132,
+                                            end: 147,
+                                        },
+                                        inner: [
+                                            Pair {
+                                                rule: tabs,
+                                                span: Span {
+                                                    str: "",
+                                                    start: 132,
+                                                    end: 132,
+                                                },
+                                                inner: [],
+                                            },
+                                            Pair {
+                                                rule: param_item,
+                                                span: Span {
+                                                    str: "|continuation",
+                                                    start: 132,
+                                                    end: 145,
+                                                },
+                                                inner: [
+                                                    Pair {
+                                                        rule: content,
+                                                        span: Span {
+                                                            str: "continuation",
+                                                            start: 133,
+                                                            end: 145,
+                                                        },
+                                                        inner: [
+                                                            Pair {
+                                                                rule: char_seq,
+                                                                span: Span {
+                                                                    str: "continuation",
+                                                                    start: 133,
+                                                                    end: 145,
+                                                                },
+                                                                inner: [],
+                                                            },
+                                                        ],
+                                                    },
+                                                ],
+                                            },
+                                            Pair {
+                                                rule: line_end,
+                                                span: Span {
+                                                    str: "\r\n",
+                                                    start: 145,
+                                                    end: 147,
+                                                },
+                                                inner: [
+                                                    Pair {
+                                                        rule: normal_end,
+                                                        span: Span {
+                                                            str: "\r\n",
+                                                            start: 145,
+                                                            end: 147,
+                                                        },
+                                                        inner: [
+                                                            Pair {
+                                                                rule: new_line,
+                                                                span: Span {
+                                                                    str: "\r\n",
+                                                                    start: 145,
+                                                                    end: 147,
+                                                                },
+                                                                inner: [],
+                                                            },
+                                                        ],
+                                                    },
+                                                ],
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            Pair {
+                rule: tabs,
+                span: Span {
+                    str: "",
+                    start: 147,
+                    end: 147,
+                },
+                inner: [],
+            },
+            Pair {
+                rule: main_line,
+                span: Span {
+                    str: "Text|param|| comment\r\n",
+                    start: 147,
+                    end: 169,
+                },
+                inner: [
+                    Pair {
+                        rule: content,
+                        span: Span {
+                            str: "Text",
+                            start: 147,
+                            end: 151,
+                        },
+                        inner: [
+                            Pair {
+                                rule: char_seq,
+                                span: Span {
+                                    str: "Text",
+                                    start: 147,
+                                    end: 151,
+                                },
+                                inner: [],
+                            },
+                        ],
+                    },
+                    Pair {
+                        rule: param_item,
+                        span: Span {
+                            str: "|param",
+                            start: 151,
+                            end: 157,
+                        },
+                        inner: [
+                            Pair {
+                                rule: content,
+                                span: Span {
+                                    str: "param",
+                                    start: 152,
+                                    end: 157,
+                                },
+                                inner: [
+                                    Pair {
+                                        rule: char_seq,
+                                        span: Span {
+                                            str: "param",
+                                            start: 152,
+                                            end: 157,
+                                        },
+                                        inner: [],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    Pair {
+                        rule: line_end,
+                        span: Span {
+                            str: "|| comment\r\n",
+                            start: 157,
+                            end: 169,
+                        },
+                        inner: [
+                            Pair {
+                                rule: double_bars,
+                                span: Span {
+                                    str: "|| comment\r\n",
+                                    start: 157,
+                                    end: 169,
+                                },
+                                inner: [
+                                    Pair {
+                                        rule: new_line,
+                                        span: Span {
+                                            str: "\r\n",
+                                            start: 167,
+                                            end: 169,
+                                        },
+                                        inner: [],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            Pair {
+                rule: tabs,
+                span: Span {
+                    str: "",
+                    start: 169,
+                    end: 169,
+                },
+                inner: [],
+            },
+            Pair {
+                rule: main_line,
+                span: Span {
+                    str: "    |continuation\r\n",
+                    start: 169,
+                    end: 188,
+                },
+                inner: [
+                    Pair {
+                        rule: content,
+                        span: Span {
+                            str: "    ",
+                            start: 169,
+                            end: 173,
+                        },
+                        inner: [
+                            Pair {
+                                rule: char_seq,
+                                span: Span {
+                                    str: "    ",
+                                    start: 169,
+                                    end: 173,
+                                },
+                                inner: [],
+                            },
+                        ],
+                    },
+                    Pair {
+                        rule: param_item,
+                        span: Span {
+                            str: "|continuation",
+                            start: 173,
+                            end: 186,
+                        },
+                        inner: [
+                            Pair {
+                                rule: content,
+                                span: Span {
+                                    str: "continuation",
+                                    start: 174,
+                                    end: 186,
+                                },
+                                inner: [
+                                    Pair {
+                                        rule: char_seq,
+                                        span: Span {
+                                            str: "continuation",
+                                            start: 174,
+                                            end: 186,
+                                        },
+                                        inner: [],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    Pair {
+                        rule: line_end,
+                        span: Span {
+                            str: "\r\n",
+                            start: 186,
+                            end: 188,
+                        },
+                        inner: [
+                            Pair {
+                                rule: normal_end,
+                                span: Span {
+                                    str: "\r\n",
+                                    start: 186,
+                                    end: 188,
+                                },
+                                inner: [
+                                    Pair {
+                                        rule: new_line,
+                                        span: Span {
+                                            str: "\r\n",
+                                            start: 186,
+                                            end: 188,
+                                        },
+                                        inner: [],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            Pair {
+                rule: tabs,
+                span: Span {
+                    str: "",
+                    start: 188,
+                    end: 188,
+                },
+                inner: [],
+            },
+            Pair {
+                rule: main_line,
+                span: Span {
+                    str: "    Text|param|| comment\r\n|continuation\r\n",
+                    start: 188,
+                    end: 229,
+                },
+                inner: [
+                    Pair {
+                        rule: content,
+                        span: Span {
+                            str: "    Text",
+                            start: 188,
+                            end: 196,
+                        },
+                        inner: [
+                            Pair {
+                                rule: char_seq,
+                                span: Span {
+                                    str: "    Text",
+                                    start: 188,
+                                    end: 196,
+                                },
+                                inner: [],
+                            },
+                        ],
+                    },
+                    Pair {
+                        rule: param_item,
+                        span: Span {
+                            str: "|param",
+                            start: 196,
+                            end: 202,
+                        },
+                        inner: [
+                            Pair {
+                                rule: content,
+                                span: Span {
+                                    str: "param",
+                                    start: 197,
+                                    end: 202,
+                                },
+                                inner: [
+                                    Pair {
+                                        rule: char_seq,
+                                        span: Span {
+                                            str: "param",
+                                            start: 197,
+                                            end: 202,
+                                        },
+                                        inner: [],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    Pair {
+                        rule: line_end,
+                        span: Span {
+                            str: "|| comment\r\n|continuation\r\n",
+                            start: 202,
+                            end: 229,
+                        },
+                        inner: [
+                            Pair {
+                                rule: double_bars,
+                                span: Span {
+                                    str: "|| comment\r\n|continuation\r\n",
+                                    start: 202,
+                                    end: 229,
+                                },
+                                inner: [
+                                    Pair {
+                                        rule: new_line,
+                                        span: Span {
+                                            str: "\r\n",
+                                            start: 212,
+                                            end: 214,
+                                        },
+                                        inner: [],
+                                    },
+                                    Pair {
+                                        rule: continuation,
+                                        span: Span {
+                                            str: "|continuation\r\n",
+                                            start: 214,
+                                            end: 229,
+                                        },
+                                        inner: [
+                                            Pair {
+                                                rule: tabs,
+                                                span: Span {
+                                                    str: "",
+                                                    start: 214,
+                                                    end: 214,
+                                                },
+                                                inner: [],
+                                            },
+                                            Pair {
+                                                rule: param_item,
+                                                span: Span {
+                                                    str: "|continuation",
+                                                    start: 214,
+                                                    end: 227,
+                                                },
+                                                inner: [
+                                                    Pair {
+                                                        rule: content,
+                                                        span: Span {
+                                                            str: "continuation",
+                                                            start: 215,
+                                                            end: 227,
+                                                        },
+                                                        inner: [
+                                                            Pair {
+                                                                rule: char_seq,
+                                                                span: Span {
+                                                                    str: "continuation",
+                                                                    start: 215,
+                                                                    end: 227,
+                                                                },
+                                                                inner: [],
+                                                            },
+                                                        ],
+                                                    },
+                                                ],
+                                            },
+                                            Pair {
+                                                rule: line_end,
+                                                span: Span {
+                                                    str: "\r\n",
+                                                    start: 227,
+                                                    end: 229,
+                                                },
+                                                inner: [
+                                                    Pair {
+                                                        rule: normal_end,
+                                                        span: Span {
+                                                            str: "\r\n",
+                                                            start: 227,
+                                                            end: 229,
+                                                        },
+                                                        inner: [
+                                                            Pair {
+                                                                rule: new_line,
+                                                                span: Span {
+                                                                    str: "\r\n",
+                                                                    start: 227,
+                                                                    end: 229,
+                                                                },
+                                                                inner: [],
+                                                            },
+                                                        ],
+                                                    },
+                                                ],
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            Pair {
+                rule: tabs,
+                span: Span {
+                    str: "",
+                    start: 229,
+                    end: 229,
+                },
+                inner: [],
+            },
+            Pair {
+                rule: main_line,
+                span: Span {
+                    str: "Text|\r\n|pseudo-continuation\r\n",
+                    start: 229,
+                    end: 258,
+                },
+                inner: [
+                    Pair {
+                        rule: content,
+                        span: Span {
+                            str: "Text",
+                            start: 229,
+                            end: 233,
+                        },
+                        inner: [
+                            Pair {
+                                rule: char_seq,
+                                span: Span {
+                                    str: "Text",
+                                    start: 229,
+                                    end: 233,
+                                },
+                                inner: [],
+                            },
+                        ],
+                    },
+                    Pair {
+                        rule: line_end,
+                        span: Span {
+                            str: "|\r\n|pseudo-continuation\r\n",
+                            start: 233,
+                            end: 258,
+                        },
+                        inner: [
+                            Pair {
+                                rule: single_bar,
+                                span: Span {
+                                    str: "|\r\n|pseudo-continuation\r\n",
+                                    start: 233,
+                                    end: 258,
+                                },
+                                inner: [
+                                    Pair {
+                                        rule: new_line,
+                                        span: Span {
+                                            str: "\r\n",
+                                            start: 234,
+                                            end: 236,
+                                        },
+                                        inner: [],
+                                    },
+                                    Pair {
+                                        rule: continued_line,
+                                        span: Span {
+                                            str: "|pseudo-continuation\r\n",
+                                            start: 236,
+                                            end: 258,
+                                        },
+                                        inner: [
+                                            Pair {
+                                                rule: tabs,
+                                                span: Span {
+                                                    str: "",
+                                                    start: 236,
+                                                    end: 236,
+                                                },
+                                                inner: [],
+                                            },
+                                            Pair {
+                                                rule: continued_line_without_content,
+                                                span: Span {
+                                                    str: "|pseudo-continuation\r\n",
+                                                    start: 236,
+                                                    end: 258,
+                                                },
+                                                inner: [
+                                                    Pair {
+                                                        rule: param_item,
+                                                        span: Span {
+                                                            str: "|pseudo-continuation",
+                                                            start: 236,
+                                                            end: 256,
+                                                        },
+                                                        inner: [
+                                                            Pair {
+                                                                rule: content,
+                                                                span: Span {
+                                                                    str: "pseudo-continuation",
+                                                                    start: 237,
+                                                                    end: 256,
+                                                                },
+                                                                inner: [
+                                                                    Pair {
+                                                                        rule: char_seq,
+                                                                        span: Span {
+                                                                            str: "pseudo-continuation",
+                                                                            start: 237,
+                                                                            end: 256,
+                                                                        },
+                                                                        inner: [],
+                                                                    },
+                                                                ],
+                                                            },
+                                                        ],
+                                                    },
+                                                    Pair {
+                                                        rule: line_end,
+                                                        span: Span {
+                                                            str: "\r\n",
+                                                            start: 256,
+                                                            end: 258,
+                                                        },
+                                                        inner: [
+                                                            Pair {
+                                                                rule: normal_end,
+                                                                span: Span {
+                                                                    str: "\r\n",
+                                                                    start: 256,
+                                                                    end: 258,
+                                                                },
+                                                                inner: [
+                                                                    Pair {
+                                                                        rule: new_line,
+                                                                        span: Span {
+                                                                            str: "\r\n",
+                                                                            start: 256,
+                                                                            end: 258,
+                                                                        },
+                                                                        inner: [],
+                                                                    },
+                                                                ],
+                                                            },
+                                                        ],
+                                                    },
+                                                ],
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            Pair {
+                rule: tabs,
+                span: Span {
+                    str: "",
+                    start: 258,
+                    end: 258,
+                },
+                inner: [],
+            },
+            Pair {
+                rule: main_line,
+                span: Span {
+                    str: "Text param|||\r\n|pseudo-continuation\r\n",
+                    start: 258,
+                    end: 295,
+                },
+                inner: [
+                    Pair {
+                        rule: content,
+                        span: Span {
+                            str: "Text param",
+                            start: 258,
+                            end: 268,
+                        },
+                        inner: [
+                            Pair {
+                                rule: char_seq,
+                                span: Span {
+                                    str: "Text param",
+                                    start: 258,
+                                    end: 268,
+                                },
+                                inner: [],
+                            },
+                        ],
+                    },
+                    Pair {
+                        rule: line_end,
+                        span: Span {
+                            str: "|||\r\n|pseudo-continuation\r\n",
+                            start: 268,
+                            end: 295,
+                        },
+                        inner: [
+                            Pair {
+                                rule: triple_bars,
+                                span: Span {
+                                    str: "|||\r\n|pseudo-continuation\r\n",
+                                    start: 268,
+                                    end: 295,
+                                },
+                                inner: [
+                                    Pair {
+                                        rule: new_line,
+                                        span: Span {
+                                            str: "\r\n",
+                                            start: 271,
+                                            end: 273,
+                                        },
+                                        inner: [],
+                                    },
+                                    Pair {
+                                        rule: continued_line,
+                                        span: Span {
+                                            str: "|pseudo-continuation\r\n",
+                                            start: 273,
+                                            end: 295,
+                                        },
+                                        inner: [
+                                            Pair {
+                                                rule: tabs,
+                                                span: Span {
+                                                    str: "",
+                                                    start: 273,
+                                                    end: 273,
+                                                },
+                                                inner: [],
+                                            },
+                                            Pair {
+                                                rule: continued_line_without_content,
+                                                span: Span {
+                                                    str: "|pseudo-continuation\r\n",
+                                                    start: 273,
+                                                    end: 295,
+                                                },
+                                                inner: [
+                                                    Pair {
+                                                        rule: param_item,
+                                                        span: Span {
+                                                            str: "|pseudo-continuation",
+                                                            start: 273,
+                                                            end: 293,
+                                                        },
+                                                        inner: [
+                                                            Pair {
+                                                                rule: content,
+                                                                span: Span {
+                                                                    str: "pseudo-continuation",
+                                                                    start: 274,
+                                                                    end: 293,
+                                                                },
+                                                                inner: [
+                                                                    Pair {
+                                                                        rule: char_seq,
+                                                                        span: Span {
+                                                                            str: "pseudo-continuation",
+                                                                            start: 274,
+                                                                            end: 293,
+                                                                        },
+                                                                        inner: [],
+                                                                    },
+                                                                ],
+                                                            },
+                                                        ],
+                                                    },
+                                                    Pair {
+                                                        rule: line_end,
+                                                        span: Span {
+                                                            str: "\r\n",
+                                                            start: 293,
+                                                            end: 295,
+                                                        },
+                                                        inner: [
+                                                            Pair {
+                                                                rule: normal_end,
+                                                                span: Span {
+                                                                    str: "\r\n",
+                                                                    start: 293,
+                                                                    end: 295,
+                                                                },
+                                                                inner: [
+                                                                    Pair {
+                                                                        rule: new_line,
+                                                                        span: Span {
+                                                                            str: "\r\n",
+                                                                            start: 293,
+                                                                            end: 295,
+                                                                        },
+                                                                        inner: [],
+                                                                    },
+                                                                ],
+                                                            },
+                                                        ],
+                                                    },
+                                                ],
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            Pair {
+                rule: tabs,
+                span: Span {
+                    str: "",
+                    start: 295,
+                    end: 295,
+                },
+                inner: [],
+            },
+            Pair {
+                rule: main_line,
+                span: Span {
+                    str: "Text\\\r\n some text|param\r\n|continuation\r\n",
+                    start: 295,
+                    end: 335,
+                },
+                inner: [
+                    Pair {
+                        rule: content,
+                        span: Span {
+                            str: "Text",
+                            start: 295,
+                            end: 299,
+                        },
+                        inner: [
+                            Pair {
+                                rule: char_seq,
+                                span: Span {
+                                    str: "Text",
+                                    start: 295,
+                                    end: 299,
+                                },
+                                inner: [],
+                            },
+                        ],
+                    },
+                    Pair {
+                        rule: line_end,
+                        span: Span {
+                            str: "\\\r\n some text|param\r\n|continuation\r\n",
+                            start: 299,
+                            end: 335,
+                        },
+                        inner: [
+                            Pair {
+                                rule: backslash_end,
+                                span: Span {
+                                    str: "\\\r\n some text|param\r\n|continuation\r\n",
+                                    start: 299,
+                                    end: 335,
+                                },
+                                inner: [
+                                    Pair {
+                                        rule: new_line,
+                                        span: Span {
+                                            str: "\r\n",
+                                            start: 300,
+                                            end: 302,
+                                        },
+                                        inner: [],
+                                    },
+                                    Pair {
+                                        rule: continued_line,
+                                        span: Span {
+                                            str: " some text|param\r\n|continuation\r\n",
+                                            start: 302,
+                                            end: 335,
+                                        },
+                                        inner: [
+                                            Pair {
+                                                rule: tabs,
+                                                span: Span {
+                                                    str: "",
+                                                    start: 302,
+                                                    end: 302,
+                                                },
+                                                inner: [],
+                                            },
+                                            Pair {
+                                                rule: continued_line_with_content,
+                                                span: Span {
+                                                    str: " some text|param\r\n|continuation\r\n",
+                                                    start: 302,
+                                                    end: 335,
+                                                },
+                                                inner: [
+                                                    Pair {
+                                                        rule: content,
+                                                        span: Span {
+                                                            str: " some text",
+                                                            start: 302,
+                                                            end: 312,
+                                                        },
+                                                        inner: [
+                                                            Pair {
+                                                                rule: char_seq,
+                                                                span: Span {
+                                                                    str: " some text",
+                                                                    start: 302,
+                                                                    end: 312,
+                                                                },
+                                                                inner: [],
+                                                            },
+                                                        ],
+                                                    },
+                                                    Pair {
+                                                        rule: param_item,
+                                                        span: Span {
+                                                            str: "|param",
+                                                            start: 312,
+                                                            end: 318,
+                                                        },
+                                                        inner: [
+                                                            Pair {
+                                                                rule: content,
+                                                                span: Span {
+                                                                    str: "param",
+                                                                    start: 313,
+                                                                    end: 318,
+                                                                },
+                                                                inner: [
+                                                                    Pair {
+                                                                        rule: char_seq,
+                                                                        span: Span {
+                                                                            str: "param",
+                                                                            start: 313,
+                                                                            end: 318,
+                                                                        },
+                                                                        inner: [],
+                                                                    },
+                                                                ],
+                                                            },
+                                                        ],
+                                                    },
+                                                    Pair {
+                                                        rule: line_end,
+                                                        span: Span {
+                                                            str: "\r\n|continuation\r\n",
+                                                            start: 318,
+                                                            end: 335,
+                                                        },
+                                                        inner: [
+                                                            Pair {
+                                                                rule: normal_end,
+                                                                span: Span {
+                                                                    str: "\r\n|continuation\r\n",
+                                                                    start: 318,
+                                                                    end: 335,
+                                                                },
+                                                                inner: [
+                                                                    Pair {
+                                                                        rule: new_line,
+                                                                        span: Span {
+                                                                            str: "\r\n",
+                                                                            start: 318,
+                                                                            end: 320,
+                                                                        },
+                                                                        inner: [],
+                                                                    },
+                                                                    Pair {
+                                                                        rule: continuation,
+                                                                        span: Span {
+                                                                            str: "|continuation\r\n",
+                                                                            start: 320,
+                                                                            end: 335,
+                                                                        },
+                                                                        inner: [
+                                                                            Pair {
+                                                                                rule: tabs,
+                                                                                span: Span {
+                                                                                    str: "",
+                                                                                    start: 320,
+                                                                                    end: 320,
+                                                                                },
+                                                                                inner: [],
+                                                                            },
+                                                                            Pair {
+                                                                                rule: param_item,
+                                                                                span: Span {
+                                                                                    str: "|continuation",
+                                                                                    start: 320,
+                                                                                    end: 333,
+                                                                                },
+                                                                                inner: [
+                                                                                    Pair {
+                                                                                        rule: content,
+                                                                                        span: Span {
+                                                                                            str: "continuation",
+                                                                                            start: 321,
+                                                                                            end: 333,
+                                                                                        },
+                                                                                        inner: [
+                                                                                            Pair {
+                                                                                                rule: char_seq,
+                                                                                                span: Span {
+                                                                                                    str: "continuation",
+                                                                                                    start: 321,
+                                                                                                    end: 333,
+                                                                                                },
+                                                                                                inner: [],
+                                                                                            },
+                                                                                        ],
+                                                                                    },
+                                                                                ],
+                                                                            },
+                                                                            Pair {
+                                                                                rule: line_end,
+                                                                                span: Span {
+                                                                                    str: "\r\n",
+                                                                                    start: 333,
+                                                                                    end: 335,
+                                                                                },
+                                                                                inner: [
+                                                                                    Pair {
+                                                                                        rule: normal_end,
+                                                                                        span: Span {
+                                                                                            str: "\r\n",
+                                                                                            start: 333,
+                                                                                            end: 335,
+                                                                                        },
+                                                                                        inner: [
+                                                                                            Pair {
+                                                                                                rule: new_line,
+                                                                                                span: Span {
+                                                                                                    str: "\r\n",
+                                                                                                    start: 333,
+                                                                                                    end: 335,
+                                                                                                },
+                                                                                                inner: [],
+                                                                                            },
+                                                                                        ],
+                                                                                    },
+                                                                                ],
+                                                                            },
+                                                                        ],
+                                                                    },
+                                                                ],
+                                                            },
+                                                        ],
+                                                    },
+                                                ],
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            Pair {
+                rule: tabs,
+                span: Span {
+                    str: "",
+                    start: 335,
+                    end: 335,
+                },
+                inner: [],
+            },
+            Pair {
+                rule: main_line,
+                span: Span {
+                    str: "Text\\|| commenting...\r\n",
+                    start: 335,
+                    end: 358,
+                },
+                inner: [
+                    Pair {
+                        rule: content,
+                        span: Span {
+                            str: "Text\\|",
+                            start: 335,
+                            end: 341,
+                        },
+                        inner: [
+                            Pair {
+                                rule: char_seq,
+                                span: Span {
+                                    str: "Text",
+                                    start: 335,
+                                    end: 339,
+                                },
+                                inner: [],
+                            },
+                            Pair {
+                                rule: escaped,
+                                span: Span {
+                                    str: "\\|",
+                                    start: 339,
+                                    end: 341,
+                                },
+                                inner: [],
+                            },
+                        ],
+                    },
+                    Pair {
+                        rule: param_item,
+                        span: Span {
+                            str: "| commenting...",
+                            start: 341,
+                            end: 356,
+                        },
+                        inner: [
+                            Pair {
+                                rule: content,
+                                span: Span {
+                                    str: " commenting...",
+                                    start: 342,
+                                    end: 356,
+                                },
+                                inner: [
+                                    Pair {
+                                        rule: char_seq,
+                                        span: Span {
+                                            str: " commenting...",
+                                            start: 342,
+                                            end: 356,
+                                        },
+                                        inner: [],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    Pair {
+                        rule: line_end,
+                        span: Span {
+                            str: "\r\n",
+                            start: 356,
+                            end: 358,
+                        },
+                        inner: [
+                            Pair {
+                                rule: normal_end,
+                                span: Span {
+                                    str: "\r\n",
+                                    start: 356,
+                                    end: 358,
+                                },
+                                inner: [
+                                    Pair {
+                                        rule: new_line,
+                                        span: Span {
+                                            str: "\r\n",
+                                            start: 356,
+                                            end: 358,
+                                        },
+                                        inner: [],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            Pair {
+                rule: tabs,
+                span: Span {
+                    str: "",
+                    start: 358,
+                    end: 358,
+                },
+                inner: [],
+            },
+            Pair {
+                rule: main_line,
+                span: Span {
+                    str: " some text|param\r\n|continuation\r\n",
+                    start: 358,
+                    end: 391,
+                },
+                inner: [
+                    Pair {
+                        rule: content,
+                        span: Span {
+                            str: " some text",
+                            start: 358,
+                            end: 368,
+                        },
+                        inner: [
+                            Pair {
+                                rule: char_seq,
+                                span: Span {
+                                    str: " some text",
+                                    start: 358,
+                                    end: 368,
+                                },
+                                inner: [],
+                            },
+                        ],
+                    },
+                    Pair {
+                        rule: param_item,
+                        span: Span {
+                            str: "|param",
+                            start: 368,
+                            end: 374,
+                        },
+                        inner: [
+                            Pair {
+                                rule: content,
+                                span: Span {
+                                    str: "param",
+                                    start: 369,
+                                    end: 374,
+                                },
+                                inner: [
+                                    Pair {
+                                        rule: char_seq,
+                                        span: Span {
+                                            str: "param",
+                                            start: 369,
+                                            end: 374,
+                                        },
+                                        inner: [],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    Pair {
+                        rule: line_end,
+                        span: Span {
+                            str: "\r\n|continuation\r\n",
+                            start: 374,
+                            end: 391,
+                        },
+                        inner: [
+                            Pair {
+                                rule: normal_end,
+                                span: Span {
+                                    str: "\r\n|continuation\r\n",
+                                    start: 374,
+                                    end: 391,
+                                },
+                                inner: [
+                                    Pair {
+                                        rule: new_line,
+                                        span: Span {
+                                            str: "\r\n",
+                                            start: 374,
+                                            end: 376,
+                                        },
+                                        inner: [],
+                                    },
+                                    Pair {
+                                        rule: continuation,
+                                        span: Span {
+                                            str: "|continuation\r\n",
+                                            start: 376,
+                                            end: 391,
+                                        },
+                                        inner: [
+                                            Pair {
+                                                rule: tabs,
+                                                span: Span {
+                                                    str: "",
+                                                    start: 376,
+                                                    end: 376,
+                                                },
+                                                inner: [],
+                                            },
+                                            Pair {
+                                                rule: param_item,
+                                                span: Span {
+                                                    str: "|continuation",
+                                                    start: 376,
+                                                    end: 389,
+                                                },
+                                                inner: [
+                                                    Pair {
+                                                        rule: content,
+                                                        span: Span {
+                                                            str: "continuation",
+                                                            start: 377,
+                                                            end: 389,
+                                                        },
+                                                        inner: [
+                                                            Pair {
+                                                                rule: char_seq,
+                                                                span: Span {
+                                                                    str: "continuation",
+                                                                    start: 377,
+                                                                    end: 389,
+                                                                },
+                                                                inner: [],
+                                                            },
+                                                        ],
+                                                    },
+                                                ],
+                                            },
+                                            Pair {
+                                                rule: line_end,
+                                                span: Span {
+                                                    str: "\r\n",
+                                                    start: 389,
+                                                    end: 391,
+                                                },
+                                                inner: [
+                                                    Pair {
+                                                        rule: normal_end,
+                                                        span: Span {
+                                                            str: "\r\n",
+                                                            start: 389,
+                                                            end: 391,
+                                                        },
+                                                        inner: [
+                                                            Pair {
+                                                                rule: new_line,
+                                                                span: Span {
+                                                                    str: "\r\n",
+                                                                    start: 389,
+                                                                    end: 391,
+                                                                },
+                                                                inner: [],
+                                                            },
+                                                        ],
+                                                    },
+                                                ],
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            Pair {
+                rule: tabs,
+                span: Span {
+                    str: "",
+                    start: 391,
+                    end: 391,
+                },
+                inner: [],
+            },
+            Pair {
+                rule: empty_line,
+                span: Span {
+                    str: "\r\n",
+                    start: 391,
+                    end: 393,
+                },
+                inner: [
+                    Pair {
+                        rule: new_line,
+                        span: Span {
+                            str: "\r\n",
+                            start: 391,
+                            end: 393,
+                        },
+                        inner: [],
+                    },
+                ],
+            },
+            Pair {
+                rule: tabs,
+                span: Span {
+                    str: "",
+                    start: 393,
+                    end: 393,
+                },
+                inner: [],
+            },
+            Pair {
+                rule: main_line,
+                span: Span {
+                    str: ">>double|empty\r\n",
+                    start: 393,
+                    end: 409,
+                },
+                inner: [
+                    Pair {
+                        rule: line_start_symbol,
+                        span: Span {
+                            str: ">>",
+                            start: 393,
+                            end: 395,
+                        },
+                        inner: [],
+                    },
+                    Pair {
+                        rule: content,
+                        span: Span {
+                            str: "double",
+                            start: 395,
+                            end: 401,
+                        },
+                        inner: [
+                            Pair {
+                                rule: char_seq,
+                                span: Span {
+                                    str: "double",
+                                    start: 395,
+                                    end: 401,
+                                },
+                                inner: [],
+                            },
+                        ],
+                    },
+                    Pair {
+                        rule: param_item,
+                        span: Span {
+                            str: "|empty",
+                            start: 401,
+                            end: 407,
+                        },
+                        inner: [
+                            Pair {
+                                rule: content,
+                                span: Span {
+                                    str: "empty",
+                                    start: 402,
+                                    end: 407,
+                                },
+                                inner: [
+                                    Pair {
+                                        rule: char_seq,
+                                        span: Span {
+                                            str: "empty",
+                                            start: 402,
+                                            end: 407,
+                                        },
+                                        inner: [],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    Pair {
+                        rule: line_end,
+                        span: Span {
+                            str: "\r\n",
+                            start: 407,
+                            end: 409,
+                        },
+                        inner: [
+                            Pair {
+                                rule: normal_end,
+                                span: Span {
+                                    str: "\r\n",
+                                    start: 407,
+                                    end: 409,
+                                },
+                                inner: [
+                                    Pair {
+                                        rule: new_line,
+                                        span: Span {
+                                            str: "\r\n",
+                                            start: 407,
+                                            end: 409,
+                                        },
+                                        inner: [],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            Pair {
+                rule: tabs,
+                span: Span {
+                    str: "",
+                    start: 409,
+                    end: 409,
+                },
+                inner: [],
+            },
+            Pair {
+                rule: main_line,
+                span: Span {
+                    str: "hogehoge\r\n",
+                    start: 409,
+                    end: 419,
+                },
+                inner: [
+                    Pair {
+                        rule: content,
+                        span: Span {
+                            str: "hogehoge",
+                            start: 409,
+                            end: 417,
+                        },
+                        inner: [
+                            Pair {
+                                rule: char_seq,
+                                span: Span {
+                                    str: "hogehoge",
+                                    start: 409,
+                                    end: 417,
+                                },
+                                inner: [],
+                            },
+                        ],
+                    },
+                    Pair {
+                        rule: line_end,
+                        span: Span {
+                            str: "\r\n",
+                            start: 417,
+                            end: 419,
+                        },
+                        inner: [
+                            Pair {
+                                rule: normal_end,
+                                span: Span {
+                                    str: "\r\n",
+                                    start: 417,
+                                    end: 419,
+                                },
+                                inner: [
+                                    Pair {
+                                        rule: new_line,
+                                        span: Span {
+                                            str: "\r\n",
+                                            start: 417,
+                                            end: 419,
+                                        },
+                                        inner: [],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            Pair {
+                rule: tabs,
+                span: Span {
+                    str: "",
+                    start: 419,
+                    end: 419,
+                },
+                inner: [],
+            },
+            Pair {
+                rule: empty_line,
+                span: Span {
+                    str: "\r\n",
+                    start: 419,
+                    end: 421,
+                },
+                inner: [
+                    Pair {
+                        rule: new_line,
+                        span: Span {
+                            str: "\r\n",
+                            start: 419,
+                            end: 421,
+                        },
+                        inner: [],
+                    },
+                ],
+            },
+        ],
+    },
+]

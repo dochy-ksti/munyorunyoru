@@ -9,6 +9,7 @@ use shrink_pool::ShrinkPool;
 use crate::{
     converters::converter::Converter,
     error::{MunyoError, MunyoResult, ReadFileError},
+    lang::process_file_text::process_file_text,
 };
 
 use super::receiver::Receiver;
@@ -27,22 +28,19 @@ where
     std::thread::spawn(move || {
         let pool = ShrinkPool::new(num_cpus::get());
 
-        for path in pathes.iter() {
-            match std::fs::File::open(path) {
-                Ok(f) => match read_lines(f) {
-                    Ok(lines) => {
-                        pool.execute(move || {});
-                    }
-                    Err(e) => {
-                        sender
-                            .send_blocking(Err(ReadFileError::ReadFile(
-                                path.to_owned(),
-                                format!("{e}"),
-                            )))
-                            .expect("async_channel::send_blocking failed");
-                        return;
-                    }
-                },
+        for path in pathes.into_iter() {
+			let sender = sender.clone();
+            match std::fs::read_to_string(&path) {
+                Ok(s) => {
+                    pool.execute(move || match process_file_text(s) {
+                        Ok(_) => {}
+                        Err(e) => {
+                            sender
+                                .send_blocking(Err(ReadFileError::Parse(path, format!("{e}"))))
+                                .expect("async_channel::send_blocking failed");
+                        }
+                    });
+                }
                 Err(e) => {
                     sender
                         .send_blocking(Err(ReadFileError::ReadFile(
@@ -56,10 +54,4 @@ where
         }
     });
     Receiver::new(receiver)
-}
-
-fn read_lines(f: File) -> Result<Vec<String>, std::io::Error> {
-    use std::io::prelude::*;
-    let reader = BufReader::new(f);
-    reader.lines().collect()
 }

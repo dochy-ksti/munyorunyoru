@@ -3,15 +3,17 @@ pub mod error;
 mod file_io;
 mod lang;
 
-
 #[cfg(test)]
 mod tests {
     use std::fs;
 
+    use crate::{error::MunyoResult, lang::process_file_text::process_file_text};
+
     #[test]
-    fn it_works() {
-        // use super::*;
-        // let unparsed_file = fs::read_to_string("hoge.csv").expect("cannot read file");
+    fn it_works() -> MunyoResult<()> {
+        let unparsed_file = fs::read_to_string("sample.munyo").expect("cannot read file");
+        process_file_text(unparsed_file)?;
+        Ok(())
         // let file = CSVParser::parse(Rule::file, &unparsed_file)
         //     .expect("unsuccessful parse")
         //     .next()

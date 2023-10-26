@@ -17,5 +17,5 @@ content = {
 }
 
 param = {
-    " "* ~ name ~ " " ~ text
+    " "* ~ name ~ (" " ~ text)?
 }
