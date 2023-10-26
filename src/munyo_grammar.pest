@@ -3,7 +3,7 @@ char = _{
 }
 
 comment_char = _{
-	!("\r" | "\n") ~ ANY
+    !("\r" | "\n") ~ ANY
 }
 
 char_seq = @{
@@ -11,7 +11,11 @@ char_seq = @{
 }
 
 escaped = {
-    "\\\\" | "\\|" | "\\n" | "\\t" | "\\r"
+    "\\\\"
+  | "\\|"
+  | "\\n"
+  | "\\t"
+  | "\\r"
 }
 
 content = {
@@ -19,10 +23,10 @@ content = {
 }
 
 tabs = {
-    \t*
+    "\t"*
 }
 
-new_line ={ "\n" | "\r\n" | "\r" | EOI }
+new_line = { "\n" | "\r\n" | "\r" | EOI }
 
 param_item = { "|" ~ content }
 
@@ -39,28 +43,37 @@ continuation = {
 }
 
 line_end = {
-    normal_end | backslash_end | single_bar | triple_bars | double_bars
+    normal_end
+  | backslash_end
+  | single_bar
+  | triple_bars
+  | double_bars
 }
 
-triple_bars = { "|||" ~ comment_char* ~ new_line ~ continued_line }
-double_bars = { "||" ~ comment_char* ~ new_line ~ continuation? }
-single_bar = {"|" ~ new_line ~ continued_line }
-normal_end = { new_line ~ continuation? }
-backslash_end = { "\" ~ new_line ~ continued_line }
+triple_bars   = { "|||" ~ comment_char* ~ new_line ~ continued_line }
+double_bars   = { "||" ~ comment_char* ~ new_line ~ continuation? }
+single_bar    = { "|" ~ new_line ~ continued_line }
+normal_end    = { new_line ~ continuation? }
+backslash_end = { "\\" ~ new_line ~ continued_line }
 
 line_start_symbol = {
-    ">>>" | ">>" | ">\\" | ">" |
-    "\\>>>" | "\\>>" | "\\>"
+    ">>>"
+  | ">>"
+  | ">\\"
+  | ">"
+  | "\\>>>"
+  | "\\>>"
+  | "\\>"
 }
 
 empty_line = {
-	tabs* ~ new_line
+    tabs ~ new_line
 }
 
 commented_line = {
-	tabs* ~ "||" ~ comment_char* ~ new_line
+    tabs ~ "||" ~ comment_char* ~ new_line
 }
 
 file = {
-	(main_line | empty_line | commented_line)*
+    SOI ~ (tabs ~ (main_line | empty_line | commented_line))*
 }

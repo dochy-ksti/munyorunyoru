@@ -1,0 +1,21 @@
+name_char = _{
+    !(" ") ~ ANY
+}
+
+char = _{ ANY }
+
+name = @{
+    name_char+
+}
+
+text = @{
+    char+
+}
+
+content = {
+    name ~ (" " ~ text)?
+}
+
+param = {
+    " "* ~ name ~ " " ~ text
+}

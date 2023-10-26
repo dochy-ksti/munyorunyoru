@@ -2,6 +2,10 @@ use std::fmt::{Display, Formatter, Debug};
 
 use anyhow::anyhow;
 
+pub(crate) mod read_file_error;
+
+pub use read_file_error::ReadFileError;
+
 /// The error type.
 ///
 /// This wraps anyhow::Error. You can get it from Into trait.
