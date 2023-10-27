@@ -1,48 +1,57 @@
-use std::sync::OnceLock;
-
-use crate::error::{
-    parse_error::{parse_err, ParseError},
-    MunyoResult,
+use crate::{
+    builder::builder::{Builder, MetaBuilder},
+    error::parse_error::{parse_err, ParseError},
 };
 
 use super::{
     line_type::LineType,
     munyo_parser::{MunyoParser, Pair, Pairs, Rule},
+    parse_line_contents::parse_line_contents,
     state_machine::StateMachine,
 };
 
 use crate::error::parse_error::ParseErrorHelper;
 use pest::Parser;
 
-pub fn process_file_text(text: String) -> Result<(), ParseError> {
+pub fn process_file_text<MB, B, T>(text: String, builder: &MB) -> Result<(), ParseError>
+where
+    MB: MetaBuilder<B, T>,
+    B: Builder<T>,
+{
     let mut pairs =
         MunyoParser::parse(Rule::file, &text).map_err(|e| ParseError::from_pest_err(e))?;
 
     let pair = pairs.next().unwrap();
 
-    return parse_file(pair.into_inner());
+    return parse_file(pair.into_inner(), builder);
 }
 
-fn parse_file(mut pairs: Pairs) -> Result<(), ParseError> {
+fn parse_file<MB, B, T>(mut pairs: Pairs, builder: &MB) -> Result<(), ParseError>
+where
+    MB: MetaBuilder<B, T>,
+    B: Builder<T>,
+{
     let mut state = StateMachine::new();
-    let Some(tabs) = pairs.next() else {
-        return Ok(());
-    };
-    state.indent(tabs.as_str().len()).oe(&tabs)?;
-    if let Some(choice) = pairs.next() {
+	let mut indent_level = 0;
+    while let Some(choice) = pairs.next() {
         match choice.as_rule() {
-            Rule::main_line => {
-                parse_main_line(choice.into_inner());
+            Rule::tabs => {
+				indent_level = choice.as_str().len();
             }
-            //Rule::empty_line => {}
-            Rule::commented_line => {}
+            Rule::line_contents => {
+                parse_line_contents(choice.into_inner(), indent_level, &mut state, builder)?;
+            }
+            Rule::new_line => {}
+            Rule::EOI => {
+                return Ok(());
+            }
             _ => {
                 unreachable!()
             }
         }
     }
 
-    Ok(())
+    unreachable!()
 }
 
 fn parse_main_line(mut pairs: Pairs) -> Result<(), ParseError> {
@@ -131,4 +140,6 @@ fn parse_param_item(pair: Pair) -> Result<String, ParseError> {
     parse_content(pair.into_inner(), "")
 }
 
-//fn parse_line_end()
+fn parse_new_line(pair: Pair) -> String {
+    pair.as_str().to_string()
+}

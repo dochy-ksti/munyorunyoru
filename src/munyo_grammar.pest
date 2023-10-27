@@ -88,7 +88,7 @@ define_stmt_start_symbol = {
 }
 
 commented_line = {
-    "||" ~ comment_char*
+    "||" ~ comment_text
 }
 
 line_contents = {
