@@ -14,20 +14,13 @@ use super::{
 use crate::error::parse_error::ParseErrorHelper;
 use pest::Parser;
 
-pub(crate) fn process_file_text(text: String) -> Result<(), ParseError> {
-    let mut pairs =
-        MunyoParser::parse(Rule::file, &text).map_err(|e| ParseError(0, 0, format!("{e}")))?;
-    //let text = format!("{:#?}", pairs);
-    //std::fs::write("sample_output.txt", text)?;
+pub fn process_file_text(text: String) -> Result<(), ParseError> {
+    let mut pairs = MunyoParser::parse(Rule::file, &text)
+	.map_err(|e| ParseError::from_pest_err(e))?;
 
     let pair = pairs.next().unwrap();
 
     return parse_file(pair.into_inner());
-}
-
-fn report(pair: Pair, message: String) -> ParseError {
-    let line_col = pair.line_col();
-    ParseError(line_col.0, line_col.1, message)
 }
 
 fn parse_file(mut pairs: Pairs) -> Result<(), ParseError> {
@@ -69,14 +62,16 @@ fn parse_main_line(mut pairs: Pairs) -> Result<(), ParseError> {
         line_type.starting_text(),
     )?;
 
-	let mut params : Vec<String> = vec![];
+    let mut params: Vec<String> = vec![];
 
     let p = loop {
         let p = pairs.next().unwrap();
         match p.as_rule() {
             Rule::param_item => params.push(parse_param_item(p)?),
             Rule::line_end => break p,
-			_ =>{ unreachable!() }
+            _ => {
+                unreachable!()
+            }
         }
     };
 
@@ -92,12 +87,12 @@ fn parse_line_start_symbol(pair: Pair) -> Result<LineType, ParseError> {
         r"\>>>" => Ok(LineType::CharTriple),
         r"\>>" => Ok(LineType::CharDouble),
         r"\>" => Ok(LineType::CharSingle),
-		_ => unreachable!(),
+        _ => unreachable!(),
     }
 }
 
 fn parse_content(mut pairs: Pairs, starting_text: &str) -> Result<String, ParseError> {
-    let mut s = String::with_capacity(8); 
+    let mut s = String::with_capacity(8);
     s.push_str(starting_text);
     for pair in pairs {
         match pair.as_rule() {
@@ -132,8 +127,8 @@ fn parse_content(mut pairs: Pairs, starting_text: &str) -> Result<String, ParseE
     Ok(s)
 }
 
-fn parse_param_item(pair : Pair) -> Result<String, ParseError>{
-	parse_content(pair.into_inner(), "")
+fn parse_param_item(pair: Pair) -> Result<String, ParseError> {
+    parse_content(pair.into_inner(), "")
 }
 
-fn parse_line_end()
+//fn parse_line_end()

@@ -29,14 +29,14 @@ where
         let pool = ShrinkPool::new(num_cpus::get());
 
         for path in pathes.into_iter() {
-			let sender = sender.clone();
+            let sender = sender.clone();
             match std::fs::read_to_string(&path) {
                 Ok(s) => {
                     pool.execute(move || match process_file_text(s) {
                         Ok(_) => {}
                         Err(e) => {
                             sender
-                                .send_blocking(Err(ReadFileError::Parse(path, e.0, e.1, e.2)))
+                                .send_blocking(Err(ReadFileError::Parse(path, e)))
                                 .expect("async_channel::send_blocking failed");
                         }
                     });

@@ -2,9 +2,9 @@
     Pair {
         rule: file,
         span: Span {
-            str: "Text hoge\r\n    Text hoge|param huga\r\n        Text hoge|  param huga|param2\r\nText|param|param2 hego\r\n\r\n||commented empty line\r\nText\r\n|continuation\r\nText|param|| comment\r\n    |continuation\r\n    Text|param|| comment\r\n|continuation\r\nText|\r\n|pseudo-continuation\r\nText param|||\r\n|pseudo-continuation\r\nText\\\r\n some text|param\r\n|continuation\r\nText\\|| commenting...\r\n some text|param\r\n|continuation\r\n\r\n>>double|empty\r\nhogehoge\r\n\r\n",
+            str: "Text hoge\r\n    Text hoge|param huga\r\n        Text hoge|  param huga|param2\r\nText|param|param2 hego\r\n\r\n||commented empty line\r\nText\r\n|continuation\r\nText|param|| comment\r\n    |continuation\r\n    Text|param|| comment\r\n|continuation\r\nText|\r\n|pseudo-continuation\r\nText param|||\r\n|pseudo-continuation\r\nText\\\r\n some text|param\r\n|continuation\r\nText\\|| commenting...\r\n some\\| t\\\\ext|param\r\n|continuation\r\n\r\n>>double|empty\r\nhogehoge\r\n\r\n",
             start: 0,
-            end: 421,
+            end: 425,
         },
         inner: [
             Pair {
@@ -1660,25 +1660,61 @@
             Pair {
                 rule: main_line,
                 span: Span {
-                    str: " some text|param\r\n|continuation\r\n",
+                    str: " some\\| t\\\\ext|param\r\n|continuation\r\n",
                     start: 358,
-                    end: 391,
+                    end: 395,
                 },
                 inner: [
                     Pair {
                         rule: content,
                         span: Span {
-                            str: " some text",
+                            str: " some\\| t\\\\ext",
                             start: 358,
-                            end: 368,
+                            end: 372,
                         },
                         inner: [
                             Pair {
                                 rule: char_seq,
                                 span: Span {
-                                    str: " some text",
+                                    str: " some",
                                     start: 358,
-                                    end: 368,
+                                    end: 363,
+                                },
+                                inner: [],
+                            },
+                            Pair {
+                                rule: escaped,
+                                span: Span {
+                                    str: "\\|",
+                                    start: 363,
+                                    end: 365,
+                                },
+                                inner: [],
+                            },
+                            Pair {
+                                rule: char_seq,
+                                span: Span {
+                                    str: " t",
+                                    start: 365,
+                                    end: 367,
+                                },
+                                inner: [],
+                            },
+                            Pair {
+                                rule: escaped,
+                                span: Span {
+                                    str: "\\\\",
+                                    start: 367,
+                                    end: 369,
+                                },
+                                inner: [],
+                            },
+                            Pair {
+                                rule: char_seq,
+                                span: Span {
+                                    str: "ext",
+                                    start: 369,
+                                    end: 372,
                                 },
                                 inner: [],
                             },
@@ -1688,24 +1724,24 @@
                         rule: param_item,
                         span: Span {
                             str: "|param",
-                            start: 368,
-                            end: 374,
+                            start: 372,
+                            end: 378,
                         },
                         inner: [
                             Pair {
                                 rule: content,
                                 span: Span {
                                     str: "param",
-                                    start: 369,
-                                    end: 374,
+                                    start: 373,
+                                    end: 378,
                                 },
                                 inner: [
                                     Pair {
                                         rule: char_seq,
                                         span: Span {
                                             str: "param",
-                                            start: 369,
-                                            end: 374,
+                                            start: 373,
+                                            end: 378,
                                         },
                                         inner: [],
                                     },
@@ -1717,24 +1753,24 @@
                         rule: line_end,
                         span: Span {
                             str: "\r\n|continuation\r\n",
-                            start: 374,
-                            end: 391,
+                            start: 378,
+                            end: 395,
                         },
                         inner: [
                             Pair {
                                 rule: normal_end,
                                 span: Span {
                                     str: "\r\n|continuation\r\n",
-                                    start: 374,
-                                    end: 391,
+                                    start: 378,
+                                    end: 395,
                                 },
                                 inner: [
                                     Pair {
                                         rule: new_line,
                                         span: Span {
                                             str: "\r\n",
-                                            start: 374,
-                                            end: 376,
+                                            start: 378,
+                                            end: 380,
                                         },
                                         inner: [],
                                     },
@@ -1742,16 +1778,16 @@
                                         rule: continuation,
                                         span: Span {
                                             str: "|continuation\r\n",
-                                            start: 376,
-                                            end: 391,
+                                            start: 380,
+                                            end: 395,
                                         },
                                         inner: [
                                             Pair {
                                                 rule: tabs,
                                                 span: Span {
                                                     str: "",
-                                                    start: 376,
-                                                    end: 376,
+                                                    start: 380,
+                                                    end: 380,
                                                 },
                                                 inner: [],
                                             },
@@ -1759,24 +1795,24 @@
                                                 rule: param_item,
                                                 span: Span {
                                                     str: "|continuation",
-                                                    start: 376,
-                                                    end: 389,
+                                                    start: 380,
+                                                    end: 393,
                                                 },
                                                 inner: [
                                                     Pair {
                                                         rule: content,
                                                         span: Span {
                                                             str: "continuation",
-                                                            start: 377,
-                                                            end: 389,
+                                                            start: 381,
+                                                            end: 393,
                                                         },
                                                         inner: [
                                                             Pair {
                                                                 rule: char_seq,
                                                                 span: Span {
                                                                     str: "continuation",
-                                                                    start: 377,
-                                                                    end: 389,
+                                                                    start: 381,
+                                                                    end: 393,
                                                                 },
                                                                 inner: [],
                                                             },
@@ -1788,24 +1824,24 @@
                                                 rule: line_end,
                                                 span: Span {
                                                     str: "\r\n",
-                                                    start: 389,
-                                                    end: 391,
+                                                    start: 393,
+                                                    end: 395,
                                                 },
                                                 inner: [
                                                     Pair {
                                                         rule: normal_end,
                                                         span: Span {
                                                             str: "\r\n",
-                                                            start: 389,
-                                                            end: 391,
+                                                            start: 393,
+                                                            end: 395,
                                                         },
                                                         inner: [
                                                             Pair {
                                                                 rule: new_line,
                                                                 span: Span {
                                                                     str: "\r\n",
-                                                                    start: 389,
-                                                                    end: 391,
+                                                                    start: 393,
+                                                                    end: 395,
                                                                 },
                                                                 inner: [],
                                                             },
@@ -1825,8 +1861,8 @@
                 rule: tabs,
                 span: Span {
                     str: "",
-                    start: 391,
-                    end: 391,
+                    start: 395,
+                    end: 395,
                 },
                 inner: [],
             },
@@ -1834,16 +1870,16 @@
                 rule: empty_line,
                 span: Span {
                     str: "\r\n",
-                    start: 391,
-                    end: 393,
+                    start: 395,
+                    end: 397,
                 },
                 inner: [
                     Pair {
                         rule: new_line,
                         span: Span {
                             str: "\r\n",
-                            start: 391,
-                            end: 393,
+                            start: 395,
+                            end: 397,
                         },
                         inner: [],
                     },
@@ -1853,8 +1889,8 @@
                 rule: tabs,
                 span: Span {
                     str: "",
-                    start: 393,
-                    end: 393,
+                    start: 397,
+                    end: 397,
                 },
                 inner: [],
             },
@@ -1862,16 +1898,16 @@
                 rule: main_line,
                 span: Span {
                     str: ">>double|empty\r\n",
-                    start: 393,
-                    end: 409,
+                    start: 397,
+                    end: 413,
                 },
                 inner: [
                     Pair {
                         rule: line_start_symbol,
                         span: Span {
                             str: ">>",
-                            start: 393,
-                            end: 395,
+                            start: 397,
+                            end: 399,
                         },
                         inner: [],
                     },
@@ -1879,16 +1915,16 @@
                         rule: content,
                         span: Span {
                             str: "double",
-                            start: 395,
-                            end: 401,
+                            start: 399,
+                            end: 405,
                         },
                         inner: [
                             Pair {
                                 rule: char_seq,
                                 span: Span {
                                     str: "double",
-                                    start: 395,
-                                    end: 401,
+                                    start: 399,
+                                    end: 405,
                                 },
                                 inner: [],
                             },
@@ -1898,24 +1934,24 @@
                         rule: param_item,
                         span: Span {
                             str: "|empty",
-                            start: 401,
-                            end: 407,
+                            start: 405,
+                            end: 411,
                         },
                         inner: [
                             Pair {
                                 rule: content,
                                 span: Span {
                                     str: "empty",
-                                    start: 402,
-                                    end: 407,
+                                    start: 406,
+                                    end: 411,
                                 },
                                 inner: [
                                     Pair {
                                         rule: char_seq,
                                         span: Span {
                                             str: "empty",
-                                            start: 402,
-                                            end: 407,
+                                            start: 406,
+                                            end: 411,
                                         },
                                         inner: [],
                                     },
@@ -1927,24 +1963,24 @@
                         rule: line_end,
                         span: Span {
                             str: "\r\n",
-                            start: 407,
-                            end: 409,
+                            start: 411,
+                            end: 413,
                         },
                         inner: [
                             Pair {
                                 rule: normal_end,
                                 span: Span {
                                     str: "\r\n",
-                                    start: 407,
-                                    end: 409,
+                                    start: 411,
+                                    end: 413,
                                 },
                                 inner: [
                                     Pair {
                                         rule: new_line,
                                         span: Span {
                                             str: "\r\n",
-                                            start: 407,
-                                            end: 409,
+                                            start: 411,
+                                            end: 413,
                                         },
                                         inner: [],
                                     },
@@ -1958,8 +1994,8 @@
                 rule: tabs,
                 span: Span {
                     str: "",
-                    start: 409,
-                    end: 409,
+                    start: 413,
+                    end: 413,
                 },
                 inner: [],
             },
@@ -1967,24 +2003,24 @@
                 rule: main_line,
                 span: Span {
                     str: "hogehoge\r\n",
-                    start: 409,
-                    end: 419,
+                    start: 413,
+                    end: 423,
                 },
                 inner: [
                     Pair {
                         rule: content,
                         span: Span {
                             str: "hogehoge",
-                            start: 409,
-                            end: 417,
+                            start: 413,
+                            end: 421,
                         },
                         inner: [
                             Pair {
                                 rule: char_seq,
                                 span: Span {
                                     str: "hogehoge",
-                                    start: 409,
-                                    end: 417,
+                                    start: 413,
+                                    end: 421,
                                 },
                                 inner: [],
                             },
@@ -1994,24 +2030,24 @@
                         rule: line_end,
                         span: Span {
                             str: "\r\n",
-                            start: 417,
-                            end: 419,
+                            start: 421,
+                            end: 423,
                         },
                         inner: [
                             Pair {
                                 rule: normal_end,
                                 span: Span {
                                     str: "\r\n",
-                                    start: 417,
-                                    end: 419,
+                                    start: 421,
+                                    end: 423,
                                 },
                                 inner: [
                                     Pair {
                                         rule: new_line,
                                         span: Span {
                                             str: "\r\n",
-                                            start: 417,
-                                            end: 419,
+                                            start: 421,
+                                            end: 423,
                                         },
                                         inner: [],
                                     },
@@ -2025,8 +2061,8 @@
                 rule: tabs,
                 span: Span {
                     str: "",
-                    start: 419,
-                    end: 419,
+                    start: 423,
+                    end: 423,
                 },
                 inner: [],
             },
@@ -2034,16 +2070,16 @@
                 rule: empty_line,
                 span: Span {
                     str: "\r\n",
-                    start: 419,
-                    end: 421,
+                    start: 423,
+                    end: 425,
                 },
                 inner: [
                     Pair {
                         rule: new_line,
                         span: Span {
                             str: "\r\n",
-                            start: 419,
-                            end: 421,
+                            start: 423,
+                            end: 425,
                         },
                         inner: [],
                     },

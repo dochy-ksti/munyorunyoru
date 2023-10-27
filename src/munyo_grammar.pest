@@ -30,13 +30,17 @@ tabs = {
     "\t"*
 }
 
-new_line = { "\n" | "\r\n" | "\r" | EOI }
+new_line = { "\n" | "\r\n" | "\r" }
 
 param_item = { "|" ~ content }
 
 main_line = {
-    line_start_symbol? ~ content ~ param_item* ~ line_end
+    main_line_start_symbol? ~ content ~ param_item* ~ line_end
 }
+
+define_stmt = {
+	(">>>" | ">>" | ">") ~ content? ~ ("|" ~ content?)? ~ new_line
+} 
 
 continued_line = {
     tabs ~ (continued_line_with_content | continued_line_without_content)
@@ -55,34 +59,36 @@ continuation = {
 }
 
 line_end = {
-    normal_end | backslash_comment_end | backslash_end | single_bar | triple_bars | double_bars
+    normal_end
+  | backslash_comment_end
+  | backslash_end
+  | single_bar
+  | triple_bars
+  | double_bars
 }
 
-triple_bars = { "|||" ~ comment_text ~ new_line ~ continued_line }
-double_bars = { "||" ~ comment_text ~ new_line ~ continuation? }
-single_bar = {"|" ~ new_line ~ continued_line }
-normal_end = { new_line ~ continuation? }
-backslash_end = { "\\" ~ new_line ~ continued_line }
+triple_bars           = { "|||" ~ comment_text ~ new_line ~ continued_line }
+double_bars           = { "||" ~ comment_text ~ new_line ~ continuation? }
+single_bar            = { "|" ~ new_line ~ continued_line }
+normal_end            = { new_line ~ continuation? }
+backslash_end         = { "\\" ~ new_line ~ continued_line }
 backslash_comment_end = { "\\||" ~ comment_text ~ new_line ~ continued_line }
 
-line_start_symbol = {
-    ">>>"
-  | ">>"
+main_line_start_symbol = {
   | ">\\"
-  | ">"
   | "\\>>>"
   | "\\>>"
   | "\\>"
 }
 
 empty_line = {
-	new_line
+    new_line
 }
 
 commented_line = {
-	"||" ~ comment_char* ~ new_line
+    "||" ~ comment_char* ~ new_line
 }
 
 file = {
-	SOI ~ (tabs ~ (main_line | empty_line | commented_line))*
+    SOI ~ (tabs ~ (main_line | empty_line | commented_line | define_stmt))+ ~ tabs ~ EOI
 }

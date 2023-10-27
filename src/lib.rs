@@ -3,40 +3,39 @@ pub mod error;
 mod file_io;
 mod lang;
 
+pub use crate::file_io::read_files::read_files;
+pub use crate::lang::process_file_text::process_file_text;
+
 #[cfg(test)]
 mod tests {
-    use std::fs;
+    use std::{fs, path::PathBuf, str::FromStr};
 
-    use crate::{error::MunyoResult, lang::process_file_text::process_file_text};
+    use pest::Parser;
+
+    use crate::{
+        error::{MunyoResult, ReadFileError},
+        lang::{
+            munyo_parser::{MunyoParser, Rule},
+            process_file_text::process_file_text,
+        },
+    };
 
     #[test]
-    fn it_works() -> MunyoResult<()> {
-        let unparsed_file = fs::read_to_string("sample.munyo").expect("cannot read file");
-        process_file_text(unparsed_file)?;
+    fn it_works() -> Result<(), ReadFileError> {
+        let path = "sample.munyo";
+        let unparsed_file = fs::read_to_string(path).expect("cannot read file");
+        process_file_text(unparsed_file)
+            .map_err(|e| ReadFileError::Parse(PathBuf::from_str(path).unwrap(), e))?;
         Ok(())
-        // let file = CSVParser::parse(Rule::file, &unparsed_file)
-        //     .expect("unsuccessful parse")
-        //     .next()
-        //     .unwrap(); //this unwrap never fails
+    }
 
-        // let mut field_sum: f64 = 0.0;
-        // let mut record_count: u64 = 0;
-
-        // for record in file.into_inner() {
-        //     match record.as_rule() {
-        //         Rule::record => {
-        //             record_count += 1;
-
-        //             for field in record.into_inner() {
-        //                 field_sum += field.as_str().parse::<f64>().unwrap();
-        //             }
-        //         }
-        //         Rule::EOI => (),
-        //         _ => unreachable!(),
-        //     }
-        // }
-
-        // println!("Sum of fields: {field_sum}");
-        // println!("Number of records: {record_count}");
+    #[test]
+    fn output_sample() -> Result<(), ()> {
+        let path = "sample.munyo";
+        let unparsed_file = fs::read_to_string(path).expect("cannot read file");
+        let parsed = MunyoParser::parse(Rule::file, &unparsed_file).unwrap();
+        let txt = format!("{:#?}", parsed);
+        fs::write("sample_output.txt", &txt).unwrap();
+        Ok(())
     }
 }
