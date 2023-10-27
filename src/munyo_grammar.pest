@@ -10,7 +10,7 @@ char_seq = @{
     char+
 }
 
-comment_text = _{
+comment_text = @{
     comment_char*
 }
 
@@ -26,7 +26,7 @@ content = {
     (char_seq | escaped)+
 }
 
-tabs = {
+tabs = @{
     "\t"*
 }
 
@@ -35,30 +35,30 @@ new_line = { "\n" | "\r\n" | "\r" }
 param_item = { "|" ~ content }
 
 main_line = {
-    main_line_start_symbol? ~ content ~ param_item* ~ line_end
+    main_line_start_symbol? ~ content ~ param_item* ~ line_continuation?
 }
 
 define_stmt = {
-	(">>>" | ">>" | ">") ~ content? ~ ("|" ~ content?)? ~ new_line
-} 
+    define_stmt_start_symbol ~ content? ~ ("|" ~ content?)?
+}
 
 continued_line = {
     tabs ~ (continued_line_with_content | continued_line_without_content)
 }
 
 continued_line_with_content = {
-    content ~ param_item* ~ line_end
+    content ~ param_item* ~ line_continuation?
 }
 
 continued_line_without_content = {
-    param_item+ ~ line_end
+    param_item+ ~ line_continuation?
 }
 
 continuation = {
-    tabs ~ param_item+ ~ line_end
+    tabs ~ param_item+ ~ line_continuation?
 }
 
-line_end = {
+line_continuation = {
     normal_end
   | backslash_comment_end
   | backslash_end
@@ -68,27 +68,33 @@ line_end = {
 }
 
 triple_bars           = { "|||" ~ comment_text ~ new_line ~ continued_line }
-double_bars           = { "||" ~ comment_text ~ new_line ~ continuation? }
+double_bars           = { "||" ~ comment_text ~ (new_line ~ continuation)? }
 single_bar            = { "|" ~ new_line ~ continued_line }
-normal_end            = { new_line ~ continuation? }
+normal_end            = { new_line ~ continuation }
 backslash_end         = { "\\" ~ new_line ~ continued_line }
 backslash_comment_end = { "\\||" ~ comment_text ~ new_line ~ continued_line }
 
 main_line_start_symbol = {
-  | ">\\"
+    ">\\"
   | "\\>>>"
   | "\\>>"
   | "\\>"
 }
 
-empty_line = {
-    new_line
+define_stmt_start_symbol = {
+    ">>>"
+  | ">>"
+  | ">"
 }
 
 commented_line = {
-    "||" ~ comment_char* ~ new_line
+    "||" ~ comment_char*
+}
+
+line_contents = {
+    ((&">" ~ define_stmt) | main_line | commented_line)
 }
 
 file = {
-    SOI ~ (tabs ~ (main_line | empty_line | commented_line | define_stmt))+ ~ tabs ~ EOI
+    SOI ~ (tabs ~ line_contents? ~ new_line)* ~ tabs ~ line_contents? ~ EOI
 }

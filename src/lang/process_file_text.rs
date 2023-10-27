@@ -15,8 +15,8 @@ use crate::error::parse_error::ParseErrorHelper;
 use pest::Parser;
 
 pub fn process_file_text(text: String) -> Result<(), ParseError> {
-    let mut pairs = MunyoParser::parse(Rule::file, &text)
-	.map_err(|e| ParseError::from_pest_err(e))?;
+    let mut pairs =
+        MunyoParser::parse(Rule::file, &text).map_err(|e| ParseError::from_pest_err(e))?;
 
     let pair = pairs.next().unwrap();
 
@@ -34,7 +34,7 @@ fn parse_file(mut pairs: Pairs) -> Result<(), ParseError> {
             Rule::main_line => {
                 parse_main_line(choice.into_inner());
             }
-            Rule::empty_line => {}
+            //Rule::empty_line => {}
             Rule::commented_line => {}
             _ => {
                 unreachable!()
@@ -48,7 +48,7 @@ fn parse_file(mut pairs: Pairs) -> Result<(), ParseError> {
 fn parse_main_line(mut pairs: Pairs) -> Result<(), ParseError> {
     let first = pairs.next().unwrap();
     let (line_type, content) = match first.as_rule() {
-        Rule::line_start_symbol => {
+        Rule::main_line_start_symbol => {
             let line_type = parse_line_start_symbol(first)?;
             (line_type, pairs.next().unwrap())
         }
@@ -68,7 +68,7 @@ fn parse_main_line(mut pairs: Pairs) -> Result<(), ParseError> {
         let p = pairs.next().unwrap();
         match p.as_rule() {
             Rule::param_item => params.push(parse_param_item(p)?),
-            Rule::line_end => break p,
+            //Rule::line_end => break p,
             _ => {
                 unreachable!()
             }

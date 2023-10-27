@@ -2,6 +2,7 @@ mod converters;
 pub mod error;
 mod file_io;
 mod lang;
+mod test_parser;
 
 pub use crate::file_io::read_files::read_files;
 pub use crate::lang::process_file_text::process_file_text;
@@ -17,7 +18,7 @@ mod tests {
         lang::{
             munyo_parser::{MunyoParser, Rule},
             process_file_text::process_file_text,
-        },
+        }, test_parser::ProbleParser,
     };
 
     #[test]
@@ -34,6 +35,16 @@ mod tests {
         let path = "sample.munyo";
         let unparsed_file = fs::read_to_string(path).expect("cannot read file");
         let parsed = MunyoParser::parse(Rule::file, &unparsed_file).unwrap();
+        let txt = format!("{:#?}", parsed);
+        fs::write("sample_output.txt", &txt).unwrap();
+        Ok(())
+    }
+
+	#[test]
+	fn proble_test() -> Result<(), ()> {
+        let path = "sample.munyo";
+        let unparsed_file = fs::read_to_string(path).expect("cannot read file");
+        let parsed = ProbleParser::parse(crate::test_parser::Rule::file, &unparsed_file).unwrap();
         let txt = format!("{:#?}", parsed);
         fs::write("sample_output.txt", &txt).unwrap();
         Ok(())
