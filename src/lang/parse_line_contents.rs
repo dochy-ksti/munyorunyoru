@@ -1,11 +1,12 @@
 use crate::{
     builder::builder::{Builder, MetaBuilder},
-    error::parse_error::{ParseError, parse_err},
+    error::parse_error::{parse_err, ParseError},
 };
 
 use super::{
     munyo_parser::{Pair, Pairs, Rule},
-    state::State, parse_content::parse_content,
+    parse_content::parse_content,
+    state::State,
 };
 
 pub(crate) fn parse_line_contents<MB, B, T>(
@@ -18,38 +19,53 @@ where
     MB: MetaBuilder<B, T>,
     B: Builder<T>,
 {
-    match pair.as_rule(){
-        Rule::define_stmt =>{},
-        Rule::main_line =>{},
-        Rule::commented_line =>{},
-        _ =>{ unreachable!() }
+    match pair.as_rule() {
+        Rule::define_stmt => parse_define_stmt(pair.into_inner(), indent_level, state)?,
+        Rule::main_line => {}
+        Rule::commented_line => {}
+        _ => {
+            unreachable!()
+        }
     }
     Ok(())
 }
 
-fn parse_define_stmt(pairs : Pairs, indent_level : usize, state : &mut State) -> Result<(), ParseError>{
-    let mut default_type : Option<String> = None;
-    let mut empty_line_type : Option<String> = None;
-    let mut is_doubled : Option<bool> = None;
+fn parse_define_stmt(
+    mut pairs: Pairs,
+    indent_level: usize,
+    state: &mut State,
+) -> Result<(), ParseError> {
+    let mut default_type: String = String::new();
+    let mut empty_line_type: String = String::new();
+    let mut is_doubled;
 
-    for pair in pairs{
-        match pair.as_rule(){
-            Rule::define_stmt_start_symbol => {
-                match pair.as_str(){
-                    ">>" => is_doubled = Some(true),
-                    ">" => is_doubled = Some(false),
-                    _ => unreachable!(),
-                }
+    state
+        .set_indent(indent_level)
+        .map_err(|s| parse_err(&pairs.next().unwrap(), &s))?;
+
+    for pair in pairs {
+        match pair.as_rule() {
+            Rule::define_stmt_start_symbol => match pair.as_str() {
+                ">>>" => Err(parse_err(&pair, ">>> is reserved and currently unusable."))?,
+                ">>" => is_doubled = true,
+                ">" => is_doubled = false,
+                _ => unreachable!(),
             },
-            Rule::content =>{
-                default_type = Some(parse_content(pair.into_inner(), "")?);
-            },
-            Rule::content_for_empty_line =>{
-                empty_line_type = Some(parse_content(pair.into_inner(), "")?);
-            },
+            Rule::content => {
+                default_type = parse_content(pair.into_inner(), "")?;
+            }
+            Rule::content_for_empty_line => {
+                empty_line_type =
+                    parse_content(pair.into_inner().next().unwrap().into_inner(), "")?;
+            }
             _ => unreachable!(),
         }
     }
-    state
+
+    if is_doubled {
+        state.set_doubled_default_types(indent_level, default_type, empty_line_type)
+    } else {
+        state.set_single_default_types(indent_level, default_type, empty_line_type)
+    }
     Ok(())
 }

@@ -84,7 +84,8 @@ main_line_start_symbol = {
 }
 
 define_stmt_start_symbol = {  
-  ">>"
+	">>>"
+  | ">>"
   | ">"
 }
 
@@ -93,7 +94,7 @@ commented_line = {
 }
 
 line_contents = {
-    ((!">" ~ main_line) | commented_line | (&">" ~ define_stmt))
+    ((!">" ~ main_line) | commented_line | (&">" ~ define_stmt) | (&">" ~ main_line))
 }
 
 file = {

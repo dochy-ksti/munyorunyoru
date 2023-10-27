@@ -7,7 +7,7 @@ use super::{
     line_type::LineType,
     munyo_parser::{MunyoParser, Pair, Pairs, Rule},
     parse_line_contents::parse_line_contents,
-    state::State,
+    state::State, parse_content::parse_content,
 };
 
 use crate::error::parse_error::ParseErrorHelper;
@@ -54,57 +54,7 @@ where
     unreachable!()
 }
 
-fn parse_main_line(mut pairs: Pairs) -> Result<(), ParseError> {
-    let first = pairs.next().unwrap();
-    let (line_type, content) = match first.as_rule() {
-        Rule::main_line_start_symbol => {
-            let line_type = parse_line_start_symbol(first)?;
-            (line_type, pairs.next().unwrap())
-        }
-        Rule::content => (LineType::Normal, first),
-        _ => {
-            unreachable!()
-        }
-    };
-    let content = parse_content(
-        pairs.next().unwrap().into_inner(),
-        line_type.starting_text(),
-    )?;
 
-    let mut params: Vec<String> = vec![];
-
-    let p = loop {
-        let p = pairs.next().unwrap();
-        match p.as_rule() {
-            Rule::param_item => params.push(parse_param_item(p)?),
-            //Rule::line_end => break p,
-            _ => {
-                unreachable!()
-            }
-        }
-    };
-
-    Ok(())
-}
-
-fn parse_line_start_symbol(pair: Pair) -> Result<LineType, ParseError> {
-    match pair.as_str() {
-        ">>>" => Err(parse_err(&pair, ">>> is not supported")),
-        ">>" => Ok(LineType::Double),
-        r">\" => Ok(LineType::Normal),
-        ">" => Ok(LineType::Single),
-        r"\>>>" => Ok(LineType::CharTriple),
-        r"\>>" => Ok(LineType::CharDouble),
-        r"\>" => Ok(LineType::CharSingle),
-        _ => unreachable!(),
-    }
-}
-
-
-fn parse_param_item(pair: Pair) -> Result<String, ParseError> {
-    parse_content(pair.into_inner(), "")
-}
-
-fn parse_new_line(pair: Pair) -> String {
+pub(crate) fn parse_new_line(pair: Pair) -> String {
     pair.as_str().to_string()
 }

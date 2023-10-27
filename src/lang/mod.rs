@@ -6,3 +6,4 @@ pub(crate) mod main_line_item;
 pub(crate) mod parse_line_end;
 pub(crate) mod parse_line_contents;
 pub(crate) mod parse_content;
+pub(crate) mod parse_main_line;
