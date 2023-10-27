@@ -13,9 +13,9 @@ text = @{
 }
 
 content = {
-    name ~ (" " ~ text)?
+    SOI ~ name ~ (" " ~ text)? ~ EOI
 }
 
 param = {
-    " "* ~ name ~ (" " ~ text)?
+    SOI ~ " "* ~ name ~ (" " ~ text)? ~ EOI
 }

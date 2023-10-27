@@ -7,7 +7,7 @@ use super::{
     line_type::LineType,
     munyo_parser::{MunyoParser, Pair, Pairs, Rule},
     parse_line_contents::parse_line_contents,
-    state_machine::StateMachine,
+    state::State,
 };
 
 use crate::error::parse_error::ParseErrorHelper;
@@ -31,7 +31,7 @@ where
     MB: MetaBuilder<B, T>,
     B: Builder<T>,
 {
-    let mut state = StateMachine::new();
+    let mut state = State::new();
 	let mut indent_level = 0;
     while let Some(choice) = pairs.next() {
         match choice.as_rule() {
@@ -39,7 +39,7 @@ where
 				indent_level = choice.as_str().len();
             }
             Rule::line_contents => {
-                parse_line_contents(choice.into_inner(), indent_level, &mut state, builder)?;
+                parse_line_contents(choice.into_inner().next().unwrap(), indent_level, &mut state, builder)?;
             }
             Rule::new_line => {}
             Rule::EOI => {
@@ -100,41 +100,6 @@ fn parse_line_start_symbol(pair: Pair) -> Result<LineType, ParseError> {
     }
 }
 
-fn parse_content(mut pairs: Pairs, starting_text: &str) -> Result<String, ParseError> {
-    let mut s = String::with_capacity(8);
-    s.push_str(starting_text);
-    for pair in pairs {
-        match pair.as_rule() {
-            Rule::char_seq => {
-                s.push_str(pair.as_str());
-            }
-            Rule::escaped => match pair.as_str() {
-                r"\\" => {
-                    s.push('\\');
-                }
-                r"\|" => {
-                    s.push('|');
-                }
-                r"\n" => {
-                    s.push('\n');
-                }
-                r"\r" => {
-                    s.push('\r');
-                }
-                r"\t" => {
-                    s.push('\t');
-                }
-                _ => {
-                    unreachable!()
-                }
-            },
-            _ => {
-                unreachable!();
-            }
-        }
-    }
-    Ok(s)
-}
 
 fn parse_param_item(pair: Pair) -> Result<String, ParseError> {
     parse_content(pair.into_inner(), "")

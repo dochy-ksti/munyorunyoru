@@ -38,8 +38,10 @@ main_line = {
     main_line_start_symbol? ~ content ~ param_item* ~ line_continuation?
 }
 
+content_for_empty_line = { content }
+
 define_stmt = {
-    define_stmt_start_symbol ~ content? ~ ("|" ~ content?)?
+    define_stmt_start_symbol ~ content? ~ ("|" ~ content_for_empty_line?)?
 }
 
 continued_line = {
@@ -81,9 +83,8 @@ main_line_start_symbol = {
   | "\\>"
 }
 
-define_stmt_start_symbol = {
-    ">>>"
-  | ">>"
+define_stmt_start_symbol = {  
+  ">>"
   | ">"
 }
 
@@ -92,7 +93,7 @@ commented_line = {
 }
 
 line_contents = {
-    ((&">" ~ define_stmt) | main_line | commented_line)
+    ((!">" ~ main_line) | commented_line | (&">" ~ define_stmt))
 }
 
 file = {
