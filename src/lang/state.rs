@@ -1,3 +1,5 @@
+use std::ops::Index;
+
 use crate::error::MunyoResult;
 
 pub(crate) struct State {
@@ -29,6 +31,9 @@ impl State {
             default_stack: vec![],
             leveled_default: vec![],
         }
+    }
+    pub(crate) fn indent_level(&self) -> usize {
+        self.indent_level
     }
 
     pub(crate) fn set_indent(&mut self, indent_level: usize) -> Result<(), String> {
@@ -81,5 +86,15 @@ impl State {
         }
 
         self.leveled_default[indent_level] = Some((default_type, empty_line_type))
+    }
+
+    pub(crate) fn default_types(&self) -> (&str, &str) {
+        if let Some((def, emp)) = self.leveled_default.index(self.indent_level) {
+            return (def, emp);
+        }
+        if let Some(last) = self.default_stack.last() {
+            return (&last.default_type, &last.empty_line_type);
+        }
+        ("", "")
     }
 }

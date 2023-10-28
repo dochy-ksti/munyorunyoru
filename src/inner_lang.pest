@@ -20,4 +20,3 @@ param = {
     SOI ~ " "* ~ name ~ (" " ~ text)? ~ EOI
 }
 
-argument  = { SOI ~ text ~ EOI }

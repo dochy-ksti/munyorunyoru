@@ -1,8 +1,11 @@
-pub trait MetaBuilder<B, T>
-where
-    B: Builder<T>,
-{
-    fn new(typename: String, content: String) -> B;
+
+pub struct MetaBuilderArguments{
+	pub typename : String,
+	pub argument : String,
+}
+
+impl MetaBuilderArguments {
+    pub fn new(typename: String, argument: String) -> Self { Self { typename, argument } }
 }
 
 pub trait Builder<T> {

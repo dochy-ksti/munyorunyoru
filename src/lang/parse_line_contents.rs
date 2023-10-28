@@ -1,37 +1,48 @@
 use crate::{
-    builder::builder::{Builder, MetaBuilder},
+    builder::builder::{Builder, MetaBuilderArguments},
     error::parse_error::{parse_err, ParseError, ParseErrorHelper},
 };
 
 use super::{
+    inner_lang::{build, build_empty_line_item},
+    item_tree::ItemTree,
     munyo_parser::{Pair, Pairs, Rule},
     parse_content::parse_content,
-    state::State, parse_main_line::parse_main_line,
+    parse_main_line::parse_main_line,
+    state::State,
 };
 
 pub(crate) fn parse_line_contents<MB, B, T>(
     pair: Pair,
     indent_level: usize,
     state: &mut State,
-    builder: &MB,
+    tree: &mut ItemTree<B>,
+    meta_builder: &MB,
 ) -> Result<(), ParseError>
 where
-    MB: MetaBuilder<B, T>,
+    MB: Fn(MetaBuilderArguments) -> B,
     B: Builder<T>,
 {
+    let mut is_empty = true;
     match pair.as_rule() {
-        Rule::define_stmt =>{
-			state.set_indent(indent_level).oe(&pair)?;
-			parse_define_stmt(pair.into_inner(), indent_level, state)?
-		}
-        Rule::main_line => {
-			state.set_indent(indent_level).oe(&pair)?;
-			let r = parse_main_line(pair.into_inner())?;
-		}
-        Rule::commented_line => {}
-        _ => {
-            unreachable!()
+        Rule::define_stmt => {
+            is_empty = false;
+            state.set_indent(indent_level).oe(&pair)?;
+            parse_define_stmt(pair.into_inner(), indent_level, state)?;
         }
+        Rule::main_line => {
+            state.set_indent(indent_level).oe(&pair)?;
+            let r = parse_main_line(pair.into_inner())?;
+            build(state, tree, r, meta_builder);
+            is_empty = false;
+        }
+        Rule::commented_line => {
+            is_empty = false;
+        }
+        _ => {}
+    }
+    if is_empty {
+        build_empty_line_item(state, tree, meta_builder)
     }
     Ok(())
 }

@@ -1,20 +1,22 @@
 use crate::{
-    builder::builder::{Builder, MetaBuilder},
+    builder::builder::{Builder, MetaBuilderArguments},
     error::parse_error::{parse_err, ParseError},
+    lang::{inner_lang::build_empty_line_item, item_tree::ItemTree},
 };
 
 use super::{
     munyo_parser::{MunyoParser, Pair, Pairs, Rule},
+    parse_content::parse_content,
     parse_line_contents::parse_line_contents,
-    state::State, parse_content::parse_content,
+    state::State,
 };
 
 use crate::error::parse_error::ParseErrorHelper;
 use pest::Parser;
 
-pub fn process_file_text<MB, B, T>(text: String, builder: &MB) -> Result<(), ParseError>
+pub fn process_file_text<MB, B, T>(text: String, meta_builder: &MB) -> Result<Vec<T>, ParseError>
 where
-    MB: MetaBuilder<B, T>,
+    MB: Fn(MetaBuilderArguments) -> B,
     B: Builder<T>,
 {
     let mut pairs =
@@ -22,37 +24,48 @@ where
 
     let pair = pairs.next().unwrap();
 
-    return parse_file(pair.into_inner(), builder);
+    let tree = parse_file(pair.into_inner(), meta_builder)?;
+    unimplemented!()
 }
 
-fn parse_file<MB, B, T>(mut pairs: Pairs, builder: &MB) -> Result<(), ParseError>
+fn parse_file<MB, B, T>(mut pairs: Pairs, meta_builder: &MB) -> Result<ItemTree<B>, ParseError>
 where
-    MB: MetaBuilder<B, T>,
+    MB: Fn(MetaBuilderArguments) -> B,
     B: Builder<T>,
 {
     let mut state = State::new();
-	let mut indent_level = 0;
-    while let Some(choice) = pairs.next() {
-        match choice.as_rule() {
-            Rule::tabs => {
-				indent_level = choice.as_str().len();
-            }
+    let mut tree = ItemTree::new(meta_builder(MetaBuilderArguments::new(
+        String::new(),
+        String::new(),
+    )));
+    loop {
+        let tabs = pairs.next().unwrap();
+        let indent_level = tabs.as_str().len();
+
+        let p = pairs.next().unwrap();
+
+        match p.as_rule() {
             Rule::line_contents => {
-                parse_line_contents(choice.into_inner().next().unwrap(), indent_level, &mut state, builder)?;
+                parse_line_contents(
+                    p.into_inner().next().unwrap(),
+                    indent_level,
+                    &mut state,
+                    &mut tree,
+                    meta_builder,
+                )?;
+                let new_line_or_eoi = pairs.next().unwrap();
+                if new_line_or_eoi.as_rule() == Rule::EOI {
+                    return Ok(tree);
+                }
             }
-            Rule::new_line => {}
-            Rule::EOI => {
-                return Ok(());
+            Rule::new_line => {
+                build_empty_line_item(&mut state, &mut tree, meta_builder);
             }
-            _ => {
-                unreachable!()
-            }
+            Rule::EOI => return Ok(tree),
+            _ => unreachable!(),
         }
     }
-
-    unreachable!()
 }
-
 
 // pub(crate) fn parse_new_line(pair: Pair) -> String {
 //     pair.as_str().to_string()
