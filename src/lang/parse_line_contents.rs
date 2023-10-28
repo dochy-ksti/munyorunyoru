@@ -1,12 +1,12 @@
 use crate::{
     builder::builder::{Builder, MetaBuilder},
-    error::parse_error::{parse_err, ParseError},
+    error::parse_error::{parse_err, ParseError, ParseErrorHelper},
 };
 
 use super::{
     munyo_parser::{Pair, Pairs, Rule},
     parse_content::parse_content,
-    state::State,
+    state::State, parse_main_line::parse_main_line,
 };
 
 pub(crate) fn parse_line_contents<MB, B, T>(
@@ -20,8 +20,14 @@ where
     B: Builder<T>,
 {
     match pair.as_rule() {
-        Rule::define_stmt => parse_define_stmt(pair.into_inner(), indent_level, state)?,
-        Rule::main_line => {}
+        Rule::define_stmt =>{
+			state.set_indent(indent_level).oe(&pair)?;
+			parse_define_stmt(pair.into_inner(), indent_level, state)?
+		}
+        Rule::main_line => {
+			state.set_indent(indent_level).oe(&pair)?;
+			let r = parse_main_line(pair.into_inner())?;
+		}
         Rule::commented_line => {}
         _ => {
             unreachable!()
@@ -37,7 +43,7 @@ fn parse_define_stmt(
 ) -> Result<(), ParseError> {
     let mut default_type: String = String::new();
     let mut empty_line_type: String = String::new();
-    let mut is_doubled;
+    let mut is_doubled = false;
 
     state
         .set_indent(indent_level)

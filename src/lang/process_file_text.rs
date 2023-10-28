@@ -4,7 +4,6 @@ use crate::{
 };
 
 use super::{
-    line_type::LineType,
     munyo_parser::{MunyoParser, Pair, Pairs, Rule},
     parse_line_contents::parse_line_contents,
     state::State, parse_content::parse_content,
@@ -55,6 +54,6 @@ where
 }
 
 
-pub(crate) fn parse_new_line(pair: Pair) -> String {
-    pair.as_str().to_string()
-}
+// pub(crate) fn parse_new_line(pair: Pair) -> String {
+//     pair.as_str().to_string()
+// }

@@ -2,8 +2,7 @@ use crate::error::parse_error::ParseError;
 
 use super::munyo_parser::{Pairs, Rule};
 
-
-pub(crate) fn parse_content(mut pairs: Pairs, starting_text: &str) -> Result<String, ParseError> {
+pub(crate) fn parse_content(pairs: Pairs, starting_text: &str) -> Result<String, ParseError> {
     let mut s = String::with_capacity(8);
     s.push_str(starting_text);
     for pair in pairs {
