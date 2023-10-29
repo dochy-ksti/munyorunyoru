@@ -1,4 +1,4 @@
-use crate::{error::parse_fail::ParseFail, NEW_LINE_CODE};
+use crate::error::parse_fail::ParseFail;
 
 use super::{
     munyo_parser::{Pair, Pairs, Rule},

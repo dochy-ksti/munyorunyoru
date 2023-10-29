@@ -43,6 +43,7 @@ pub(crate) fn parse_fail(pair: &Pair, s: &str) -> ParseFail {
 
 pub(crate) trait ParseFailHelper<T> {
     fn oe(self, pair: &Pair) -> Result<T, ParseFail>;
+	fn os(self, index : usize) -> Result<T, ParseFail>;
 }
 
 impl<T> ParseFailHelper<T> for Result<T, String> {
@@ -50,6 +51,13 @@ impl<T> ParseFailHelper<T> for Result<T, String> {
         match self {
             Ok(r) => Ok(r),
             Err(s) => Err(parse_fail(pair, &s)),
+        }
+    }
+
+	fn os(self, index : usize) -> Result<T, ParseFail> {
+        match self {
+            Ok(r) => Ok(r),
+            Err(s) => Err(ParseFail::new(index, s)),
         }
     }
 }

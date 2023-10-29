@@ -37,7 +37,7 @@ where
     let pair = pairs.next().unwrap();
 
     let tree = parse_file(pair.into_inner(), meta_builder)?;
-    Ok(tree.finish())
+    tree.finish()
 }
 
 fn parse_file<MB, B>(mut pairs: Pairs, meta_builder: &MB) -> Result<BuilderTree<B>, ParseFail>

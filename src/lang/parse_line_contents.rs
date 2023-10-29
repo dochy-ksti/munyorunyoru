@@ -32,7 +32,7 @@ where
             state.set_indent(indent_level).oe(&pair)?;
 			let start_index = pair.start_index();
             let r = parse_main_line(pair.into_inner())?;
-            build(state, tree, r, meta_builder, start_index);
+            build(state, tree, r, meta_builder, start_index).os(start_index)?;
         }
         Rule::commented_line => {}
         _ => {}

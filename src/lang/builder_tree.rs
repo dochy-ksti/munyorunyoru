@@ -1,4 +1,4 @@
-use crate::builder::builder::Builder;
+use crate::{builder::builder::Builder, error::parse_fail::ParseFail};
 
 pub(crate) struct TreeItem<B> {
     pub item: B,
@@ -47,8 +47,15 @@ impl<B, T> BuilderTree<B>
 where
     B: Builder<Item = T>,
 {
-    pub(crate) fn finish(self) -> Result<Vec<T>, (usize, String)> {
-        self.root.into_iter().map(|c| Self::make_child(c)).collect()
+    pub(crate) fn finish(self) -> Result<Vec<T>, ParseFail> {
+        self.root
+            .into_iter()
+            .map(|c| {
+                Self::make_child(c)
+                    .map(|(_, item)| item)
+                    .map_err(|(index, m)| ParseFail::new(index, m))
+            })
+            .collect()
     }
 
     ///Returns Failed item's start index too
