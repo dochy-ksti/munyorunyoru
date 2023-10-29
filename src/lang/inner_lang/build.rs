@@ -1,20 +1,20 @@
 use pest::Parser;
 
 use crate::{
-    builder::builder::{Builder, MetaBuilderArguments},
-    lang::{item_tree::ItemTree, parse_main_line::LineResult, state::State},
+    builder::builder::{Builder, MetaBuilder},
+    lang::{builder_tree::BuilderTree, parse_main_line::LineResult, state::State},
 };
 
 use super::{InnerLangParser, Pairs, Rule};
 
-pub(crate) fn build<MB, B, T>(
+pub(crate) fn build<MB, B>(
     state: &mut State,
-    tree: &mut ItemTree<B>,
+    tree: &mut BuilderTree<B>,
     r: LineResult,
-    meta_builder: MB,
+    meta_builder: &MB,
 ) where
-    MB: Fn(MetaBuilderArguments) -> B,
-    B: Builder<T>,
+    MB: MetaBuilder<Item = B>,
+	B : Builder,
 {
     let (def, _emp) = state.default_types();
 
@@ -27,7 +27,7 @@ pub(crate) fn build<MB, B, T>(
         parse_content(p)
     };
 
-    let mut builder = meta_builder(MetaBuilderArguments::new(name, arg));
+    let mut builder = meta_builder.new(name, arg);
 
     let params = r.params;
 
@@ -42,13 +42,12 @@ pub(crate) fn build<MB, B, T>(
         .expect("unreachable");
 }
 
-pub(crate) fn build_empty_line_item<MB, B, T>(
+pub(crate) fn build_empty_line_item<MB, B>(
     state: &mut State,
-    tree: &mut ItemTree<B>,
-    meta_builder: MB,
+    tree: &mut BuilderTree<B>,
+    meta_builder: &MB,
 ) where
-    MB: Fn(MetaBuilderArguments) -> B,
-    B: Builder<T>,
+    MB: MetaBuilder<Item = B>,
 {
     let (_def, emp) = state.default_types();
 
@@ -64,7 +63,7 @@ pub(crate) fn build_empty_line_item<MB, B, T>(
     let p = InnerLangParser::parse(Rule::content, &emp_command).expect("unreachable");
     let (name, arg) = parse_content(p);
 
-    let builder = meta_builder(MetaBuilderArguments::new(name, arg));
+    let builder = meta_builder.new(name, arg);
 
     tree.add(builder, state.indent_level())
         .expect("unreachable");

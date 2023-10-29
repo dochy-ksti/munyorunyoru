@@ -1,15 +1,15 @@
+pub trait MetaBuilder
+where
+    Self::Item: Builder,
+{
+    type Item;
 
-pub struct MetaBuilderArguments{
-	pub typename : String,
-	pub argument : String,
+    fn new(&self, typename: String, argument: String) -> Self::Item;
 }
 
-impl MetaBuilderArguments {
-    pub fn new(typename: String, argument: String) -> Self { Self { typename, argument } }
-}
-
-pub trait Builder<T> {
+pub trait Builder {
+    type Item;
     fn set_param(&mut self, param_name: String, content: String);
-    fn set_child(&mut self, child: T);
-    fn finish(self) -> T;
+    fn set_child(&mut self, child: Self::Item);
+    fn finish(self) -> Self::Item;
 }

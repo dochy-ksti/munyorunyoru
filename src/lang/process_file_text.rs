@@ -1,7 +1,7 @@
 use crate::{
-    builder::builder::{Builder, MetaBuilderArguments},
+    builder::builder::{Builder, MetaBuilder},
     error::parse_error::{parse_err, ParseError},
-    lang::{inner_lang::build_empty_line_item, item_tree::ItemTree},
+    lang::{inner_lang::build_empty_line_item, builder_tree::BuilderTree},
 };
 
 use super::{
@@ -16,8 +16,8 @@ use pest::Parser;
 
 pub fn process_file_text<MB, B, T>(text: String, meta_builder: &MB) -> Result<Vec<T>, ParseError>
 where
-    MB: Fn(MetaBuilderArguments) -> B,
-    B: Builder<T>,
+    MB: MetaBuilder<Item=B>,
+	B : Builder<Item=T>,
 {
     let mut pairs =
         MunyoParser::parse(Rule::file, &text).map_err(|e| ParseError::from_pest_err(e))?;
@@ -25,19 +25,16 @@ where
     let pair = pairs.next().unwrap();
 
     let tree = parse_file(pair.into_inner(), meta_builder)?;
-    unimplemented!()
+    Ok(tree.finish())
 }
 
-fn parse_file<MB, B, T>(mut pairs: Pairs, meta_builder: &MB) -> Result<ItemTree<B>, ParseError>
+fn parse_file<MB, B>(mut pairs: Pairs, meta_builder: &MB) -> Result<BuilderTree<B>, ParseError>
 where
-    MB: Fn(MetaBuilderArguments) -> B,
-    B: Builder<T>,
+    MB: MetaBuilder<Item = B>,
+	B : Builder,
 {
     let mut state = State::new();
-    let mut tree = ItemTree::new(meta_builder(MetaBuilderArguments::new(
-        String::new(),
-        String::new(),
-    )));
+    let mut tree = BuilderTree::new(meta_builder.new(String::new(), String::new()));
     loop {
         let tabs = pairs.next().unwrap();
         let indent_level = tabs.as_str().len();

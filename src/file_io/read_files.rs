@@ -8,23 +8,28 @@ use std::{
 use shrink_pool::ShrinkPool;
 
 use crate::{
-    builder::builder::{Builder, MetaBuilderArguments},
+    builder::builder::{Builder, MetaBuilder},
     error::{MunyoError, MunyoResult, ReadFileError},
     lang::process_file_text::process_file_text,
 };
 
 use super::receiver::Receiver;
 
+pub struct Data<T>{
+	path : PathBuf,
+	items : Vec<T>
+}
+
 pub fn read_files<I, P, T, B, MB>(
     pathes: I,
     meta_builder: MB,
-) -> Receiver<Result<T, ReadFileError>>
+) -> Receiver<Result<Data<T>, ReadFileError>>
 where
     I: Iterator<Item = P>,
     P: AsRef<Path>,
-    T: Send + 'static,
-    MB: Fn(MetaBuilderArguments) -> B + Send + Sync + 'static,
-    B: Builder<T>,
+    MB: MetaBuilder<Item=B> + Send + Sync + 'static,
+	B : Builder<Item=T>,
+	T : Send + 'static,
 {
     let pathes: Vec<PathBuf> = pathes.map(|p| p.as_ref().to_path_buf()).collect();
     let (sender, receiver) = async_channel::bounded(pathes.len());

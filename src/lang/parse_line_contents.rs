@@ -1,27 +1,27 @@
 use crate::{
-    builder::builder::{Builder, MetaBuilderArguments},
+    builder::builder::{Builder, MetaBuilder},
     error::parse_error::{parse_err, ParseError, ParseErrorHelper},
 };
 
 use super::{
     inner_lang::{build, build_empty_line_item},
-    item_tree::ItemTree,
+    builder_tree::BuilderTree,
     munyo_parser::{Pair, Pairs, Rule},
     parse_content::parse_content,
     parse_main_line::parse_main_line,
     state::State,
 };
 
-pub(crate) fn parse_line_contents<MB, B, T>(
+pub(crate) fn parse_line_contents<MB, B>(
     pair: Pair,
     indent_level: usize,
     state: &mut State,
-    tree: &mut ItemTree<B>,
+    tree: &mut BuilderTree<B>,
     meta_builder: &MB,
 ) -> Result<(), ParseError>
 where
-    MB: Fn(MetaBuilderArguments) -> B,
-    B: Builder<T>,
+    MB: MetaBuilder<Item = B>,
+	B : Builder,
 {
     let mut is_empty = true;
     match pair.as_rule() {
