@@ -1,6 +1,10 @@
 use crate::{
     builder::builder::{Builder, MetaBuilder},
-    error::{parse_fail::{parse_fail, PairHelper, ParseFail}, line_col_lookup::LineColLookup, parse_error::ParseError},
+    error::{
+        line_col_lookup::LineColLookup,
+        parse_error::ParseError,
+        parse_fail::{parse_fail, PairHelper, ParseFail},
+    },
     lang::{builder_tree::BuilderTree, inner_lang::build_empty_line_item},
 };
 
@@ -20,10 +24,15 @@ where
     B: Builder<Item = T>,
 {
     in_process_file_text(&text, meta_builder).map_err(|e| {
-		let lookup = LineColLookup::new(&text);
-		let r = lookup.line_col(e.start_index).unwrap();
-		ParseError::new(r.line, r.col, text[r.line_start..r.line_end].to_string(), e.message)
-	})
+        let lookup = LineColLookup::new(&text);
+        let r = lookup.line_col(e.start_index).unwrap();
+        ParseError::new(
+            r.line,
+            r.col,
+            text[r.line_start..r.line_end].to_string(),
+            e.message,
+        )
+    })
 }
 
 fn in_process_file_text<MB, B, T>(text: &str, meta_builder: &MB) -> Result<Vec<T>, ParseFail>
@@ -70,7 +79,7 @@ where
             }
             Rule::new_line => {
                 build_empty_line_item(&mut state, &mut tree, meta_builder, p.start_index())
-                    .oe(&p)?;
+                    .op(&p)?;
             }
             Rule::EOI => return Ok(tree),
             _ => unreachable!(),

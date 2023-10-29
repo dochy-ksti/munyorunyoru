@@ -1,6 +1,6 @@
 use crate::{
     builder::builder::{Builder, MetaBuilder},
-    error::parse_fail::{parse_fail, ParseFail, ParseFailHelper, PairHelper},
+    error::parse_fail::{parse_fail, PairHelper, ParseFail, ParseFailHelper},
 };
 
 use super::{
@@ -25,12 +25,12 @@ where
 {
     match pair.as_rule() {
         Rule::define_stmt => {
-            state.set_indent(indent_level).oe(&pair)?;
+            state.set_indent(indent_level).op(&pair)?;
             parse_define_stmt(pair.into_inner(), indent_level, state)?;
         }
         Rule::main_line => {
-            state.set_indent(indent_level).oe(&pair)?;
-			let start_index = pair.start_index();
+            state.set_indent(indent_level).op(&pair)?;
+            let start_index = pair.start_index();
             let r = parse_main_line(pair.into_inner())?;
             build(state, tree, r, meta_builder, start_index).os(start_index)?;
         }

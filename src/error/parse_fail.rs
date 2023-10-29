@@ -8,7 +8,6 @@ use pest::{error::LineColLocation, RuleType};
 
 use crate::lang::munyo_parser::Pair;
 
-
 pub(crate) struct ParseFail {
     pub start_index: usize,
     pub message: String,
@@ -39,22 +38,20 @@ pub(crate) fn parse_fail(pair: &Pair, s: &str) -> ParseFail {
     ParseFail::new(pair.as_span().start(), s.to_string())
 }
 
-
-
 pub(crate) trait ParseFailHelper<T> {
-    fn oe(self, pair: &Pair) -> Result<T, ParseFail>;
-	fn os(self, index : usize) -> Result<T, ParseFail>;
+    fn op(self, pair: &Pair) -> Result<T, ParseFail>;
+    fn os(self, index: usize) -> Result<T, ParseFail>;
 }
 
 impl<T> ParseFailHelper<T> for Result<T, String> {
-    fn oe(self, pair: &Pair) -> Result<T, ParseFail> {
+    fn op(self, pair: &Pair) -> Result<T, ParseFail> {
         match self {
             Ok(r) => Ok(r),
             Err(s) => Err(parse_fail(pair, &s)),
         }
     }
 
-	fn os(self, index : usize) -> Result<T, ParseFail> {
+    fn os(self, index: usize) -> Result<T, ParseFail> {
         match self {
             Ok(r) => Ok(r),
             Err(s) => Err(ParseFail::new(index, s)),
