@@ -1,11 +1,11 @@
 use crate::{
     builder::builder::{Builder, MetaBuilder},
-    error::parse_error::{parse_err, ParseError, ParseErrorHelper},
+    error::parse_fail::{parse_fail, ParseFail, ParseFailHelper, PairHelper},
 };
 
 use super::{
-    inner_lang::{build, build_empty_line_item},
     builder_tree::BuilderTree,
+    inner_lang::{build, build_empty_line_item},
     munyo_parser::{Pair, Pairs, Rule},
     parse_content::parse_content,
     parse_main_line::parse_main_line,
@@ -18,10 +18,10 @@ pub(crate) fn parse_line_contents<MB, B>(
     state: &mut State,
     tree: &mut BuilderTree<B>,
     meta_builder: &MB,
-) -> Result<(), ParseError>
+) -> Result<(), ParseFail>
 where
     MB: MetaBuilder<Item = B>,
-	B : Builder,
+    B: Builder,
 {
     match pair.as_rule() {
         Rule::define_stmt => {
@@ -30,11 +30,11 @@ where
         }
         Rule::main_line => {
             state.set_indent(indent_level).oe(&pair)?;
+			let start_index = pair.start_index();
             let r = parse_main_line(pair.into_inner())?;
-            build(state, tree, r, meta_builder).oe(&pair)?;
+            build(state, tree, r, meta_builder, start_index);
         }
-        Rule::commented_line => {
-        }
+        Rule::commented_line => {}
         _ => {}
     }
     Ok(())
@@ -44,19 +44,19 @@ fn parse_define_stmt(
     mut pairs: Pairs,
     indent_level: usize,
     state: &mut State,
-) -> Result<(), ParseError> {
+) -> Result<(), ParseFail> {
     let mut default_type: String = String::new();
     let mut empty_line_type: String = String::new();
     let mut is_doubled = false;
 
     state
         .set_indent(indent_level)
-        .map_err(|s| parse_err(&pairs.next().unwrap(), &s))?;
+        .map_err(|s| parse_fail(&pairs.next().unwrap(), &s))?;
 
     for pair in pairs {
         match pair.as_rule() {
             Rule::define_stmt_start_symbol => match pair.as_str() {
-                ">>>" => Err(parse_err(&pair, ">>> is reserved and currently unusable."))?,
+                ">>>" => Err(parse_fail(&pair, ">>> is reserved and currently unusable."))?,
                 ">>" => is_doubled = true,
                 ">" => is_doubled = false,
                 _ => unreachable!(),

@@ -12,6 +12,7 @@ pub(crate) fn build<MB, B>(
     tree: &mut BuilderTree<B>,
     r: LineResult,
     meta_builder: &MB,
+	start_index: usize,
 ) -> Result<(), String> where
     MB: MetaBuilder<Item = B>,
 	B : Builder,
@@ -38,7 +39,7 @@ pub(crate) fn build<MB, B>(
         builder.set_param(name, val)?;
     }
 
-    tree.add(builder, state.indent_level())
+    tree.add(builder, state.indent_level(), start_index)
         .expect("unreachable");
     Ok(())
 }
@@ -47,7 +48,7 @@ pub(crate) fn build_empty_line_item<MB, B>(
     state: &mut State,
     tree: &mut BuilderTree<B>,
     meta_builder: &MB,
-    pair : &Pair,
+    start_index : usize,
 ) -> Result<(), String> where
     MB: MetaBuilder<Item = B>,
 {
@@ -64,7 +65,7 @@ pub(crate) fn build_empty_line_item<MB, B>(
 
     let builder = meta_builder.build(name, arg)?;
 
-    tree.add(builder, state.indent_level(), pair.as_span().)
+    tree.add(builder, state.indent_level(), start_index)
         .expect("unreachable");
     Ok(())
 }
@@ -72,9 +73,7 @@ pub(crate) fn build_empty_line_item<MB, B>(
 //premature optimization.
 fn build_empty_line_command(emp_default : &str, indent_level : usize) -> String{
 	let mut r : Vec<u8> = Vec::with_capacity(indent_level + emp_default.len());
-	for _ in 0..indent_level{
-		r.push('\t' as u8);
-	}
+	r.extend(std::iter::repeat('\t' as u8).take(indent_level));
 	r.extend_from_slice(emp_default.as_bytes());
 	unsafe{ String::from_utf8_unchecked(r) } 
 }

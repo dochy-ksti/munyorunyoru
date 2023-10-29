@@ -10,7 +10,6 @@ mod test_parser;
 pub use crate::file_io::read_files::read_files;
 pub use crate::lang::process_file_text::process_file_text;
 
-pub(crate) const NEW_LINE_CODE : char = '\n';
 
 #[cfg(test)]
 mod tests {

@@ -1,8 +1,8 @@
-use crate::error::parse_error::ParseError;
+use crate::error::parse_fail::ParseFail;
 
 use super::munyo_parser::{Pairs, Rule};
 
-pub(crate) fn parse_content(pairs: Pairs, starting_text: &str) -> Result<String, ParseError> {
+pub(crate) fn parse_content(pairs: Pairs, starting_text: &str) -> Result<String, ParseFail> {
     let mut s = String::with_capacity(8);
     s.push_str(starting_text);
     for pair in pairs {

@@ -1,4 +1,4 @@
-use crate::error::parse_error::ParseError;
+use crate::error::parse_fail::ParseFail;
 
 use super::{
     munyo_parser::{Pair, Pairs, Rule},
@@ -17,7 +17,7 @@ impl LineResult {
     }
 }
 
-pub(crate) fn parse_main_line(pairs: Pairs) -> Result<LineResult, ParseError> {
+pub(crate) fn parse_main_line(pairs: Pairs) -> Result<LineResult, ParseFail> {
     let mut line_type = LineType::Normal;
     let mut content = String::new();
     let mut params = vec![];
@@ -50,7 +50,7 @@ pub(crate) fn parse_main_line(pairs: Pairs) -> Result<LineResult, ParseError> {
     Ok(LineResult::new(content, params))
 }
 
-fn parse_line_start_symbol(pair: Pair) -> Result<LineType, ParseError> {
+fn parse_line_start_symbol(pair: Pair) -> Result<LineType, ParseFail> {
     match pair.as_str() {
         r">\" => Ok(LineType::Canceled),
         r"\>>>" => Ok(LineType::CharTriple),
@@ -79,6 +79,6 @@ impl LineType {
     }
 }
 
-pub(crate) fn parse_param_item(pair: Pair) -> Result<String, ParseError> {
+pub(crate) fn parse_param_item(pair: Pair) -> Result<String, ParseFail> {
     parse_content(pair.into_inner(), "")
 }

@@ -1,7 +1,7 @@
 use crate::{
     builder::builder::{Builder, MetaBuilder},
-    error::parse_error::{parse_err, ParseError},
-    lang::{inner_lang::build_empty_line_item, builder_tree::BuilderTree},
+    error::{parse_fail::{parse_fail, PairHelper, ParseFail}, line_col_lookup::LineColLookup, parse_error::ParseError},
+    lang::{builder_tree::BuilderTree, inner_lang::build_empty_line_item},
 };
 
 use super::{
@@ -11,16 +11,28 @@ use super::{
     state::State,
 };
 
-use crate::error::parse_error::ParseErrorHelper;
+use crate::error::parse_fail::ParseFailHelper;
 use pest::Parser;
 
 pub fn process_file_text<MB, B, T>(text: String, meta_builder: &MB) -> Result<Vec<T>, ParseError>
 where
-    MB: MetaBuilder<Item=B>,
-	B : Builder<Item=T>,
+    MB: MetaBuilder<Item = B>,
+    B: Builder<Item = T>,
+{
+    in_process_file_text(&text, meta_builder).map_err(|e| {
+		let lookup = LineColLookup::new(&text);
+		let r = lookup.line_col(e.start_index).unwrap();
+		ParseError::new(r.line, r.col, text[r.line_start..r.line_end].to_string(), e.message)
+	})
+}
+
+fn in_process_file_text<MB, B, T>(text: &str, meta_builder: &MB) -> Result<Vec<T>, ParseFail>
+where
+    MB: MetaBuilder<Item = B>,
+    B: Builder<Item = T>,
 {
     let mut pairs =
-        MunyoParser::parse(Rule::file, &text).map_err(|e| ParseError::from_pest_err(e))?;
+        MunyoParser::parse(Rule::file, text).map_err(|e| ParseFail::from_pest_err(e))?;
 
     let pair = pairs.next().unwrap();
 
@@ -28,15 +40,14 @@ where
     Ok(tree.finish())
 }
 
-fn parse_file<MB, B>(mut pairs: Pairs, meta_builder: &MB) -> Result<BuilderTree<B>, ParseError>
+fn parse_file<MB, B>(mut pairs: Pairs, meta_builder: &MB) -> Result<BuilderTree<B>, ParseFail>
 where
     MB: MetaBuilder<Item = B>,
-	B : Builder,
+    B: Builder,
 {
     let mut state = State::new();
-    let mut tree = BuilderTree::new(
-        meta_builder.build(String::new(), String::new())
-        .oe(&pairs.next().unwrap())?);
+    let mut tree = BuilderTree::new();
+
     loop {
         let tabs = pairs.next().unwrap();
         let indent_level = tabs.as_str().len();
@@ -58,8 +69,8 @@ where
                 }
             }
             Rule::new_line => {
-                build_empty_line_item(&mut state, &mut tree, meta_builder)
-                .oe(&p)?;
+                build_empty_line_item(&mut state, &mut tree, meta_builder, p.start_index())
+                    .oe(&p)?;
             }
             Rule::EOI => return Ok(tree),
             _ => unreachable!(),
