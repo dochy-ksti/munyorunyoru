@@ -1,5 +1,3 @@
-
-
 pub(crate) struct LineColLookup {
     src_len: usize,
     line_heads: Vec<usize>,
@@ -13,7 +11,6 @@ pub(crate) struct LineColResult {
 }
 
 impl LineColLookup {
-   
     pub fn new(src: &str) -> Self {
         Self {
             src_len: src.len(),
@@ -27,10 +24,8 @@ impl LineColLookup {
         for i in 0..s.len() {
             if s[i] == b'\n' {
                 vec.push(i);
-            } else if s[i] == b'\r' {
-                if s.get(i + 1) != Some(&b'\n') {
-                    vec.push(i)
-                }
+            } else if s[i] == b'\r' && s.get(i + 1) != Some(&b'\n') {
+                vec.push(i)
             }
         }
         vec
@@ -56,12 +51,12 @@ impl LineColLookup {
         };
         let col = index + 1 - line_start;
 
-        return Ok(LineColResult {
+        Ok(LineColResult {
             line: line_index + 1,
             col,
             line_start,
             line_end,
-        });
+        })
     }
 
     fn _get(&self, index: usize) -> (usize, usize) {

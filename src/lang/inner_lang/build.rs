@@ -8,7 +8,7 @@ use crate::{
 use super::{InnerLangParser, Pairs, Rule};
 
 pub(crate) fn build<MB, B>(
-    state: &mut State,
+    state: &State,
     tree: &mut BuilderTree<B>,
     r: LineResult,
     meta_builder: &MB,
@@ -46,7 +46,7 @@ where
 }
 
 pub(crate) fn build_empty_line_item<MB, B>(
-    state: &mut State,
+    state: &State,
     tree: &mut BuilderTree<B>,
     meta_builder: &MB,
     start_index: usize,

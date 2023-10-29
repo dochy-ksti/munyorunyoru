@@ -39,9 +39,9 @@ impl Debug for MunyoError {
     }
 }
 
-impl Into<anyhow::Error> for MunyoError {
-    fn into(self) -> anyhow::Error {
-        self.error
+impl From<MunyoError> for anyhow::Error {
+    fn from(e : MunyoError) -> anyhow::Error {
+        e.error
     }
 }
 

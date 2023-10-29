@@ -40,7 +40,7 @@ where
     B: Builder<Item = T>,
 {
     let mut pairs =
-        MunyoParser::parse(Rule::file, text).map_err(|e| ParseFail::from_pest_err(e))?;
+        MunyoParser::parse(Rule::file, text).map_err(ParseFail::from_pest_err)?;
 
     let pair = pairs.next().unwrap();
 
@@ -77,7 +77,7 @@ where
                 }
             }
             Rule::new_line => {
-                build_empty_line_item(&mut state, &mut tree, meta_builder, p.start_index())
+                build_empty_line_item(&state, &mut tree, meta_builder, p.start_index())
                     .op(&p)?;
             }
             Rule::EOI => return Ok(tree),

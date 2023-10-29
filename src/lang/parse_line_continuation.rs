@@ -137,7 +137,7 @@ fn parse_continued_line(mut pairs: Pairs) -> Result<LineResult, ParseFail> {
 fn parse_continued_line_with_content(mut pairs: Pairs) -> Result<LineResult, ParseFail> {
     let mut content = parse_content(pairs.next().unwrap().into_inner(), "")?;
     let mut params = vec![];
-    while let Some(p) = pairs.next() {
+    for p in pairs {
         match p.as_rule() {
             Rule::param_item => {
                 params.push(parse_param_item(p.into_inner().next().unwrap())?);
@@ -152,9 +152,9 @@ fn parse_continued_line_with_content(mut pairs: Pairs) -> Result<LineResult, Par
     Ok(LineResult { content, params })
 }
 
-fn parse_continued_line_without_content(mut pairs: Pairs) -> Result<Params, ParseFail> {
+fn parse_continued_line_without_content(pairs: Pairs) -> Result<Params, ParseFail> {
     let mut vec = vec![];
-    while let Some(pair) = pairs.next() {
+    for pair in pairs {
         match pair.as_rule() {
             Rule::param_item => vec.push(parse_param_item(pair.into_inner().next().unwrap())?),
             Rule::line_continuation => {

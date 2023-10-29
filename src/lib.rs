@@ -1,5 +1,6 @@
 //#![allow(dead_code)]
 //#![allow(unused_imports)]
+#![allow(clippy::module_inception)]
 
 mod builder;
 pub mod error;
