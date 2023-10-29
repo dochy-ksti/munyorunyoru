@@ -1,6 +1,6 @@
-use std::ops::Index;
 
-pub(crate) struct LineColLookup{
+
+pub(crate) struct LineColLookup {
     src_len: usize,
     line_heads: Vec<usize>,
 }
@@ -13,12 +13,10 @@ pub(crate) struct LineColResult {
 }
 
 impl LineColLookup {
-    /// Creates a new line/col lookup table. The `src` parameter provides the input string used to calculate lines and columns.
-    ///
-    /// Internally, this scans `src` and caches the starting positions of all lines. This means this is an O(n) operation.
+   
     pub fn new(src: &str) -> Self {
         Self {
-            src_len : src.len(),
+            src_len: src.len(),
             line_heads: Self::heads(src),
         }
     }
@@ -38,62 +36,63 @@ impl LineColLookup {
         vec
     }
 
-   
     pub fn line_col(&self, index: usize) -> Result<LineColResult, String> {
         if index > self.src_len {
             Err("Index cannot be greater than the length of the input slice.")?
         }
 
         let heads = &self.line_heads;
-		//row = line_index + 1
-		let line_index = heads.binary_search(&index).map_or_else(|e| e, |v| v + 1);
-		let line_start = if line_index == 0{
-			0
-		} else{
-			heads[line_index - 1]
-		};
-		let line_end = if line_index == heads.len(){
-			self.src_len
-		} else{
-			heads[line_index]
-		};
-		let col = line_start - index + 1;
-        
-        return Ok(LineColResult { line: line_index + 1, col, line_start, line_end });
+        //row = line_index + 1
+        let line_index = heads.binary_search(&index).map_or_else(|e| e, |v| v);
+        let line_start = if line_index == 0 {
+            0
+        } else {
+            heads[line_index - 1] + 1
+        };
+        let line_end = if line_index == heads.len() {
+            self.src_len
+        } else {
+            heads[line_index] + 1
+        };
+        let col = index + 1 - line_start;
+
+        return Ok(LineColResult {
+            line: line_index + 1,
+            col,
+            line_start,
+            line_end,
+        });
     }
 
-	fn get(&self, index : usize) -> (usize, usize){
-		let r = self.line_col(index).unwrap();
-		(r.line, r.col)
-	}
+    fn _get(&self, index: usize) -> (usize, usize) {
+        let r = self.line_col(index).unwrap();
+        (r.line, r.col)
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use crate::error::line_col_lookup::LineColLookup;
 
-
     #[test]
     fn empty_str() {
         let text = "";
         let lookup = LineColLookup::new(text);
-        assert_eq!(lookup.get(0), (1, 1));
+        assert_eq!(lookup._get(0), (1, 1));
     }
 
     #[test]
     fn line_col_iter_by_codepoints() {
         let text = "a\nab\nabc";
         let lookup = LineColLookup::new(text);
-        assert_eq!(lookup.get(0), (1, 1));
-        assert_eq!(lookup.get(1), (1, 2));
-        assert_eq!(lookup.get(2), (2, 1));
-        assert_eq!(lookup.get(3), (2, 2));
-        assert_eq!(lookup.get(4), (2, 3));
-        assert_eq!(lookup.get(5), (3, 1));
-        assert_eq!(lookup.get(6), (3, 2));
-        assert_eq!(lookup.get(7), (3, 3));
-        assert_eq!(lookup.get(8), (3, 4));
+        assert_eq!(lookup._get(0), (1, 1));
+        assert_eq!(lookup._get(1), (1, 2));
+        assert_eq!(lookup._get(2), (2, 1));
+        assert_eq!(lookup._get(3), (2, 2));
+        assert_eq!(lookup._get(4), (2, 3));
+        assert_eq!(lookup._get(5), (3, 1));
+        assert_eq!(lookup._get(6), (3, 2));
+        assert_eq!(lookup._get(7), (3, 3));
+        assert_eq!(lookup._get(8), (3, 4));
     }
-
-
 }

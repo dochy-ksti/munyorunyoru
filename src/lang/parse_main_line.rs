@@ -2,7 +2,7 @@ use crate::error::parse_fail::ParseFail;
 
 use super::{
     munyo_parser::{Pair, Pairs, Rule},
-    parse_content::{self, parse_content},
+    parse_content::parse_content,
     parse_line_continuation::{parse_line_continuation, set_results},
 };
 

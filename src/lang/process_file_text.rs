@@ -3,14 +3,13 @@ use crate::{
     error::{
         line_col_lookup::LineColLookup,
         parse_error::ParseError,
-        parse_fail::{parse_fail, PairHelper, ParseFail},
+        parse_fail::{PairHelper, ParseFail},
     },
     lang::{builder_tree::BuilderTree, inner_lang::build_empty_line_item},
 };
 
 use super::{
-    munyo_parser::{MunyoParser, Pair, Pairs, Rule},
-    parse_content::parse_content,
+    munyo_parser::{MunyoParser, Pairs, Rule},
     parse_line_contents::parse_line_contents,
     state::State,
 };

@@ -20,18 +20,18 @@ pub struct DefaultBuilder{
 }
 
 impl DefaultBuilder{
-	pub fn new(typename : String, content : String) -> Self{
-		Self{ typename, content, params : HashMap::new(), children : vec![] }
+	pub fn new(typename : String, argument : String) -> Self{
+		Self{ typename, content: argument, params : HashMap::new(), children : vec![] }
 	}
 }
 
 impl Builder for DefaultBuilder{
     type Item = DefaultItem;
 
-    fn set_param(&mut self, param_name: String, content: String) -> Result<(), String>{
-        let _b = self.params.insert(param_name, content);
-        if _b.is_some(){
-            //You can throw an error here, but I don't want to make the default builder picky.
+    fn set_param(&mut self, param_name: String, argument: String) -> Result<(), String>{
+        let b = self.params.insert(param_name, argument);
+        if let Some(param_name) = b{
+            return Err(format!("{param_name} is applied multiple times for {} {}", &self.typename, &self.content));
         }
         Ok(())
     }
@@ -52,8 +52,8 @@ impl Builder for DefaultBuilder{
 }
 
 pub struct DefaultItem{
-	typename : String,
-	content : String,
-	params : HashMap<String, String>,
-	children : Vec<DefaultItem>
+	pub typename : String,
+	pub content : String,
+	pub params : HashMap<String, String>,
+	pub children : Vec<DefaultItem>
 }

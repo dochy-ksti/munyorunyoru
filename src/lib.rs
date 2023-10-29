@@ -1,5 +1,5 @@
-#![allow(dead_code)]
-#![allow(unused_imports)]
+//#![allow(dead_code)]
+//#![allow(unused_imports)]
 
 mod builder;
 pub mod error;
@@ -9,7 +9,6 @@ mod test_parser;
 
 pub use crate::file_io::read_files::read_files;
 pub use crate::lang::process_file_text::process_file_text;
-
 
 #[cfg(test)]
 mod tests {

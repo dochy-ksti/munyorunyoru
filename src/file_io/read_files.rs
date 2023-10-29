@@ -1,6 +1,4 @@
 use std::{
-    fs::File,
-    io::{BufRead, BufReader},
     path::{Path, PathBuf},
     sync::Arc,
 };
@@ -9,15 +7,15 @@ use shrink_pool::ShrinkPool;
 
 use crate::{
     builder::builder::{Builder, MetaBuilder},
-    error::{MunyoError, MunyoResult, ReadFileError},
+    error::ReadFileError,
     lang::process_file_text::process_file_text,
 };
 
 use super::receiver::Receiver;
 
 pub struct Data<T>{
-	path : PathBuf,
-	items : Vec<T>
+	pub path : PathBuf,
+	pub items : Vec<T>
 }
 
 pub fn read_files<I, P, T, B, MB>(

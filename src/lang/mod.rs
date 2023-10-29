@@ -7,6 +7,3 @@ pub(crate) mod parse_main_line;
 pub(crate) mod parse_line_continuation;
 pub(crate) mod builder_tree;
 mod inner_lang;
-
-pub(crate) use self::inner_lang::build;
-pub(crate) use self::inner_lang::build_empty_line_item;

@@ -5,7 +5,7 @@ use crate::{
 
 use super::{
     builder_tree::BuilderTree,
-    inner_lang::{build, build_empty_line_item},
+    inner_lang::build,
     munyo_parser::{Pair, Pairs, Rule},
     parse_content::parse_content,
     parse_main_line::parse_main_line,

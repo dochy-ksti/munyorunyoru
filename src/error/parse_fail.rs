@@ -1,10 +1,5 @@
-use std::{
-    error::Error,
-    fmt::{Debug, Display, Formatter},
-};
-
 use pest::error::{Error as PestError, InputLocation};
-use pest::{error::LineColLocation, RuleType};
+use pest::RuleType;
 
 use crate::lang::munyo_parser::Pair;
 

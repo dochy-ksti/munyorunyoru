@@ -14,9 +14,6 @@ impl<B> TreeItem<B> {
             start_index,
         }
     }
-    pub(crate) fn last_mut(&mut self) -> Option<&mut TreeItem<B>> {
-        self.children.last_mut()
-    }
 }
 
 pub(crate) struct BuilderTree<B> {
