@@ -54,11 +54,8 @@ pub(crate) fn build_empty_line_item<MB, B>(
     if emp.is_empty() {
         return;
     }
-
-    let emp_command: String = std::iter::repeat('\t')
-        .take(state.indent_level())
-        .chain(emp.chars())
-        .collect();
+	
+    let emp_command = build_empty_line_command(emp, state.indent_level());
 
     let p = InnerLangParser::parse(Rule::content, &emp_command).expect("unreachable");
     let (name, arg) = parse_content(p);
@@ -67,6 +64,16 @@ pub(crate) fn build_empty_line_item<MB, B>(
 
     tree.add(builder, state.indent_level())
         .expect("unreachable");
+}
+
+//premature optimization.
+fn build_empty_line_command(emp_default : &str, indent_level : usize) -> String{
+	let mut r : Vec<u8> = Vec::with_capacity(indent_level + emp_default.len());
+	for _ in 0..indent_level{
+		r.push('\t' as u8);
+	}
+	r.extend_from_slice(emp_default.as_bytes());
+	unsafe{ String::from_utf8_unchecked(r) } 
 }
 
 fn parse_content(pairs: Pairs) -> (String, String) {

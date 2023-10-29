@@ -48,6 +48,11 @@ impl<B,T> BuilderTree<B> where B : Builder<Item=T>{
 	}
 
 	fn make_child(item : TreeItem<B>) -> T{
-		unimplemented!()
+		let children = item.children;
+		let mut item = item.item;
+		for c in children.into_iter().map(|c| Self::make_child(c)){
+			item.set_child(c);
+		}
+		item.finish()
 	}
 }
