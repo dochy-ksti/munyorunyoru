@@ -7,8 +7,8 @@ pub struct DefaultMetaBuilder{}
 impl MetaBuilder for DefaultMetaBuilder{
     type Item = DefaultBuilder;
 
-    fn new(&self, typename: String, argument: String) -> Self::Item {
-        DefaultBuilder::new(typename, argument)
+    fn build(&self, typename: String, argument: String) -> Result<Self::Item, String> {
+        Ok(DefaultBuilder::new(typename, argument))
     }
 }
 
@@ -28,16 +28,26 @@ impl DefaultBuilder{
 impl Builder for DefaultBuilder{
     type Item = DefaultItem;
 
-    fn set_param(&mut self, param_name: String, content: String) {
-        self.params.insert(param_name, content);
+    fn set_param(&mut self, param_name: String, content: String) -> Result<(), String>{
+        let _b = self.params.insert(param_name, content);
+        if _b.is_some(){
+            //You can throw an error here, but I don't want to make the default builder picky.
+        }
+        Ok(())
     }
 
-    fn set_child(&mut self, child: Self::Item) {
-        todo!()
+    fn set_child(&mut self, child: Self::Item) -> Result<(), String>{
+        self.children.push(child);
+        Ok(())
     }
 
-    fn finish(self) -> Self::Item {
-        todo!()
+    fn finish(self) -> Result<Self::Item, String> {
+        Ok(Self::Item{ 
+            typename : self.typename, 
+            content : self.content,
+            params : self.params,
+            children : self.children
+         })
     }
 }
 

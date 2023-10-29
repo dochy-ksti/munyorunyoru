@@ -2,7 +2,7 @@ use pest::Parser;
 
 use crate::{
     builder::builder::{Builder, MetaBuilder},
-    lang::{builder_tree::BuilderTree, parse_main_line::LineResult, state::State},
+    lang::{builder_tree::BuilderTree, parse_main_line::LineResult, state::State, munyo_parser::Pair},
 };
 
 use super::{InnerLangParser, Pairs, Rule};
@@ -12,7 +12,7 @@ pub(crate) fn build<MB, B>(
     tree: &mut BuilderTree<B>,
     r: LineResult,
     meta_builder: &MB,
-) where
+) -> Result<(), String> where
     MB: MetaBuilder<Item = B>,
 	B : Builder,
 {
@@ -27,7 +27,7 @@ pub(crate) fn build<MB, B>(
         parse_content(p)
     };
 
-    let mut builder = meta_builder.new(name, arg);
+    let mut builder = meta_builder.build(name, arg)?;
 
     let params = r.params;
 
@@ -35,24 +35,26 @@ pub(crate) fn build<MB, B>(
         let p = InnerLangParser::parse(Rule::param, &param).expect("unreachable");
 
         let (name, val) = parse_param(p);
-        builder.set_param(name, val);
+        builder.set_param(name, val)?;
     }
 
     tree.add(builder, state.indent_level())
         .expect("unreachable");
+    Ok(())
 }
 
 pub(crate) fn build_empty_line_item<MB, B>(
     state: &mut State,
     tree: &mut BuilderTree<B>,
     meta_builder: &MB,
-) where
+    pair : &Pair,
+) -> Result<(), String> where
     MB: MetaBuilder<Item = B>,
 {
     let (_def, emp) = state.default_types();
 
     if emp.is_empty() {
-        return;
+        return Ok(());
     }
 	
     let emp_command = build_empty_line_command(emp, state.indent_level());
@@ -60,10 +62,11 @@ pub(crate) fn build_empty_line_item<MB, B>(
     let p = InnerLangParser::parse(Rule::content, &emp_command).expect("unreachable");
     let (name, arg) = parse_content(p);
 
-    let builder = meta_builder.new(name, arg);
+    let builder = meta_builder.build(name, arg)?;
 
-    tree.add(builder, state.indent_level())
+    tree.add(builder, state.indent_level(), pair.as_span().)
         .expect("unreachable");
+    Ok(())
 }
 
 //premature optimization.

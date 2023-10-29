@@ -23,26 +23,19 @@ where
     MB: MetaBuilder<Item = B>,
 	B : Builder,
 {
-    let mut is_empty = true;
     match pair.as_rule() {
         Rule::define_stmt => {
-            is_empty = false;
             state.set_indent(indent_level).oe(&pair)?;
             parse_define_stmt(pair.into_inner(), indent_level, state)?;
         }
         Rule::main_line => {
             state.set_indent(indent_level).oe(&pair)?;
             let r = parse_main_line(pair.into_inner())?;
-            build(state, tree, r, meta_builder);
-            is_empty = false;
+            build(state, tree, r, meta_builder).oe(&pair)?;
         }
         Rule::commented_line => {
-            is_empty = false;
         }
         _ => {}
-    }
-    if is_empty {
-        build_empty_line_item(state, tree, meta_builder)
     }
     Ok(())
 }

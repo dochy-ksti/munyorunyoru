@@ -4,7 +4,7 @@ where
 {
     type Item;
 
-    fn new(&self, typename: String, argument: String) -> Result<Self::Item, String>;
+    fn build(&self, typename: String, argument: String) -> Result<Self::Item, String>;
 }
 
 pub trait Builder {

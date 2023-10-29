@@ -34,7 +34,9 @@ where
 	B : Builder,
 {
     let mut state = State::new();
-    let mut tree = BuilderTree::new(meta_builder.new(String::new(), String::new()));
+    let mut tree = BuilderTree::new(
+        meta_builder.build(String::new(), String::new())
+        .oe(&pairs.next().unwrap())?);
     loop {
         let tabs = pairs.next().unwrap();
         let indent_level = tabs.as_str().len();
@@ -56,7 +58,8 @@ where
                 }
             }
             Rule::new_line => {
-                build_empty_line_item(&mut state, &mut tree, meta_builder);
+                build_empty_line_item(&mut state, &mut tree, meta_builder)
+                .oe(&p)?;
             }
             Rule::EOI => return Ok(tree),
             _ => unreachable!(),
