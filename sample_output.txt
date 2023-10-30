@@ -1,10 +1,10 @@
 Text hoge
-        Text hoge|param huga
-                Text hoge|param huga|param2
+	Text hoge|param huga
+		Text hoge|param huga|param2
 Text|param|param2 hego
 Text|continuation
 Text|continuation|param
-        Text|continuation|param
+	Text|continuation|param
 Text|pseudo-continuation
 Text param|pseudo-continuation
 Text
@@ -29,12 +29,12 @@ hu pumapuma
 katu
 hu mumu
 katu
-        Cantoverwrite Children affected
-        emem
-                Cantoverwrite Grandchildren affected
-                emem
-        overwrite nyanya
-                overwrite childitem dayo
-        reoverwrite mahomaho
-        maho
+	Cantoverwrite Children affected
+	emem
+		Cantoverwrite Grandchildren affected
+		emem
+	overwrite nyanya
+		overwrite childitem dayo
+	reoverwrite mahomaho
+	maho
 hu tako hachiro

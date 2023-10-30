@@ -18,15 +18,10 @@ pub use crate::lang::process_file_text::process_file_text;
 mod tests {
     use std::{fs, path::PathBuf, str::FromStr};
 
-    use pest::Parser;
-
     use crate::{
         builder::default_builder::DefaultMetaBuilder,
-        error::ReadFileError,
-        lang::{
-            munyo_parser::{MunyoParser, Rule},
-            process_file_text::process_file_text,
-        },
+        error::{parse_error::ParseError, ReadFileError},
+        lang::process_file_text::process_file_text,
     };
 
     #[test]
@@ -35,27 +30,19 @@ mod tests {
         let unparsed_file = fs::read_to_string(path).expect("cannot read file");
         let r = process_file_text(unparsed_file, &DefaultMetaBuilder::new())
             .map_err(|e| ReadFileError::Parse(PathBuf::from_str(path).unwrap(), e))?;
-        for item in &r {
-            println!("{}", item);
-        }
+
+        println!("{}", r);
+
         Ok(())
     }
 
-    fn output_sample() -> Result<(), ()> {
+    #[test]
+    fn output_sample() -> Result<(), ParseError> {
         let path = "sample.munyo";
         let unparsed_file = fs::read_to_string(path).expect("cannot read file");
-        let parsed = MunyoParser::parse(Rule::file, &unparsed_file).unwrap();
-        let txt = format!("{:#?}", parsed);
+        let r = process_file_text(unparsed_file, &DefaultMetaBuilder::new())?;
+        let txt = format!("{}", r);
         fs::write("sample_output.txt", &txt).unwrap();
-        Ok(())
-    }
-
-    fn proble_test() -> Result<(), ()> {
-        // let path = "sample.munyo";
-        // let unparsed_file = fs::read_to_string(path).expect("cannot read file");
-        // let parsed = ProbleParser::parse(crate::test_parser::Rule::file, &unparsed_file).unwrap();
-        // let txt = format!("{:#?}", parsed);
-        // fs::write("sample_output.txt", &txt).unwrap();
         Ok(())
     }
 }
