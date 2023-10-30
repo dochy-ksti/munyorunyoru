@@ -56,6 +56,9 @@ impl Builder for HtmlBuilder {
     }
 
     fn set_child(&mut self, child: Self::Item) -> Result<(), String> {
+		if self.typename == "Text"{
+			Err("Text can't have childs")?;
+		}
         self.children.push(child);
         Ok(())
     }
