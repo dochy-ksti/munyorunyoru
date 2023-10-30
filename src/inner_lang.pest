@@ -20,3 +20,5 @@ param = {
     SOI ~ " "* ~ name ~ (" " ~ text)? ~ EOI
 }
 
+// dummy. Pest language server complains about ununified rules
+file = { param | content }

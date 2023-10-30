@@ -42,12 +42,12 @@ impl LineColLookup {
         let line_start = if line_index == 0 {
             0
         } else {
-            heads[line_index - 1] + 1
+            heads[line_index - 1] + 1 //the start of a line is the next of the '\n'
         };
         let line_end = if line_index == heads.len() {
             self.src_len
         } else {
-            heads[line_index] + 1
+            heads[line_index] + 1 //the index of the end of a line is also the next of the '\n'
         };
         let col = index + 1 - line_start;
 
