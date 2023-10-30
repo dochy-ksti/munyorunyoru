@@ -1,0 +1,40 @@
+Text hoge
+        Text hoge|param huga
+                Text hoge|param huga|param2
+Text|param|param2 hego
+Text|continuation
+Text|continuation|param
+        Text|continuation|param
+Text|pseudo-continuation
+Text param|pseudo-continuation
+Text
+ some text|continuation|param
+Text
+ some| t\ext|continuation|param
+double hogehoge
+empty
+No Default
+emp
+doub hugahuga
+Non Default
+ma huga
+mo
+single hegohego
+em
+Nono Default
+em
+sing penyopenyo|param huga
+Nonon Default
+hu pumapuma
+katu
+hu mumu
+katu
+        Cantoverwrite Children affected
+        emem
+                Cantoverwrite Grandchildren affected
+                emem
+        overwrite nyanya
+                overwrite childitem dayo
+        reoverwrite mahomaho
+        maho
+hu tako hachiro

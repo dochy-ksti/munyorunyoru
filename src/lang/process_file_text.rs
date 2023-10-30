@@ -14,7 +14,6 @@ use super::{
     state::State,
 };
 
-use crate::error::parse_fail::ParseFailHelper;
 use pest::Parser;
 
 pub fn process_file_text<MB, B, T>(text: String, meta_builder: &MB) -> Result<Vec<T>, ParseError>

@@ -12,7 +12,7 @@ Text|param|| comment
 |continuation
 Text|
 |pseudo-continuation
-Text param|||
+Text param||| commenting...
 |pseudo-continuation
 Text\
  some text|param

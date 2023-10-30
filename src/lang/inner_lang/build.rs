@@ -97,9 +97,3 @@ fn parse_content(pairs: Pairs) -> Result<(String, String), Error> {
 fn parse_param(mut pairs: Pairs) -> Result<(String, String), Error> {
     parse_content(pairs.next().unwrap().into_inner())
 }
-
-#[cfg(test)]
-mod test {
-    #[test]
-    fn hoge() {}
-}

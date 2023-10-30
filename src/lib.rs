@@ -8,9 +8,9 @@ mod file_io;
 mod lang;
 mod test_parser;
 
+pub use crate::builder::default_builder::DefaultMetaBuilder;
 pub use crate::file_io::read_files::read_files;
 pub use crate::lang::process_file_text::process_file_text;
-pub use crate::builder::default_builder::DefaultMetaBuilder;
 
 #[cfg(test)]
 mod tests {
@@ -31,12 +31,14 @@ mod tests {
     fn it_works() -> Result<(), ReadFileError> {
         let path = "sample.munyo";
         let unparsed_file = fs::read_to_string(path).expect("cannot read file");
-        process_file_text(unparsed_file, &DefaultMetaBuilder::new())
+        let r = process_file_text(unparsed_file, &DefaultMetaBuilder::new())
             .map_err(|e| ReadFileError::Parse(PathBuf::from_str(path).unwrap(), e))?;
+        for item in &r {
+            println!("{}", item);
+        }
         Ok(())
     }
 
-    
     fn output_sample() -> Result<(), ()> {
         let path = "sample.munyo";
         let unparsed_file = fs::read_to_string(path).expect("cannot read file");
@@ -46,7 +48,6 @@ mod tests {
         Ok(())
     }
 
-    
     fn proble_test() -> Result<(), ()> {
         // let path = "sample.munyo";
         // let unparsed_file = fs::read_to_string(path).expect("cannot read file");
