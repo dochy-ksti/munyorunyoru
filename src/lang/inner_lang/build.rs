@@ -78,14 +78,6 @@ where
     Ok(())
 }
 
-//premature optimization.
-fn build_empty_line_command(emp_default: &str, indent_level: usize) -> String {
-    let mut r: Vec<u8> = Vec::with_capacity(indent_level + emp_default.len());
-    r.extend(std::iter::repeat(b'\t').take(indent_level));
-    r.extend_from_slice(emp_default.as_bytes());
-    unsafe { String::from_utf8_unchecked(r) }
-}
-
 fn parse_content(pairs: Pairs) -> Result<(String, String), Error> {
     let mut name = String::new();
     let mut text = String::new();
