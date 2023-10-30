@@ -4,6 +4,10 @@ use super::builder::{MetaBuilder, Builder};
 
 pub struct DefaultMetaBuilder{}
 
+impl DefaultMetaBuilder {
+    pub fn new() -> Self { Self {  } }
+}
+
 impl MetaBuilder for DefaultMetaBuilder{
     type Item = DefaultBuilder;
 

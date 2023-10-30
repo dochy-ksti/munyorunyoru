@@ -50,7 +50,7 @@ where
             .map(|c| {
                 Self::make_child(c)
                     .map(|(_, item)| item)
-                    .map_err(|(index, m)| ParseFail::new(index, m))
+                    .map_err(|(index, m)| ParseFail::msg(index, m))
             })
             .collect()
     }

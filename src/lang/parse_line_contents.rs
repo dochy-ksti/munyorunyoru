@@ -1,6 +1,6 @@
 use crate::{
     builder::builder::{Builder, MetaBuilder},
-    error::parse_fail::{parse_fail, PairHelper, ParseFail, ParseFailHelper},
+    error::parse_fail::{parse_fail, PairHelper, ParseFail, ParseFailHelper, ParseFailHelper2},
 };
 
 use super::{
@@ -32,7 +32,7 @@ where
             state.set_indent(indent_level).op(&pair)?;
             let start_index = pair.start_index();
             let r = parse_main_line(pair.into_inner())?;
-            build(state, tree, r, meta_builder, start_index).os(start_index)?;
+            build(state, tree, r, meta_builder, start_index).oe(start_index)?;
         }
         Rule::commented_line => {}
         _ => {}

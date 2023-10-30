@@ -66,9 +66,9 @@ If you want to end with '|', and write comments after that, you can use '|||'
 	munyo arg||| comment
 	continuation
 
-If you want to end with '\', and write comments after that, you can use '\||'
+If you want to end with '\', and write comments after that, you can use '||\'
 
-	munyo arg\|| comment
+	munyo arg||\ comment
 	continuation
 
 *Default type and empty line type

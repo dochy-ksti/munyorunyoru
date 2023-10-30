@@ -46,10 +46,13 @@ pub(crate) fn set_results(
 
 pub(crate) fn parse_line_continuation(pair: Pair) -> Result<LineResult, ParseFail> {
     match pair.as_rule() {
-        Rule::normal_end => Ok(LineResult {
-            content: String::new(),
-            params: parse_normal_end(pair.into_inner())?.params,
-        }),
+        Rule::normal_end => {
+            let r = Ok(LineResult {
+                content: String::new(),
+                params: parse_normal_end(pair.into_inner())?.params,
+            });
+            r
+        }
         Rule::backslash_comment_end => {
             let mut r = parse_backslash_comment_end(pair.into_inner())?;
             r.content.insert_str(0, &r.new_line);
@@ -105,12 +108,16 @@ fn parse_backslash_end(mut pairs: Pairs) -> Result<LcnResult, ParseFail> {
 
 fn parse_single_bar(mut pairs: Pairs) -> Result<LineResult, ParseFail> {
     let _new_line = pairs.next();
-    parse_continued_line(pairs)
+    parse_continued_line(pairs.next().unwrap().into_inner())
 }
 
 fn parse_double_bars(mut pairs: Pairs) -> Result<Params, ParseFail> {
     let _comment = pairs.next();
-    parse_normal_end(pairs)
+    if pairs.peek().is_some() {
+        parse_normal_end(pairs)
+    } else {
+        Ok(Params { params: vec![] })
+    }
 }
 
 fn parse_triple_bars(mut pairs: Pairs) -> Result<LineResult, ParseFail> {
@@ -143,7 +150,7 @@ fn parse_continued_line_with_content(mut pairs: Pairs) -> Result<LineResult, Par
                 params.push(parse_param_item(p.into_inner().next().unwrap())?);
             }
             Rule::line_continuation => {
-                let mut r = parse_line_continuation(p)?;
+                let mut r = parse_line_continuation(p.into_inner().next().unwrap())?;
                 set_results(&mut content, &mut params, &r.content, &mut r.params);
             }
             _ => unreachable!(),

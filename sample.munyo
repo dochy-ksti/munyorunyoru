@@ -1,14 +1,14 @@
 Text hoge
-    Text hoge|param huga
-        Text hoge|  param huga|param2
+	Text hoge|param huga
+		Text hoge|  param huga|param2
 Text|param|param2 hego
 
 ||commented empty line
 Text
 |continuation
 Text|param|| comment
-    |continuation
-    Text|param|| comment
+	|continuation
+	Text|param|| comment
 |continuation
 Text|
 |pseudo-continuation
@@ -17,7 +17,7 @@ Text param|||
 Text\
  some text|param
 |continuation
-Text\|| commenting...
+Text||\ commenting...
  some\| t\\ext|param
 |continuation
 
@@ -55,16 +55,16 @@ pumapuma
 >>Cantoverwrite|emem
 mumu
 
-    Children affected
+	Children affected
 
-        Grandchildren affected
+		Grandchildren affected
 
-    >>overwrite
-    nyanya
+	>>overwrite
+	nyanya
 
-        childitem dayo
+		childitem dayo
 
-    >reoverwrite|maho
-    mahomaho
-    
+	>reoverwrite|maho
+	mahomaho
+
 tako hachiro

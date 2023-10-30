@@ -1,4 +1,4 @@
-use std::ops::Index;
+
 
 
 
@@ -89,7 +89,7 @@ impl State {
     }
 
     pub(crate) fn default_types(&self) -> (&str, &str) {
-        if let Some((def, emp)) = self.leveled_default.index(self.indent_level) {
+        if let Some(Some((def, emp))) = self.leveled_default.get(self.indent_level) {
             return (def, emp);
         }
         if let Some(last) = self.default_stack.last() {

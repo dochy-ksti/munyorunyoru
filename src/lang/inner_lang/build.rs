@@ -1,3 +1,4 @@
+use anyhow::{anyhow, Error};
 use pest::Parser;
 
 use crate::{
@@ -13,7 +14,7 @@ pub(crate) fn build<MB, B>(
     r: LineResult,
     meta_builder: &MB,
     start_index: usize,
-) -> Result<(), String>
+) -> Result<(), anyhow::Error>
 where
     MB: MetaBuilder<Item = B>,
     B: Builder,
@@ -21,15 +22,19 @@ where
     let (def, _emp) = state.default_types();
 
     let (name, arg) = if def.is_empty() {
-        let p = InnerLangParser::parse(Rule::content, &r.content).expect("unreachable");
-        parse_content(p)
+        let mut p = InnerLangParser::parse(Rule::content, &r.content)
+            //anything other than preceding space is accepted in this grammar
+            .map_err(|_| anyhow!("preceding space is not allowed in this context"))?;
+        parse_content(p.next().unwrap().into_inner())
     } else {
         let full = format!("{def} {}", r.content);
-        let p = InnerLangParser::parse(Rule::content, &full).expect("unreachable");
-        parse_content(p)
+        let mut p = InnerLangParser::parse(Rule::content, &full)
+            //anything other than preceding space is accepted in this grammar
+            .map_err(|_| anyhow!("preceding space is not allowed in this context"))?;
+        parse_content(p.next().unwrap().into_inner())
     };
 
-    let mut builder = meta_builder.build(name, arg)?;
+    let mut builder = meta_builder.build(name, arg).map_err(|e| Error::msg(e))?;
 
     let params = r.params;
 
@@ -37,7 +42,7 @@ where
         let p = InnerLangParser::parse(Rule::param, &param).expect("unreachable");
 
         let (name, val) = parse_param(p);
-        builder.set_param(name, val)?;
+        builder.set_param(name, val).map_err(|s| Error::msg(s))?;
     }
 
     tree.add(builder, state.indent_level(), start_index)
@@ -88,12 +93,21 @@ fn parse_content(pairs: Pairs) -> (String, String) {
             Rule::name => name = pair.as_str().to_string(),
             Rule::text => text = pair.as_str().to_string(),
             Rule::EOI => {}
-            _ => unreachable!(),
+            _ => {
+                println!("{:#?}", pair);
+                unreachable!()
+            }
         }
     }
     (name, text)
 }
 
-fn parse_param(pairs: Pairs) -> (String, String) {
-    parse_content(pairs)
+fn parse_param(mut pairs: Pairs) -> (String, String) {
+    parse_content(pairs.next().unwrap().into_inner())
+}
+
+#[cfg(test)]
+mod test {
+    #[test]
+    fn hoge() {}
 }
