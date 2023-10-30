@@ -1,6 +1,8 @@
 //#![allow(dead_code)]
 //#![allow(unused_imports)]
 #![allow(clippy::module_inception)]
+#![warn(unreachable_pub)]
+#![deny(unused_crate_dependencies)]
 
 mod builder;
 pub mod error;
@@ -20,7 +22,7 @@ mod tests {
 
     use crate::{
         builder::default_builder::DefaultMetaBuilder,
-        error::{MunyoResult, ReadFileError},
+        error::ReadFileError,
         lang::{
             munyo_parser::{MunyoParser, Rule},
             process_file_text::process_file_text,

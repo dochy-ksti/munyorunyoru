@@ -11,17 +11,19 @@ use crate::{
 use super::{
     munyo_parser::{MunyoParser, Pairs, Rule},
     parse_line_contents::parse_line_contents,
-    state::State,
+    state::State, processed::Processed,
 };
 
 use pest::Parser;
 
-pub fn process_file_text<MB, B, T>(text: String, meta_builder: &MB) -> Result<Vec<T>, ParseError>
+
+
+pub fn process_file_text<MB, B, T>(text: String, meta_builder: &MB) -> Result<Processed<T>, ParseError>
 where
     MB: MetaBuilder<Item = B>,
     B: Builder<Item = T>,
 {
-    in_process_file_text(&text, meta_builder).map_err(|e| {
+    Ok(Processed::new(in_process_file_text(&text, meta_builder).map_err(|e| {
         let lookup = LineColLookup::new(&text);
         let r = lookup.line_col(e.start_index).unwrap();
         ParseError::new(
@@ -30,7 +32,7 @@ where
             text[r.line_start..r.line_end].to_string(),
             e.message,
         )
-    })
+    })?))
 }
 
 fn in_process_file_text<MB, B, T>(text: &str, meta_builder: &MB) -> Result<Vec<T>, ParseFail>

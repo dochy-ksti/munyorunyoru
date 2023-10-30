@@ -4,14 +4,14 @@ pub(crate) struct LineColLookup {
 }
 
 pub(crate) struct LineColResult {
-    pub line: usize,
-    pub col: usize,
-    pub line_start: usize,
-    pub line_end: usize,
+    pub(crate) line: usize,
+    pub(crate) col: usize,
+    pub(crate) line_start: usize,
+    pub(crate) line_end: usize,
 }
 
 impl LineColLookup {
-    pub fn new(src: &str) -> Self {
+    pub(crate) fn new(src: &str) -> Self {
         Self {
             src_len: src.len(),
             line_heads: Self::heads(src),
@@ -31,7 +31,7 @@ impl LineColLookup {
         vec
     }
 
-    pub fn line_col(&self, index: usize) -> Result<LineColResult, String> {
+    pub(crate) fn line_col(&self, index: usize) -> Result<LineColResult, String> {
         if index > self.src_len {
             Err("Index cannot be greater than the length of the input slice.")?
         }

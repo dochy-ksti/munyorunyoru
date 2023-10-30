@@ -7,9 +7,9 @@ use super::{
 };
 
 pub(crate) struct LcnResult {
-    pub content: String,
-    pub params: Vec<String>,
-    pub new_line: String,
+    pub(crate) content: String,
+    pub(crate) params: Vec<String>,
+    pub(crate) new_line: String,
 }
 
 impl LcnResult {
@@ -46,13 +46,10 @@ pub(crate) fn set_results(
 
 pub(crate) fn parse_line_continuation(pair: Pair) -> Result<LineResult, ParseFail> {
     match pair.as_rule() {
-        Rule::normal_end => {
-            let r = Ok(LineResult {
-                content: String::new(),
-                params: parse_normal_end(pair.into_inner())?.params,
-            });
-            r
-        }
+        Rule::normal_end => Ok(LineResult {
+            content: String::new(),
+            params: parse_normal_end(pair.into_inner())?.params,
+        }),
         Rule::backslash_comment_end => {
             let mut r = parse_backslash_comment_end(pair.into_inner())?;
             r.content.insert_str(0, &r.new_line);
@@ -86,7 +83,7 @@ fn parse_normal_end(mut pairs: Pairs) -> Result<Params, ParseFail> {
 }
 
 struct Params {
-    pub params: Vec<String>,
+    pub(crate) params: Vec<String>,
 }
 
 fn parse_continuation(mut pairs: Pairs) -> Result<Params, ParseFail> {

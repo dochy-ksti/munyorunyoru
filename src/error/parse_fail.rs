@@ -5,8 +5,8 @@ use pest::RuleType;
 use crate::lang::munyo_parser::Pair;
 
 pub(crate) struct ParseFail {
-    pub start_index: usize,
-    pub message: anyhow::Error,
+    pub(crate) start_index: usize,
+    pub(crate) message: anyhow::Error,
 }
 
 impl ParseFail {
@@ -17,7 +17,7 @@ impl ParseFail {
         }
     }
 
-    pub fn msg(start_index: usize, message: String) -> Self {
+    pub(crate) fn msg(start_index: usize, message: String) -> Self {
         Self {
             start_index,
             message: anyhow!(message),

@@ -5,6 +5,7 @@ use std::{
 
 use super::builder::{Builder, MetaBuilder};
 
+#[derive(Debug, Clone, Default)]
 pub struct DefaultMetaBuilder {}
 
 impl DefaultMetaBuilder {
@@ -21,6 +22,7 @@ impl MetaBuilder for DefaultMetaBuilder {
     }
 }
 
+#[derive(Debug)]
 pub struct DefaultBuilder {
     typename: String,
     content: String,
@@ -94,17 +96,17 @@ fn write_item(
     f: &mut std::fmt::Formatter<'_>,
 ) -> std::fmt::Result {
     for _ in 0..indent_level {
-        write!(f, "\t").unwrap();
+        write!(f, "\t")?;
     }
-    write!(f, "{}", item_format(&item.typename, &item.content)).unwrap();
+    write!(f, "{}", item_format(&item.typename, &item.content))?;
     for (key, val) in &item.params {
-        write!(f, "|{}", item_format(key, val)).unwrap();
+        write!(f, "|{}", item_format(key, val))?;
     }
     for child in &item.children {
-        writeln!(f, "").unwrap();
-        write_item(child, indent_level + 1, f).unwrap();
+        writeln!(f)?;
+        write_item(child, indent_level + 1, f)?;
     }
-    write!(f, "")
+    Ok(())
 }
 
 fn item_format(name: &str, val: &str) -> String {

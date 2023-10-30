@@ -34,7 +34,7 @@ where
         parse_content(p.next().unwrap().into_inner())?
     };
 
-    let mut builder = meta_builder.build(name, arg).map_err(|e| Error::msg(e))?;
+    let mut builder = meta_builder.build(name, arg).map_err(Error::msg)?;
 
     let params = r.params;
 
@@ -42,7 +42,7 @@ where
         let p = InnerLangParser::parse(Rule::param, &param).expect("unreachable");
 
         let (name, val) = parse_param(p)?;
-        builder.set_param(name, val).map_err(|s| Error::msg(s))?;
+        builder.set_param(name, val).map_err(Error::msg)?;
     }
 
     tree.add(builder, state.indent_level(), start_index)
@@ -67,11 +67,11 @@ where
 
     //let emp_command = build_empty_line_command(emp, state.indent_level());
 
-    let mut p = InnerLangParser::parse(Rule::content, &emp)
+    let mut p = InnerLangParser::parse(Rule::content, emp)
         .map_err(|_| anyhow!("preceding space is not allowed in this context"))?;
     let (name, arg) = parse_content(p.next().unwrap().into_inner())?;
 
-    let builder = meta_builder.build(name, arg).map_err(|s| Error::msg(s))?;
+    let builder = meta_builder.build(name, arg).map_err(Error::msg)?;
 
     tree.add(builder, state.indent_level(), start_index)
         .expect("unreachable");

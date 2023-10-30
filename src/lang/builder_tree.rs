@@ -1,9 +1,9 @@
 use crate::{builder::builder::Builder, error::parse_fail::ParseFail};
 
 pub(crate) struct TreeItem<B> {
-    pub item: B,
-    pub children: Vec<TreeItem<B>>,
-    pub start_index: usize,
+    pub(crate) item: B,
+    pub(crate) children: Vec<TreeItem<B>>,
+    pub(crate) start_index: usize,
 }
 
 impl<B> TreeItem<B> {
@@ -17,7 +17,7 @@ impl<B> TreeItem<B> {
 }
 
 pub(crate) struct BuilderTree<B> {
-    pub root: Vec<TreeItem<B>>,
+    pub(crate) root: Vec<TreeItem<B>>,
 }
 
 impl<B> BuilderTree<B> {

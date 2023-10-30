@@ -7,8 +7,8 @@ use super::{
 };
 
 pub(crate) struct LineResult {
-    pub content: String,
-    pub params: Vec<String>,
+    pub(crate) content: String,
+    pub(crate) params: Vec<String>,
 }
 
 impl LineResult {

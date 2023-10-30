@@ -6,4 +6,5 @@ pub(crate) mod parse_content;
 pub(crate) mod parse_main_line;
 pub(crate) mod parse_line_continuation;
 pub(crate) mod builder_tree;
+pub(crate) mod processed;
 mod inner_lang;
