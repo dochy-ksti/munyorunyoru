@@ -3,7 +3,7 @@ use crate::{
     error::{
         line_col_lookup::LineColLookup,
         parse_error::ParseError,
-        parse_fail::{PairHelper, ParseFail},
+        parse_fail::{PairHelper, ParseFail, ParseFailHelper2},
     },
     lang::{builder_tree::BuilderTree, inner_lang::build_empty_line_item},
 };
@@ -78,7 +78,7 @@ where
             }
             Rule::new_line => {
                 build_empty_line_item(&state, &mut tree, meta_builder, p.start_index())
-                    .op(&p)?;
+                    .oe(p.start_index())?;
             }
             Rule::EOI => return Ok(tree),
             _ => unreachable!(),

@@ -25,13 +25,13 @@ where
         let mut p = InnerLangParser::parse(Rule::content, &r.content)
             //anything other than preceding space is accepted in this grammar
             .map_err(|_| anyhow!("preceding space is not allowed in this context"))?;
-        parse_content(p.next().unwrap().into_inner())
+        parse_content(p.next().unwrap().into_inner())?
     } else {
         let full = format!("{def} {}", r.content);
         let mut p = InnerLangParser::parse(Rule::content, &full)
             //anything other than preceding space is accepted in this grammar
             .map_err(|_| anyhow!("preceding space is not allowed in this context"))?;
-        parse_content(p.next().unwrap().into_inner())
+        parse_content(p.next().unwrap().into_inner())?
     };
 
     let mut builder = meta_builder.build(name, arg).map_err(|e| Error::msg(e))?;
@@ -41,7 +41,7 @@ where
     for param in params {
         let p = InnerLangParser::parse(Rule::param, &param).expect("unreachable");
 
-        let (name, val) = parse_param(p);
+        let (name, val) = parse_param(p)?;
         builder.set_param(name, val).map_err(|s| Error::msg(s))?;
     }
 
@@ -55,7 +55,7 @@ pub(crate) fn build_empty_line_item<MB, B>(
     tree: &mut BuilderTree<B>,
     meta_builder: &MB,
     start_index: usize,
-) -> Result<(), String>
+) -> Result<(), Error>
 where
     MB: MetaBuilder<Item = B>,
 {
@@ -65,12 +65,13 @@ where
         return Ok(());
     }
 
-    let emp_command = build_empty_line_command(emp, state.indent_level());
+    //let emp_command = build_empty_line_command(emp, state.indent_level());
 
-    let p = InnerLangParser::parse(Rule::content, &emp_command).expect("unreachable");
-    let (name, arg) = parse_content(p);
+    let mut p = InnerLangParser::parse(Rule::content, &emp)
+        .map_err(|_| anyhow!("preceding space is not allowed in this context"))?;
+    let (name, arg) = parse_content(p.next().unwrap().into_inner())?;
 
-    let builder = meta_builder.build(name, arg)?;
+    let builder = meta_builder.build(name, arg).map_err(|s| Error::msg(s))?;
 
     tree.add(builder, state.indent_level(), start_index)
         .expect("unreachable");
@@ -85,7 +86,7 @@ fn build_empty_line_command(emp_default: &str, indent_level: usize) -> String {
     unsafe { String::from_utf8_unchecked(r) }
 }
 
-fn parse_content(pairs: Pairs) -> (String, String) {
+fn parse_content(pairs: Pairs) -> Result<(String, String), Error> {
     let mut name = String::new();
     let mut text = String::new();
     for pair in pairs {
@@ -94,15 +95,14 @@ fn parse_content(pairs: Pairs) -> (String, String) {
             Rule::text => text = pair.as_str().to_string(),
             Rule::EOI => {}
             _ => {
-                println!("{:#?}", pair);
-                unreachable!()
+                return Err(anyhow!("{:#?}", pair));
             }
         }
     }
-    (name, text)
+    Ok((name, text))
 }
 
-fn parse_param(mut pairs: Pairs) -> (String, String) {
+fn parse_param(mut pairs: Pairs) -> Result<(String, String), Error> {
     parse_content(pairs.next().unwrap().into_inner())
 }
 
