@@ -26,11 +26,14 @@ impl<B> BuilderTree<B> {
     }
     pub(crate) fn add(&mut self, item: B, level: usize, start_index: usize) -> Result<(), String> {
         let mut parent = &mut self.root;
+        let level = level - 1;
         for i in 0..level {
             let last = parent.last_mut();
             if last.is_none() {
                 Err(format!(
-                    "The item with indent level {level} is not found. The max level is {i}"
+                    "The item with indent level {} is not found. The max level is {}",
+                    level + 1,
+                    i + 1,
                 ))?
             }
             parent = &mut last.unwrap().children;

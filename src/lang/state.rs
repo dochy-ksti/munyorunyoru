@@ -33,7 +33,7 @@ impl State {
         }
     }
     pub(crate) fn indent_level(&self) -> usize {
-        self.indent_level
+        self.indent_level as usize
     }
 
     pub(crate) fn set_indent(&mut self, indent_level: usize) -> Result<(), String> {

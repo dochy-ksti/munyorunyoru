@@ -25,8 +25,8 @@ impl Display for ParseError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "{}:{}: {}\n{}\n{}",
-            self.line, self.col, &self.message, &self.line_str, &self.message.backtrace()
+            "{}:{}: {}\n{}",
+            self.line, self.col, &self.message, &self.line_str
         )
     }
 }
@@ -36,7 +36,11 @@ impl Debug for ParseError {
         write!(
             f,
             "{}:{}: {}\n {}\n{}",
-            self.line, self.col, &self.message, &self.line_str,&self.message.backtrace()
+            self.line,
+            self.col,
+            &self.message,
+            &self.line_str,
+            &self.message.backtrace()
         )
     }
 }

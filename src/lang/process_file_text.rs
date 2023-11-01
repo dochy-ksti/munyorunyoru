@@ -11,28 +11,32 @@ use crate::{
 use super::{
     munyo_parser::{MunyoParser, Pairs, Rule},
     parse_line_contents::parse_line_contents,
-    state::State, processed::Processed,
+    processed::Processed,
+    state::State,
 };
 
 use pest::Parser;
 
-
-
-pub fn process_file_text<MB, B, T>(text: String, meta_builder: &MB) -> Result<Processed<T>, ParseError>
+pub fn process_file_text<MB, B, T>(
+    text: String,
+    meta_builder: &MB,
+) -> Result<Processed<T>, ParseError>
 where
     MB: MetaBuilder<Item = B>,
     B: Builder<Item = T>,
 {
-    Ok(Processed::new(in_process_file_text(&text, meta_builder).map_err(|e| {
-        let lookup = LineColLookup::new(&text);
-        let r = lookup.line_col(e.start_index).unwrap();
-        ParseError::new(
-            r.line,
-            r.col,
-            text[r.line_start..r.line_end].to_string(),
-            e.message,
-        )
-    })?))
+    Ok(Processed::new(
+        in_process_file_text(&text, meta_builder).map_err(|e| {
+            let lookup = LineColLookup::new(&text);
+            let r = lookup.line_col(e.start_index).unwrap();
+            ParseError::new(
+                r.line,
+                r.col,
+                text[r.line_start..r.line_end].to_string(),
+                e.message,
+            )
+        })?,
+    ))
 }
 
 fn in_process_file_text<MB, B, T>(text: &str, meta_builder: &MB) -> Result<Vec<T>, ParseFail>
@@ -40,8 +44,7 @@ where
     MB: MetaBuilder<Item = B>,
     B: Builder<Item = T>,
 {
-    let mut pairs =
-        MunyoParser::parse(Rule::file, text).map_err(ParseFail::from_pest_err)?;
+    let mut pairs = MunyoParser::parse(Rule::file, text).map_err(ParseFail::from_pest_err)?;
 
     let pair = pairs.next().unwrap();
 
@@ -59,7 +62,7 @@ where
 
     loop {
         let tabs = pairs.next().unwrap();
-        let indent_level = tabs.as_str().len();
+        let indent_level = tabs.as_str().len() + 1;
 
         let p = pairs.next().unwrap();
 
