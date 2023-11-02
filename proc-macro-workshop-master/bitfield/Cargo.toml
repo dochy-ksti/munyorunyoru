@@ -1,0 +1,16 @@
+[package]
+name = "bitfield"
+version = "0.0.0"
+autotests = false
+edition = "2021"
+publish = false
+
+[[test]]
+name = "tests"
+path = "tests/progress.rs"
+
+[dev-dependencies]
+trybuild = { version = "1.0.49", features = ["diff"] }
+
+[dependencies]
+bitfield-impl = { path = "impl" }
