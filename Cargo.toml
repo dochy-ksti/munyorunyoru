@@ -3,8 +3,6 @@ name = "munyo"
 version = "0.1.0"
 edition = "2021"
 
-[workspace]
-members = ["munyo_derive"]
 
 [dependencies]
 anyhow = "1"
