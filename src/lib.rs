@@ -16,3 +16,9 @@ pub use crate::builder::default_builder::DefaultMetaBuilder;
 pub use crate::file_io::read_files::read_files;
 pub use crate::lang::process_file_text::process_file_text;
 
+fn hoge(){
+	let s = "{}";
+	let j:() = serde_json::from_str(s).unwrap();
+	return;
+}
+extern crate serde_json;
