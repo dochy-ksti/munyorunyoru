@@ -1,0 +1,19 @@
+[package]
+name = "sorted"
+version = "0.0.0"
+autotests = false
+edition = "2021"
+publish = false
+
+[lib]
+proc-macro = true
+
+[[test]]
+name = "tests"
+path = "tests/progress.rs"
+
+[dev-dependencies]
+trybuild = { version = "1.0.49", features = ["diff"] }
+
+[dependencies]
+# TODO
