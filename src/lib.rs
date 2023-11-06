@@ -16,6 +16,8 @@ mod tests;
 pub use crate::builder::default_builder::DefaultMetaBuilder;
 pub use crate::file_io::read_files::read_files;
 pub use crate::lang::process_file_text::process_file_text;
+pub use crate::serde::serializer::MunyoSerializer;
+pub use crate::serde::deserializer::MunyoDeserializer;
 
 fn hoge() {
     let s = "{}";

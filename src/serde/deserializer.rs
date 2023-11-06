@@ -2,9 +2,15 @@ use serde::Deserializer;
 
 use crate::error::ReadFileError;
 
-pub struct MunyoDeserializer {}
+pub struct MunyoDeserializer<'de> {
+	s : &'de str,
+}
 
-impl<'de> Deserializer<'de> for MunyoDeserializer {
+impl<'de> MunyoDeserializer<'de>{
+	pub fn from_str(s : &'de str) -> Self{ Self{ s } }
+}
+
+impl<'de> Deserializer<'de> for MunyoDeserializer<'de> {
     type Error = ReadFileError;
 
     fn deserialize_any<V>(self, visitor: V) -> Result<V::Value, Self::Error>
