@@ -13,11 +13,11 @@ text = @{
 }
 
 content = {
-    SOI ~ name ~ (" " ~ text)? ~ EOI
+    SOI ~ name ~ (" " ~ text?)? ~ EOI
 }
 
 param = {
-    SOI ~ " "* ~ name ~ (" " ~ text)? ~ EOI
+    SOI ~ " "* ~ name ~ (" " ~ text?)? ~ EOI
 }
 
 // dummy. Pest language server complains about ununified rules

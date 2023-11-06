@@ -10,7 +10,7 @@ impl<'de> MunyoDeserializer<'de>{
 	pub fn from_str(s : &'de str) -> Self{ Self{ s } }
 }
 
-impl<'de> Deserializer<'de> for MunyoDeserializer<'de> {
+impl<'de, 'a> Deserializer<'de> for &'a mut MunyoDeserializer<'de> {
     type Error = ReadFileError;
 
     fn deserialize_any<V>(self, visitor: V) -> Result<V::Value, Self::Error>

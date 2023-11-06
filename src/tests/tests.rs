@@ -38,8 +38,10 @@ fn errors() -> Result<(), ParseError> {
         r#"some thing
 		doubly indented
 "#,
+        r#"name |param || one space
+"#,
     ];
-    let s = ss[0];
+    let s = ss[2];
     {
         match process_file_text(s.to_string(), &DefaultMetaBuilder::new()) {
             Ok(_) => {}
