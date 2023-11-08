@@ -24,10 +24,10 @@ impl MetaBuilder for DefaultMetaBuilder {
 
 #[derive(Debug)]
 pub struct DefaultBuilder {
-    typename: String,
-    content: String,
-    params: BTreeMap<String, String>,
-    children: Vec<DefaultItem>,
+    pub(crate) typename: String,
+    pub(crate) content: String,
+    pub(crate) params: BTreeMap<String, String>,
+    pub(crate) children: Vec<DefaultItem>,
 }
 
 impl DefaultBuilder {

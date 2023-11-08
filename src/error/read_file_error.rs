@@ -9,11 +9,33 @@ pub enum ReadFileError {
     #[error("failed to read `{0}`, {1}")]
     ReadFile(PathBuf, String),
     #[error("`{0}`:{1}")]
-    Parse(PathBuf, ParseError),
+    Parse(PathItem, ParseError),
+    #[error("`{0}`:{1}")]
+    Deserialize(PathItem, ParseError),
     #[error("{0}")]
-    Deserialize(String),
+    DeserializeCustom(String),
     #[error("{0}")]
     Serialize(String),
+}
+
+#[derive(Debug, Clone, Default, PartialEq)]
+pub struct PathItem {
+    pub path: Option<PathBuf>,
+}
+
+impl PathItem {
+    pub fn new(path: Option<PathBuf>) -> Self {
+        Self { path }
+    }
+}
+
+impl Display for PathItem {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &self.path {
+            Some(t) => write!(f, "{}", t.to_string_lossy()),
+            None => Ok(()),
+        }
+    }
 }
 
 impl serde::de::Error for ReadFileError {
@@ -21,7 +43,7 @@ impl serde::de::Error for ReadFileError {
     where
         T: Display,
     {
-        Self::Deserialize(format!("{}", msg))
+        Self::DeserializeCustom(format!("{}", msg))
     }
 }
 

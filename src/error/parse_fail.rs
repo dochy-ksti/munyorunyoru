@@ -1,10 +1,12 @@
+use std::fmt::Display;
+
 use anyhow::{anyhow, Error};
 use pest::error::{Error as PestError, InputLocation};
 use pest::RuleType;
 
 use crate::lang::munyo_parser::Pair;
 
-pub(crate) struct ParseFail {
+pub struct ParseFail {
     pub(crate) start_index: usize,
     pub(crate) message: anyhow::Error,
 }
@@ -82,5 +84,28 @@ pub(crate) trait PairHelper {
 impl<'a> PairHelper for Pair<'a> {
     fn start_index(&self) -> usize {
         self.as_span().start()
+    }
+}
+
+impl serde::de::Error for ParseFail {
+    fn custom<T>(msg: T) -> Self
+    where
+        T: Display,
+    {
+        ParseFail::msg(0, format!("{msg}"))
+    }
+}
+
+impl std::error::Error for ParseFail {}
+
+impl std::fmt::Display for ParseFail {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        Display::fmt(&self.message, f)
+    }
+}
+
+impl std::fmt::Debug for ParseFail{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+		write!(f, "{}\n{}", &self.message, self.message.backtrace())
     }
 }

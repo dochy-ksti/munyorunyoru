@@ -7,7 +7,7 @@ use shrink_pool::ShrinkPool;
 
 use crate::{
     builder::builder::{Builder, MetaBuilder},
-    error::ReadFileError,
+    error::{ReadFileError, read_file_error::PathItem},
     lang::process_file_text::process_file_text,
 };
 
@@ -44,7 +44,7 @@ where
                         Ok(_) => {}
                         Err(e) => {
                             sender
-                                .send_blocking(Err(ReadFileError::Parse(path, e)))
+                                .send_blocking(Err(ReadFileError::Parse(PathItem::new(Some(path)), e)))
                                 .expect("async_channel::send_blocking failed");
                         }
                     });

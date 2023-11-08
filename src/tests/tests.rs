@@ -2,7 +2,7 @@ use std::{fs, path::PathBuf, str::FromStr};
 
 use crate::{
     builder::default_builder::DefaultMetaBuilder,
-    error::{parse_error::ParseError, ReadFileError},
+    error::{parse_error::ParseError, ReadFileError, read_file_error::PathItem},
     lang::process_file_text::process_file_text,
 };
 
@@ -11,7 +11,7 @@ fn it_works() -> Result<(), ReadFileError> {
     let path = "sample.munyo";
     let unparsed_file = fs::read_to_string(path).expect("cannot read file");
     let r = process_file_text(unparsed_file, &DefaultMetaBuilder::new())
-        .map_err(|e| ReadFileError::Parse(PathBuf::from_str(path).unwrap(), e))?;
+        .map_err(|e| ReadFileError::Parse(PathItem::new(PathBuf::from_str(path).ok()), e))?;
 
     println!("{}", r);
 

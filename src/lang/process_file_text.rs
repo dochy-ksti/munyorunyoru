@@ -26,20 +26,31 @@ where
     B: Builder<Item = T>,
 {
     Ok(Processed::new(
-        in_process_file_text(&text, meta_builder).map_err(|e| {
-            let lookup = LineColLookup::new(&text);
-            let r = lookup.line_col(e.start_index).unwrap();
-            ParseError::new(
-                r.line,
-                r.col,
-                text[r.line_start..r.line_end].to_string(),
-                e.message,
-            )
-        })?,
+        in_process_file_text(&text, meta_builder).map_err(|e| into_parse_error(e, &text))?
     ))
 }
 
+pub(crate) fn into_parse_error(fail : ParseFail, text : &str) -> ParseError{
+	let lookup = LineColLookup::new(&text);
+	let r = lookup.line_col(fail.start_index).unwrap();
+	ParseError::new(
+		r.line,
+		r.col,
+		text[r.line_start..r.line_end].to_string(),
+		fail.message,
+	)
+}
+
 fn in_process_file_text<MB, B, T>(text: &str, meta_builder: &MB) -> Result<Vec<T>, ParseFail>
+where
+    MB: MetaBuilder<Item = B>,
+    B: Builder<Item = T>,
+{
+    let tree = parse_text(text, meta_builder)?;
+    tree.finish()
+}
+
+pub(crate) fn parse_text<MB, B, T>(text: &str, meta_builder: &MB) -> Result<BuilderTree<B>, ParseFail>
 where
     MB: MetaBuilder<Item = B>,
     B: Builder<Item = T>,
@@ -48,11 +59,12 @@ where
 
     let pair = pairs.next().unwrap();
 
-    let tree = parse_file(pair.into_inner(), meta_builder)?;
-    tree.finish()
+    parse_pairs(pair.into_inner(), meta_builder)
 }
 
-fn parse_file<MB, B>(mut pairs: Pairs, meta_builder: &MB) -> Result<BuilderTree<B>, ParseFail>
+
+
+fn parse_pairs<MB, B>(mut pairs: Pairs, meta_builder: &MB) -> Result<BuilderTree<B>, ParseFail>
 where
     MB: MetaBuilder<Item = B>,
     B: Builder,

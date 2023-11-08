@@ -42,8 +42,8 @@ impl ResultSHelper for Result<(), Er> {
     }
 }
 
-fn err(s : &str) -> ReadFileError{
-	ReadFileError::Serialize(s.to_string())
+fn err(s: &str) -> ReadFileError {
+    ReadFileError::Serialize(s.to_string())
 }
 
 impl<'a> serde::ser::Serializer for &'a mut MunyoSerializer {
@@ -138,7 +138,7 @@ impl<'a> serde::ser::Serializer for &'a mut MunyoSerializer {
     }
 
     fn serialize_str(self, v: &str) -> Result<Self::Ok, Self::Error> {
-        self.state.add_str(v.to_string()).me(|| format!("unexpected str {v}"))
+        self.state.add_str(v).me(|| format!("unexpected str {v}"))
     }
 
     fn serialize_bytes(self, _v: &[u8]) -> Result<Self::Ok, Self::Error> {
@@ -226,28 +226,30 @@ impl<'a> serde::ser::Serializer for &'a mut MunyoSerializer {
         variant: &'static str,
         _len: usize,
     ) -> Result<Self::SerializeTupleVariant, Self::Error> {
-        self.state.start_line(variant).me(|| format!("unexpected enum variant {name} {variant}"))?;
-		Ok(self)
+        self.state
+            .start_line(variant)
+            .me(|| format!("unexpected enum variant {name} {variant}"))?;
+        Ok(self)
     }
 
-    fn serialize_map(self, len: Option<usize>) -> Result<Self::SerializeMap, Self::Error> {
+    fn serialize_map(self, _len: Option<usize>) -> Result<Self::SerializeMap, Self::Error> {
         todo!()
     }
 
     fn serialize_struct(
         self,
-        name: &'static str,
-        len: usize,
+        _name: &'static str,
+        _len: usize,
     ) -> Result<Self::SerializeStruct, Self::Error> {
         todo!()
     }
 
     fn serialize_struct_variant(
         self,
-        name: &'static str,
-        variant_index: u32,
-        variant: &'static str,
-        len: usize,
+        _name: &'static str,
+        _variant_index: u32,
+        _variant: &'static str,
+        _len: usize,
     ) -> Result<Self::SerializeStructVariant, Self::Error> {
         todo!()
     }
@@ -266,7 +268,7 @@ impl<'a> ser::SerializeSeq for &'a mut MunyoSerializer {
     }
 
     fn end(self) -> Result<Self::Ok, Self::Error> {
-        self.state.end_seq();
+        self.state.end_seq().me(|| format!("unexpected end of seq"))?;
         Ok(())
     }
 }
@@ -276,7 +278,7 @@ impl<'a> ser::SerializeTuple for &'a mut MunyoSerializer {
 
     type Error = ReadFileError;
 
-    fn serialize_element<T: ?Sized>(&mut self, value: &T) -> Result<(), Self::Error>
+    fn serialize_element<T: ?Sized>(&mut self, _value: &T) -> Result<(), Self::Error>
     where
         T: serde::Serialize,
     {
@@ -293,7 +295,7 @@ impl<'a> ser::SerializeTupleStruct for &'a mut MunyoSerializer {
 
     type Error = ReadFileError;
 
-    fn serialize_field<T: ?Sized>(&mut self, value: &T) -> Result<(), Self::Error>
+    fn serialize_field<T: ?Sized>(&mut self, _value: &T) -> Result<(), Self::Error>
     where
         T: serde::Serialize,
     {
@@ -314,12 +316,14 @@ impl<'a> ser::SerializeTupleVariant for &'a mut MunyoSerializer {
         T: serde::Serialize,
     {
         value.serialize(&mut **self)?;
-		Ok(())
+        Ok(())
     }
 
     fn end(self) -> Result<Self::Ok, Self::Error> {
-        self.state.end_line();
-		Ok(())
+        self.state
+            .end_line()
+            .me(|| format!("unexpected end of tuple"))?;
+        Ok(())
     }
 }
 impl<'a> ser::SerializeMap for &'a mut MunyoSerializer {
@@ -327,14 +331,14 @@ impl<'a> ser::SerializeMap for &'a mut MunyoSerializer {
 
     type Error = ReadFileError;
 
-    fn serialize_key<T: ?Sized>(&mut self, key: &T) -> Result<(), Self::Error>
+    fn serialize_key<T: ?Sized>(&mut self, _key: &T) -> Result<(), Self::Error>
     where
         T: serde::Serialize,
     {
         todo!()
     }
 
-    fn serialize_value<T: ?Sized>(&mut self, value: &T) -> Result<(), Self::Error>
+    fn serialize_value<T: ?Sized>(&mut self, _value: &T) -> Result<(), Self::Error>
     where
         T: serde::Serialize,
     {
@@ -352,8 +356,8 @@ impl<'a> ser::SerializeStruct for &'a mut MunyoSerializer {
 
     fn serialize_field<T: ?Sized>(
         &mut self,
-        key: &'static str,
-        value: &T,
+        _key: &'static str,
+        _value: &T,
     ) -> Result<(), Self::Error>
     where
         T: serde::Serialize,
@@ -372,8 +376,8 @@ impl<'a> ser::SerializeStructVariant for &'a mut MunyoSerializer {
 
     fn serialize_field<T: ?Sized>(
         &mut self,
-        key: &'static str,
-        value: &T,
+        _key: &'static str,
+        _value: &T,
     ) -> Result<(), Self::Error>
     where
         T: serde::Serialize,
