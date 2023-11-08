@@ -7,4 +7,5 @@ pub(crate) mod parse_main_line;
 pub(crate) mod parse_line_continuation;
 pub(crate) mod builder_tree;
 pub(crate) mod processed;
+pub(crate) mod make_escaped_string;
 mod inner_lang;

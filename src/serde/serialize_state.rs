@@ -1,3 +1,5 @@
+use crate::lang::make_escaped_string::{self, make_escaped_string};
+
 pub(crate) struct SerializeState {
     pub output: String,
     indent_level: usize,
@@ -72,7 +74,7 @@ impl SerializeState {
         self.output.push_str(&arg);
         Ok(())
     }
-	pub(crate) fn add_str(&mut self, arg: String) -> ResultS {
+	pub(crate) fn add_str(&mut self, unescaped: &str) -> ResultS {
         match self.state {
             State::InArgs => self.state = State::EndOfArgs,
             State::EndOfArgs => {
@@ -81,7 +83,7 @@ impl SerializeState {
             _ => return Err(Er::None),
         }
 		self.output.push(' ');
-        self.output.push_str(&arg);
+        self.output.push_str(&make_escaped_string(unescaped));
         Ok(())
     }
 }

@@ -150,7 +150,7 @@ impl<'de, 'a> Deserializer<'de> for &'a mut MunyoDeserializer<'de> {
     fn deserialize_seq<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de> {
-        todo!()
+        visitor.visit_seq()
     }
 
     fn deserialize_tuple<V>(self, len: usize, visitor: V) -> Result<V::Value, Self::Error>
