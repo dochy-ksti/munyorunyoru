@@ -4,12 +4,13 @@ use serde::Deserializer;
 
 use crate::{
     builder::default_builder::DefaultBuilder,
-    error::{munyo_error::PathItem, parse_fail::ParseFail, Error},
+    error::{munyo_error::PathItem, parse_fail::ParseFail},
     lang::{
         builder_tree::{BuilderTree, TreeItem},
         process_file_text::{into_parse_error, parse_text},
     },
     DefaultMetaBuilder,
+	Error
 };
 
 use super::vec_deserializer::VecDeserializer;
@@ -40,7 +41,7 @@ impl<'de> MunyoDeserializer<'de> {
 }
 
 impl<'de, 'a> Deserializer<'de> for &'a mut MunyoDeserializer<'de> {
-    type Error = Error;
+    type Error = crate::Error;
 
     fn deserialize_any<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
     where

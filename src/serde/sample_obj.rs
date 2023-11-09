@@ -1,7 +1,7 @@
 use anyhow::anyhow;
 use serde::{Deserialize, Serialize};
 
-use crate::error::Error;
+use crate::Error;
 
 #[derive(Serialize, Deserialize, PartialEq, Debug)]
 enum SampleEnum {

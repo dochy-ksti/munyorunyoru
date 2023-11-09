@@ -3,5 +3,4 @@ pub(crate) mod munyo_error;
 pub(crate) mod parse_error;
 pub(crate) mod parse_fail;
 
-pub use munyo_error::Error;
-pub type Result<T> = std::result::Result<T, Error>;
+

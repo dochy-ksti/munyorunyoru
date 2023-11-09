@@ -1,6 +1,6 @@
 use serde::ser;
 
-use crate::error::Error;
+use crate::Error;
 
 use super::serialize_state::{Er, SerializeState};
 

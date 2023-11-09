@@ -18,8 +18,11 @@ pub use crate::builder::default_builder::DefaultMetaBuilder;
 pub use crate::file_io::read_files::read_files;
 pub use crate::lang::process_file_text::process_file_text;
 pub use crate::serde::deserializer::MunyoDeserializer;
-pub use crate::serde::serializer::MunyoSerializer;
 pub use crate::serde::rest_arg::RestOf;
+pub use crate::serde::serializer::MunyoSerializer;
+
+pub use crate::error::munyo_error::Error;
+pub type Result<T> = std::result::Result<T, Error>;
 
 fn hoge() {
     let s = "{}";

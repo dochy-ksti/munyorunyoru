@@ -2,7 +2,7 @@ use serde::de::{EnumAccess, SeqAccess};
 
 use crate::{
     builder::default_builder::DefaultBuilder,
-    error::{parse_error::ParseError, parse_fail::ParseFail, Error},
+    error::{parse_error::ParseError, parse_fail::ParseFail},
     lang::builder_tree::TreeItem,
     MunyoDeserializer,
 };

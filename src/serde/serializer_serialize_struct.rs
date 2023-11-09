@@ -1,11 +1,11 @@
 use serde::ser;
 
-use crate::{error::Error, MunyoSerializer};
+use crate::MunyoSerializer;
 
 impl<'a> ser::SerializeStruct for &'a mut MunyoSerializer {
     type Ok = ();
 
-    type Error = Error;
+    type Error = crate::Error;
 
     fn serialize_field<T: ?Sized>(
         &mut self,
