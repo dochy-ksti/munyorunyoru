@@ -4,7 +4,6 @@ pub(crate) struct SerializeState {
     pub(crate) output: String,
     indent_level: usize,
     state: State,
-    //pub(crate) variant : String,
 }
 
 #[derive(PartialEq)]
@@ -12,6 +11,7 @@ enum State {
     WfSeq,
     WfLine,
     WfArg,
+    WfParam,
 }
 
 pub(crate) enum Er {
@@ -66,7 +66,7 @@ impl SerializeState {
     }
     pub(crate) fn end_line(&mut self) -> Result {
         match self.state {
-            State::WfArg => {
+            State::WfArg | State::WfParam => {
                 self.output.push('\n');
                 self.state = State::WfLine;
                 Ok(())
@@ -74,18 +74,27 @@ impl SerializeState {
             State::WfSeq | State::WfLine => Err(()),
         }
     }
-    pub(crate) fn add_arg(&mut self, arg: String) -> ResultS {
+    pub(crate) fn add_arg(&mut self, arg: &str) -> ResultS {
         match self.state {
             State::WfArg => {}
             _ => return Err(Er::None),
         }
         self.output.push(' ');
-        self.output.push_str(&arg);
+        self.output.push_str(arg);
         Ok(())
     }
     pub(crate) fn add_str(&mut self, unescaped: &str) -> ResultS {
-        self.output.push(' ');
-        self.output.push_str(&make_escaped_string(unescaped));
+        self.add_arg(&make_escaped_string(unescaped))
+    }
+    pub(crate) fn add_param(&mut self, name: &str, value: &str) -> ResultS {
+        match self.state{
+            State::WfArg | State::WfParam =>{},
+            _ => return Err(message(&format!("param struct is not expected {name} {value}")))
+        }
+        self.output.push_str(&format!("|{name} {value}"));
         Ok(())
+    }
+    pub(crate) fn add_param_str(&mut self, name: &str, unescaped:&str) -> ResultS {
+        self.add_param(name, &make_escaped_string(unescaped))
     }
 }

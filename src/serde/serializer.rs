@@ -71,73 +71,73 @@ impl<'a> serde::ser::Serializer for &'a mut MunyoSerializer {
 
     fn serialize_bool(self, v: bool) -> Result<Self::Ok, Self::Error> {
         self.state
-            .add_arg(v.to_string())
+            .add_arg(&v.to_string())
             .me(|| format!("unexpected bool {v}"))
     }
 
     fn serialize_i8(self, v: i8) -> Result<Self::Ok, Self::Error> {
         self.state
-            .add_arg(v.to_string())
+            .add_arg(&v.to_string())
             .me(|| format!("unexpected i8 {v}"))
     }
 
     fn serialize_i16(self, v: i16) -> Result<Self::Ok, Self::Error> {
         self.state
-            .add_arg(v.to_string())
+            .add_arg(&v.to_string())
             .me(|| format!("unexpected i16 {v}"))
     }
 
     fn serialize_i32(self, v: i32) -> Result<Self::Ok, Self::Error> {
         self.state
-            .add_arg(v.to_string())
+            .add_arg(&v.to_string())
             .me(|| format!("unexpected i32 {v}"))
     }
 
     fn serialize_i64(self, v: i64) -> Result<Self::Ok, Self::Error> {
         self.state
-            .add_arg(v.to_string())
+            .add_arg(&v.to_string())
             .me(|| format!("unexpected i64 {v}"))
     }
 
     fn serialize_u8(self, v: u8) -> Result<Self::Ok, Self::Error> {
         self.state
-            .add_arg(v.to_string())
+            .add_arg(&v.to_string())
             .me(|| format!("unexpected u8 {v}"))
     }
 
     fn serialize_u16(self, v: u16) -> Result<Self::Ok, Self::Error> {
         self.state
-            .add_arg(v.to_string())
+            .add_arg(&v.to_string())
             .me(|| format!("unexpected u16 {v}"))
     }
 
     fn serialize_u32(self, v: u32) -> Result<Self::Ok, Self::Error> {
         self.state
-            .add_arg(v.to_string())
+            .add_arg(&v.to_string())
             .me(|| format!("unexpected u32 {v}"))
     }
 
     fn serialize_u64(self, v: u64) -> Result<Self::Ok, Self::Error> {
         self.state
-            .add_arg(v.to_string())
+            .add_arg(&v.to_string())
             .me(|| format!("unexpected u64 {v}"))
     }
 
     fn serialize_f32(self, v: f32) -> Result<Self::Ok, Self::Error> {
         self.state
-            .add_arg(v.to_string())
+            .add_arg(&v.to_string())
             .me(|| format!("unexpected f32 {v}"))
     }
 
     fn serialize_f64(self, v: f64) -> Result<Self::Ok, Self::Error> {
         self.state
-            .add_arg(v.to_string())
+            .add_arg(&v.to_string())
             .me(|| format!("unexpected f64 {v}"))
     }
 
     fn serialize_char(self, v: char) -> Result<Self::Ok, Self::Error> {
         self.state
-            .add_arg(v.to_string())
+            .add_arg(&v.to_string())
             .me(|| format!("unexpected char {v}"))
     }
 
@@ -355,26 +355,7 @@ impl<'a> ser::SerializeMap for &'a mut MunyoSerializer {
         todo!()
     }
 }
-impl<'a> ser::SerializeStruct for &'a mut MunyoSerializer {
-    type Ok = ();
 
-    type Error = ReadFileError;
-
-    fn serialize_field<T: ?Sized>(
-        &mut self,
-        _key: &'static str,
-        _value: &T,
-    ) -> Result<(), Self::Error>
-    where
-        T: serde::Serialize,
-    {
-        todo!()
-    }
-
-    fn end(self) -> Result<Self::Ok, Self::Error> {
-        todo!()
-    }
-}
 impl<'a> ser::SerializeStructVariant for &'a mut MunyoSerializer {
     type Ok = ();
 

@@ -15,9 +15,9 @@ impl serde::ser::Serialize for RestOf{
     }
 }
 
-struct StrVisitor;
+struct IgnoredAnyVisitor;
 
-impl<'de> Visitor<'de> for StrVisitor{
+impl<'de> Visitor<'de> for IgnoredAnyVisitor{
     type Value = String;
 
     fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
@@ -29,6 +29,14 @@ impl<'de> Visitor<'de> for StrVisitor{
             E: serde::de::Error, {
         Ok(v)
     }
+
+    // The document says visit_string without visit_str is not correct.
+    // I don't know why.
+    fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
+        where
+            E: serde::de::Error, {
+        Ok(v.to_string())
+    }
 }
 
 impl<'de> serde::de::Deserialize<'de> for RestOf{
@@ -36,6 +44,6 @@ impl<'de> serde::de::Deserialize<'de> for RestOf{
     where
         D: serde::Deserializer<'de> {
             //use hidden function. This consumes the rest of the arguments.
-        deserializer.deserialize_ignored_any(StrVisitor).map(|s| RestOf { arg: s })
+        deserializer.deserialize_ignored_any(IgnoredAnyVisitor).map(|s| RestOf { arg: s })
     }
 }
