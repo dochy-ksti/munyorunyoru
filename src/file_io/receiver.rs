@@ -1,4 +1,4 @@
-use crate::error::MunyoResult;
+use crate::error::Result;
 
 type AsyncReceiver<T> = async_channel::Receiver<T>;
 
@@ -10,13 +10,13 @@ impl<T> Receiver<T> {
     pub(crate) fn new(receiver: AsyncReceiver<T>) -> Receiver<T> {
         Receiver { receiver }
     }
-    pub fn recv_blocking(&self) -> MunyoResult<T> {
+    pub fn recv_blocking(&self) -> Result<T> {
         Ok(self.receiver.recv_blocking()?)
     }
-    pub fn try_recv(&self) -> MunyoResult<T> {
+    pub fn try_recv(&self) -> Result<T> {
         Ok(self.receiver.try_recv()?)
     }
-    pub async fn recv_async(&self) -> MunyoResult<T> {
+    pub async fn recv_async(&self) -> Result<T> {
         Ok(self.receiver.recv().await?)
     }
 }
