@@ -1,6 +1,6 @@
 use serde::ser;
 
-use crate::error::ReadFileError;
+use crate::error::Error;
 
 use super::serialize_state::{Er, SerializeState};
 
@@ -21,39 +21,39 @@ impl MunyoSerializer {
 }
 
 trait ResultHelper {
-    fn me<F: Fn() -> String>(self, f: F) -> Result<(), ReadFileError>;
+    fn me<F: Fn() -> String>(self, f: F) -> Result<(), Error>;
 }
 
 impl ResultHelper for Result<(), ()> {
-    fn me<F: Fn() -> String>(self, f: F) -> Result<(), ReadFileError> {
-        self.map_err(|_| ReadFileError::Serialize(msg(f())))
+    fn me<F: Fn() -> String>(self, f: F) -> Result<(), Error> {
+        self.map_err(|_| Error::Serialize(msg(f())))
     }
 }
 
-fn msg(s : String) -> anyhow::Error{
+fn msg(s: String) -> anyhow::Error {
     anyhow::Error::msg(s)
 }
 trait ResultSHelper {
-    fn me<F: Fn() -> String>(self, f: F) -> Result<(), ReadFileError>;
+    fn me<F: Fn() -> String>(self, f: F) -> Result<(), Error>;
 }
 
 impl ResultSHelper for Result<(), Er> {
-    fn me<F: Fn() -> String>(self, f: F) -> Result<(), ReadFileError> {
+    fn me<F: Fn() -> String>(self, f: F) -> Result<(), Error> {
         self.map_err(|e| match e {
-            Er::None => ReadFileError::Serialize(msg(f())),
-            Er::Message(s) => ReadFileError::Serialize(msg(s)),
+            Er::None => Error::Serialize(msg(f())),
+            Er::Message(s) => Error::Serialize(msg(s)),
         })
     }
 }
 
-fn err(s: &str) -> ReadFileError {
-    ReadFileError::Serialize(msg(s.to_string()))
+fn err(s: &str) -> Error {
+    Error::Serialize(msg(s.to_string()))
 }
 
 impl<'a> serde::ser::Serializer for &'a mut MunyoSerializer {
     type Ok = ();
 
-    type Error = ReadFileError;
+    type Error = Error;
 
     type SerializeSeq = Self;
 
@@ -174,8 +174,12 @@ impl<'a> serde::ser::Serializer for &'a mut MunyoSerializer {
         variant_index: u32,
         variant: &'static str,
     ) -> Result<Self::Ok, Self::Error> {
-        self.state.start_line(variant).me(||format!("unexpected start of line"))?;
-        self.state.end_line().me(|| format!("unexpected end of line"))
+        self.state
+            .start_line(variant)
+            .me(|| format!("unexpected start of line"))?;
+        self.state
+            .end_line()
+            .me(|| format!("unexpected end of line"))
     }
 
     fn serialize_newtype_struct<T: ?Sized>(
@@ -264,7 +268,7 @@ impl<'a> serde::ser::Serializer for &'a mut MunyoSerializer {
 impl<'a> ser::SerializeSeq for &'a mut MunyoSerializer {
     type Ok = ();
 
-    type Error = ReadFileError;
+    type Error = Error;
 
     fn serialize_element<T: ?Sized>(&mut self, value: &T) -> Result<(), Self::Error>
     where
@@ -274,7 +278,9 @@ impl<'a> ser::SerializeSeq for &'a mut MunyoSerializer {
     }
 
     fn end(self) -> Result<Self::Ok, Self::Error> {
-        self.state.end_seq().me(|| format!("unexpected end of seq"))?;
+        self.state
+            .end_seq()
+            .me(|| format!("unexpected end of seq"))?;
         Ok(())
     }
 }
@@ -282,7 +288,7 @@ impl<'a> ser::SerializeSeq for &'a mut MunyoSerializer {
 impl<'a> ser::SerializeTuple for &'a mut MunyoSerializer {
     type Ok = ();
 
-    type Error = ReadFileError;
+    type Error = Error;
 
     fn serialize_element<T: ?Sized>(&mut self, _value: &T) -> Result<(), Self::Error>
     where
@@ -299,7 +305,7 @@ impl<'a> ser::SerializeTuple for &'a mut MunyoSerializer {
 impl<'a> ser::SerializeTupleStruct for &'a mut MunyoSerializer {
     type Ok = ();
 
-    type Error = ReadFileError;
+    type Error = Error;
 
     fn serialize_field<T: ?Sized>(&mut self, _value: &T) -> Result<(), Self::Error>
     where
@@ -315,7 +321,7 @@ impl<'a> ser::SerializeTupleStruct for &'a mut MunyoSerializer {
 impl<'a> ser::SerializeTupleVariant for &'a mut MunyoSerializer {
     type Ok = ();
 
-    type Error = ReadFileError;
+    type Error = Error;
 
     fn serialize_field<T: ?Sized>(&mut self, value: &T) -> Result<(), Self::Error>
     where
@@ -335,7 +341,7 @@ impl<'a> ser::SerializeTupleVariant for &'a mut MunyoSerializer {
 impl<'a> ser::SerializeMap for &'a mut MunyoSerializer {
     type Ok = ();
 
-    type Error = ReadFileError;
+    type Error = Error;
 
     fn serialize_key<T: ?Sized>(&mut self, _key: &T) -> Result<(), Self::Error>
     where
@@ -359,7 +365,7 @@ impl<'a> ser::SerializeMap for &'a mut MunyoSerializer {
 impl<'a> ser::SerializeStructVariant for &'a mut MunyoSerializer {
     type Ok = ();
 
-    type Error = ReadFileError;
+    type Error = Error;
 
     fn serialize_field<T: ?Sized>(
         &mut self,

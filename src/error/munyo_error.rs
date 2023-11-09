@@ -5,7 +5,7 @@ use thiserror::Error;
 use super::parse_error::ParseError;
 
 #[derive(Error, Debug)]
-pub enum ReadFileError {
+pub enum Error {
     #[error("failed to read `{0}`, {1}")]
     ReadFile(PathBuf, String),
     #[error("`{0}`:{1}")]
@@ -18,6 +18,8 @@ pub enum ReadFileError {
     Serialize(anyhow::Error),
     #[error("{0}")]
     SerializeCustom(String),
+    #[error("{0}")]
+    Message(anyhow::Error),
 }
 
 #[derive(Debug, Clone, Default, PartialEq)]
@@ -40,7 +42,7 @@ impl Display for PathItem {
     }
 }
 
-impl serde::de::Error for ReadFileError {
+impl serde::de::Error for Error {
     fn custom<T>(msg: T) -> Self
     where
         T: Display,
@@ -49,11 +51,23 @@ impl serde::de::Error for ReadFileError {
     }
 }
 
-impl serde::ser::Error for ReadFileError {
+impl serde::ser::Error for Error {
     fn custom<T>(msg: T) -> Self
     where
         T: Display,
     {
         Self::SerializeCustom(format!("{msg}"))
+    }
+}
+
+impl From<async_channel::TryRecvError> for Error {
+    fn from(e: async_channel::TryRecvError) -> Self {
+        Self::Message(e.into())
+    }
+}
+
+impl From<async_channel::RecvError> for Error {
+    fn from(e: async_channel::RecvError) -> Self {
+        Self::Message(e.into())
     }
 }

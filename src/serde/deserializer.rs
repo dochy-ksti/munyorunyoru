@@ -4,7 +4,7 @@ use serde::Deserializer;
 
 use crate::{
     builder::default_builder::DefaultBuilder,
-    error::{parse_fail::ParseFail, read_file_error::PathItem, ReadFileError},
+    error::{munyo_error::PathItem, parse_fail::ParseFail, Error},
     lang::{
         builder_tree::{BuilderTree, TreeItem},
         process_file_text::{into_parse_error, parse_text},
@@ -21,7 +21,7 @@ pub struct MunyoDeserializer<'de> {
 }
 
 impl<'de> MunyoDeserializer<'de> {
-    pub fn new(text: &'de str, path: Option<PathBuf>) -> Result<Self, ReadFileError> {
+    pub fn new(text: &'de str, path: Option<PathBuf>) -> Result<Self, Error> {
         let path = PathItem::new(path);
         let mut tree = parse_text(text, &DefaultMetaBuilder::new())
             .map_err(|e| Self::into_error(text, e, &path))?;
@@ -29,18 +29,18 @@ impl<'de> MunyoDeserializer<'de> {
         Ok(Self { text, tree, path })
     }
 
-    pub fn into_munyo_error(&self, fail: ParseFail) -> ReadFileError {
+    pub fn into_munyo_error(&self, fail: ParseFail) -> Error {
         Self::into_error(self.text, fail, &self.path)
     }
 
-    fn into_error(text: &str, fail: ParseFail, path_item: &PathItem) -> ReadFileError {
+    fn into_error(text: &str, fail: ParseFail, path_item: &PathItem) -> Error {
         let e = into_parse_error(fail, text);
-        ReadFileError::Deserialize(path_item.clone(), e)
+        Error::Deserialize(path_item.clone(), e)
     }
 }
 
 impl<'de, 'a> Deserializer<'de> for &'a mut MunyoDeserializer<'de> {
-    type Error = ReadFileError;
+    type Error = Error;
 
     fn deserialize_any<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
     where
@@ -202,10 +202,10 @@ impl<'de, 'a> Deserializer<'de> for &'a mut MunyoDeserializer<'de> {
         V: serde::de::Visitor<'de>,
     {
         let vec: Vec<TreeItem<DefaultBuilder>> = std::mem::replace(&mut self.tree.root, vec![]);
-        match visitor.visit_seq(VecDeserializer::new(&*self, vec)){
-			Ok(r) => Ok(r),
-			Err(e) => Err(self.into_munyo_error(e)),
-		}
+        match visitor.visit_seq(VecDeserializer::new(&*self, vec)) {
+            Ok(r) => Ok(r),
+            Err(e) => Err(self.into_munyo_error(e)),
+        }
     }
 
     fn deserialize_tuple<V>(self, len: usize, visitor: V) -> Result<V::Value, Self::Error>

@@ -7,27 +7,24 @@ use shrink_pool::ShrinkPool;
 
 use crate::{
     builder::builder::{Builder, MetaBuilder},
-    error::{ReadFileError, read_file_error::PathItem},
+    error::{munyo_error::PathItem, Error},
     lang::process_file_text::process_file_text,
 };
 
 use super::receiver::Receiver;
 
-pub struct Data<T>{
-	pub path : PathBuf,
-	pub items : Vec<T>
+pub struct Data<T> {
+    pub path: PathBuf,
+    pub items: Vec<T>,
 }
 
-pub fn read_files<I, P, T, B, MB>(
-    pathes: I,
-    meta_builder: MB,
-) -> Receiver<Result<Data<T>, ReadFileError>>
+pub fn read_files<I, P, T, B, MB>(pathes: I, meta_builder: MB) -> Receiver<Result<Data<T>, Error>>
 where
     I: Iterator<Item = P>,
     P: AsRef<Path>,
-    MB: MetaBuilder<Item=B> + Send + Sync + 'static,
-	B : Builder<Item=T>,
-	T : Send + 'static,
+    MB: MetaBuilder<Item = B> + Send + Sync + 'static,
+    B: Builder<Item = T>,
+    T: Send + 'static,
 {
     let pathes: Vec<PathBuf> = pathes.map(|p| p.as_ref().to_path_buf()).collect();
     let (sender, receiver) = async_channel::bounded(pathes.len());
@@ -44,17 +41,14 @@ where
                         Ok(_) => {}
                         Err(e) => {
                             sender
-                                .send_blocking(Err(ReadFileError::Parse(PathItem::new(Some(path)), e)))
+                                .send_blocking(Err(Error::Parse(PathItem::new(Some(path)), e)))
                                 .expect("async_channel::send_blocking failed");
                         }
                     });
                 }
                 Err(e) => {
                     sender
-                        .send_blocking(Err(ReadFileError::ReadFile(
-                            path.to_owned(),
-                            format!("{e}"),
-                        )))
+                        .send_blocking(Err(Error::ReadFile(path.to_owned(), format!("{e}"))))
                         .expect("async_channel::send_blocking failed");
                     return;
                 }

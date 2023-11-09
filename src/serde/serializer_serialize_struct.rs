@@ -1,11 +1,11 @@
 use serde::ser;
 
-use crate::{MunyoSerializer, error::ReadFileError};
+use crate::{error::Error, MunyoSerializer};
 
 impl<'a> ser::SerializeStruct for &'a mut MunyoSerializer {
     type Ok = ();
 
-    type Error = ReadFileError;
+    type Error = Error;
 
     fn serialize_field<T: ?Sized>(
         &mut self,
@@ -17,6 +17,7 @@ impl<'a> ser::SerializeStruct for &'a mut MunyoSerializer {
     {
         let mut se = MunyoSerializer::new();
         value.serialize(&mut se)?;
+        todo!()
     }
 
     fn end(self) -> Result<Self::Ok, Self::Error> {
