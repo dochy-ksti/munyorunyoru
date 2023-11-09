@@ -15,7 +15,9 @@ pub enum ReadFileError {
     #[error("{0}")]
     DeserializeCustom(String),
     #[error("{0}")]
-    Serialize(String),
+    Serialize(anyhow::Error),
+    #[error("{0}")]
+    SerializeCustom(String),
 }
 
 #[derive(Debug, Clone, Default, PartialEq)]
@@ -52,6 +54,6 @@ impl serde::ser::Error for ReadFileError {
     where
         T: Display,
     {
-        Self::Serialize(format!("{msg}"))
+        Self::SerializeCustom(format!("{msg}"))
     }
 }

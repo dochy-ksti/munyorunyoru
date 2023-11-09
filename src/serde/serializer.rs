@@ -26,8 +26,12 @@ trait ResultHelper {
 
 impl ResultHelper for Result<(), ()> {
     fn me<F: Fn() -> String>(self, f: F) -> Result<(), ReadFileError> {
-        self.map_err(|_| ReadFileError::Serialize(f()))
+        self.map_err(|_| ReadFileError::Serialize(msg(f())))
     }
+}
+
+fn msg(s : String) -> anyhow::Error{
+    anyhow::Error::msg(s)
 }
 trait ResultSHelper {
     fn me<F: Fn() -> String>(self, f: F) -> Result<(), ReadFileError>;
@@ -36,14 +40,14 @@ trait ResultSHelper {
 impl ResultSHelper for Result<(), Er> {
     fn me<F: Fn() -> String>(self, f: F) -> Result<(), ReadFileError> {
         self.map_err(|e| match e {
-            Er::None => ReadFileError::Serialize(f()),
-            Er::Message(s) => ReadFileError::Serialize(s),
+            Er::None => ReadFileError::Serialize(msg(f())),
+            Er::Message(s) => ReadFileError::Serialize(msg(s)),
         })
     }
 }
 
 fn err(s: &str) -> ReadFileError {
-    ReadFileError::Serialize(s.to_string())
+    ReadFileError::Serialize(msg(s.to_string()))
 }
 
 impl<'a> serde::ser::Serializer for &'a mut MunyoSerializer {
@@ -170,7 +174,8 @@ impl<'a> serde::ser::Serializer for &'a mut MunyoSerializer {
         variant_index: u32,
         variant: &'static str,
     ) -> Result<Self::Ok, Self::Error> {
-        todo!()
+        self.state.start_line(variant).me(||format!("unexpected start of line"))?;
+        self.state.end_line().me(|| format!("unexpected end of line"))
     }
 
     fn serialize_newtype_struct<T: ?Sized>(
@@ -197,7 +202,8 @@ impl<'a> serde::ser::Serializer for &'a mut MunyoSerializer {
         self.state
             .start_line(variant)
             .me(|| format!("unexpected enum_variant {name} {variant}"))?;
-        value.serialize(&mut *self)
+        value.serialize(&mut *self)?;
+        self.state.end_line().me(|| format!("failed end_line"))
     }
 
     fn serialize_seq(self, _len: Option<usize>) -> Result<Self::SerializeSeq, Self::Error> {
@@ -241,7 +247,7 @@ impl<'a> serde::ser::Serializer for &'a mut MunyoSerializer {
         _name: &'static str,
         _len: usize,
     ) -> Result<Self::SerializeStruct, Self::Error> {
-        todo!()
+        Ok(self)
     }
 
     fn serialize_struct_variant(

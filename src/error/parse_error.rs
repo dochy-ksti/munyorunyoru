@@ -21,17 +21,31 @@ impl ParseError {
     }
 }
 
-impl Display for ParseError {
+// impl Display for ParseError {
+//     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+//         write!(
+//             f,
+//             "{}:{}: {}\n{}",
+//             self.line, self.col, &self.message, &self.line_str
+//         )
+//     }
+// }
+
+impl Debug for ParseError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "{}:{}: {}\n{}",
-            self.line, self.col, &self.message, &self.line_str
+            "{}:{}: {}\n {}\n{}",
+            self.line,
+            self.col,
+            &self.message,
+            &self.line_str,
+            &self.message.backtrace()
         )
     }
 }
 
-impl Debug for ParseError {
+impl Display for ParseError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(
             f,

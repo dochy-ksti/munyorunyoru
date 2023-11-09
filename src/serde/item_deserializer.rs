@@ -129,13 +129,16 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ItemDeserializer<'a, 'de>{
     fn deserialize_str<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de> {
-        Err(self.err("deserializing &str is not supported"))
+            Err(self.err("deserializing &str is not supported"))
+
+            //serde default visitor doesn't accept visit_str to deserialize &str
+            //visitor.visit_str(&self.args.arg())    
     }
 
     fn deserialize_string<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de> {
-        visitor.visit_string(self.args.rest())
+        visitor.visit_string(self.args.arg())
     }
 
     fn deserialize_bytes<V>(self, visitor: V) -> Result<V::Value, Self::Error>
@@ -219,6 +222,7 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ItemDeserializer<'a, 'de>{
     ) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de> {
+        println!("deserialize struct {name}");
         todo!()
     }
 
@@ -242,6 +246,7 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ItemDeserializer<'a, 'de>{
     fn deserialize_ignored_any<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de> {
-        todo!()
+            // hidden function.
+            visitor.visit_string(self.args.rest())
     }
 }

@@ -12,6 +12,7 @@ impl<'a, 'b, 'de> EnumAccess<'de> for &'b mut EnumDeserializer<'a, 'de>{
     fn variant_seed<V>(self, seed: V) -> Result<(V::Value, Self::Variant), Self::Error>
     where
         V: serde::de::DeserializeSeed<'de> {
+            
         let hoge = seed.deserialize(&mut *self)?;
 		Ok((hoge, self))
     }

@@ -4,6 +4,7 @@ pub(crate) struct SerializeState {
     pub(crate) output: String,
     indent_level: usize,
     state: State,
+    //pub(crate) variant : String,
 }
 
 #[derive(PartialEq)]
@@ -11,7 +12,6 @@ enum State {
     WfSeq,
     WfLine,
     WfArg,
-    EndOfArgs,
 }
 
 pub(crate) enum Er {
@@ -66,7 +66,7 @@ impl SerializeState {
     }
     pub(crate) fn end_line(&mut self) -> Result {
         match self.state {
-            State::WfArg | State::EndOfArgs => {
+            State::WfArg => {
                 self.output.push('\n');
                 self.state = State::WfLine;
                 Ok(())
@@ -77,9 +77,6 @@ impl SerializeState {
     pub(crate) fn add_arg(&mut self, arg: String) -> ResultS {
         match self.state {
             State::WfArg => {}
-            State::EndOfArgs => return Err(message(
-                "no arguments allowed after an argument of string except one struct and/or one vec",
-            )),
             _ => return Err(Er::None),
         }
         self.output.push(' ');
@@ -87,13 +84,6 @@ impl SerializeState {
         Ok(())
     }
     pub(crate) fn add_str(&mut self, unescaped: &str) -> ResultS {
-        match self.state {
-            State::WfArg => self.state = State::EndOfArgs,
-            State::EndOfArgs => return Err(message(
-                "no arguments allowed after an argument of string except one struct and/or one vec",
-            )),
-            _ => return Err(Er::None),
-        }
         self.output.push(' ');
         self.output.push_str(&make_escaped_string(unescaped));
         Ok(())
