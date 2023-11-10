@@ -7,20 +7,20 @@ use crate::{
     MunyoDeserializer,
 };
 
-use super::{enum_deserializer::EnumDeserializer, item_deserializer::ItemDeserializer};
+use super::{enum_deserializer::EnumDeserializer, arg_deserializer::ArgDeserializer};
 
-pub(crate) struct VecDeserializer<'a, 'de: 'a> {
+pub(crate) struct VecAccess<'a, 'de: 'a> {
     de: &'a MunyoDeserializer<'de>,
     b: Vec<TreeItem<DefaultBuilder>>,
 }
 
-impl<'a, 'de> VecDeserializer<'a, 'de> {
+impl<'a, 'de> VecAccess<'a, 'de> {
     pub(crate) fn new(de: &'a MunyoDeserializer<'de>, b: Vec<TreeItem<DefaultBuilder>>) -> Self {
         Self { de, b }
     }
 }
 
-impl<'de, 'a> SeqAccess<'de> for VecDeserializer<'a, 'de> {
+impl<'de, 'a> SeqAccess<'de> for VecAccess<'a, 'de> {
     type Error = ParseFail;
 
     fn next_element_seed<T>(&mut self, seed: T) -> Result<Option<T::Value>, Self::Error>

@@ -11,7 +11,9 @@ enum State {
     WfSeq,
     WfLine,
     WfArg,
-    WfParam,
+    WfParamKey,
+    WfParamValue,
+	WfEndParam,
 }
 
 pub(crate) enum Er {
@@ -24,59 +26,62 @@ type ResultS = std::result::Result<(), Er>;
 fn message(s: &str) -> Er {
     Er::Message(s.to_string())
 }
+use State::*;
 
 impl SerializeState {
     pub(crate) fn new() -> Self {
         Self {
             output: String::new(),
             indent_level: 0,
-            state: State::WfSeq,
+            state: WfSeq,
         }
     }
 
     pub(crate) fn start_seq(&mut self) -> Result {
-        if self.state != State::WfSeq {
+        if self.state != WfSeq {
             return Err(());
         }
         self.indent_level += 1;
-        self.state = State::WfLine;
+        self.state = WfLine;
         Ok(())
     }
     pub(crate) fn end_seq(&mut self) -> Result {
         match self.state {
-            State::WfLine => {
+            WfLine => {
                 self.indent_level -= 1;
                 self.output.push('\n');
-                self.state = State::WfSeq;
+                self.state = WfSeq;
                 Ok(())
             }
             _ => Err(()),
         }
     }
     pub(crate) fn start_line(&mut self, name: &str) -> Result {
-        if self.state != State::WfLine {
+        if self.state != WfLine {
             return Err(());
         }
         for _ in 1..self.indent_level {
             self.output.push('\t');
         }
         self.output.push_str(name);
-        self.state = State::WfArg;
+        self.state = WfArg;
         Ok(())
     }
     pub(crate) fn end_line(&mut self) -> Result {
         match self.state {
-            State::WfArg | State::WfParam => {
+            WfArg | WfParamKey => {
                 self.output.push('\n');
-                self.state = State::WfLine;
+                self.state = WfLine;
                 Ok(())
             }
-            State::WfSeq | State::WfLine => Err(()),
+            WfSeq | WfLine | WfParamValue | WfEndParam => Err(()),
         }
     }
     pub(crate) fn add_arg(&mut self, arg: &str) -> ResultS {
         match self.state {
-            State::WfArg => {}
+            WfArg => {}
+            WfParamValue => self.state = WfEndParam,
+            WfParamKey => return Err(Er::Message(format!("param expected {arg}"))),
             _ => return Err(Er::None),
         }
         self.output.push(' ');
@@ -86,15 +91,21 @@ impl SerializeState {
     pub(crate) fn add_str(&mut self, unescaped: &str) -> ResultS {
         self.add_arg(&make_escaped_string(unescaped))
     }
-    pub(crate) fn add_param(&mut self, name: &str, value: &str) -> ResultS {
-        match self.state{
-            State::WfArg | State::WfParam =>{},
-            _ => return Err(message(&format!("param struct is not expected {name} {value}")))
+    pub(crate) fn add_param_key(&mut self, name: &str) -> ResultS {
+        match self.state {
+            WfArg | WfParamKey => {}
+            _ => return Err(Er::Message(format!("param struct is not expected {name}"))),
         }
-        self.output.push_str(&format!("|{name} {value}"));
+        self.state = WfParamValue;
+		self.output.push('|');
+        self.output.push_str(&name);
         Ok(())
     }
-    pub(crate) fn add_param_str(&mut self, name: &str, unescaped:&str) -> ResultS {
-        self.add_param(name, &make_escaped_string(unescaped))
-    }
+	pub(crate) fn end_param(&mut self) -> Result{
+		match self.state{
+			WfEndParam => self.state = WfParamKey,
+			_ => return Err(()),
+		}
+		Ok(())
+	}
 }

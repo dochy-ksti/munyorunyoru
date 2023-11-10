@@ -5,7 +5,7 @@ use crate::Error;
 use super::serialize_state::{Er, SerializeState};
 
 pub struct MunyoSerializer {
-    state: SerializeState,
+    pub(crate) state: SerializeState,
 }
 
 impl MunyoSerializer {
@@ -20,7 +20,7 @@ impl MunyoSerializer {
     }
 }
 
-trait ResultHelper {
+pub(crate) trait ResultHelper {
     fn me<F: Fn() -> String>(self, f: F) -> Result<(), Error>;
 }
 
@@ -33,7 +33,7 @@ impl ResultHelper for Result<(), ()> {
 fn msg(s: String) -> anyhow::Error {
     anyhow::Error::msg(s)
 }
-trait ResultSHelper {
+pub(crate) trait ResultSHelper {
     fn me<F: Fn() -> String>(self, f: F) -> Result<(), Error>;
 }
 

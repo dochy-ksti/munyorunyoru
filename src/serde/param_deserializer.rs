@@ -1,34 +1,112 @@
-use std::str::FromStr;
+use std::{collections::BTreeMap, str::FromStr};
 
 use serde::Deserializer;
 
 use crate::{
-    builder::default_builder::DefaultBuilder, error::parse_fail::ParseFail,
-    lang::builder_tree::TreeItem, MunyoDeserializer,
+    builder::default_builder::{DefaultBuilder, DefaultItem},
+    error::parse_fail::ParseFail,
+    lang::builder_tree::TreeItem,
+    MunyoDeserializer,
 };
 
-use super::{arguments::Arguments, arg_deserializer::ArgDeserializer};
-
-pub(crate) struct EnumDeserializer<'a, 'de: 'a> {
-    pub(crate) de: ArgDeserializer<'a, 'de>,
+pub(crate) struct ParamDeserializer<'a, 'de: 'a> {
+    pub(crate) de: &'a MunyoDeserializer<'de>,
+    pub(crate) params: BTreeMap<String, String>,
+    pub(crate) children: Vec<TreeItem<DefaultBuilder>>,
+    pub(crate) start_index: usize,
+    pub(crate) fields: &'static [&'static str],
+    pub(crate) field_counter: usize,
 }
 
-impl<'a, 'de> EnumDeserializer<'a, 'de> {
-    pub(crate) fn new(de: &'a MunyoDeserializer<'de>, b: TreeItem<DefaultBuilder>) -> Self {
-        let de = ArgDeserializer::new(de, b);
-        Self { de }
+impl<'a, 'de> ParamDeserializer<'a, 'de> {
+    pub(crate) fn new(
+        de: &'a MunyoDeserializer<'de>,
+        b: &mut TreeItem<DefaultBuilder>,
+        fields: &'static [&'static str],
+    ) -> Self {
+        let params = std::mem::replace(&mut b.item.params, BTreeMap::new());
+        let start_index = b.start_index;
+        let children = std::mem::replace(&mut b.children, Vec::new());
+        Self {
+            de,
+            params,
+            children,
+            start_index,
+            fields,
+            field_counter: 0,
+        }
     }
 
     pub(crate) fn err(&self, msg: &str) -> ParseFail {
-        self.de.err(msg)
+        ParseFail::msg(self.start_index, msg.to_string())
     }
 
-    fn mes(&self) -> ParseFail {
-        self.err("Vec's item must be enum")
+    pub(crate) fn option_arg(&mut self) -> Option<String> {
+        if let Some(field) = self.fields.get(self.field_counter) {
+            self.field_counter += 1;
+            self.params.remove(*field)
+        } else {
+            None
+        }
+    }
+
+    pub(crate) fn arg(&mut self) -> Result<String, ParseFail> {
+        self.option_arg()
+            .ok_or_else(|| self.err(&format!("param {} is not found", self.prev_field())))
+    }
+
+    fn prev_field(&self) -> &'static str {
+        let default = "{unknown}";
+        if self.field_counter == 0 {
+            return default;
+        }
+        if let Some(f) = self.fields.get(self.field_counter - 1) {
+            *f
+        } else {
+            default
+        }
+    }
+
+    fn parse<T: FromStr>(&mut self) -> Result3<T, T::Err> {
+		match self.arg(){
+			Err(e) => Result3::ParseFail(e),
+			Ok(arg) => match arg.parse(){
+				Ok(r) => Result3::Ok(r),
+				Err(e) => Result3::Err(e),
+			}
+		}
+    }
+
+	fn has_item(&self) -> bool{
+		if let Some(field) = self.fields.get(self.field_counter) {
+            self.params.contains_key(*field)
+        } else {
+            false
+        }
+	}
+}
+
+enum Result3<T, E>{
+	Ok(T),
+	ParseFail(ParseFail),
+	Err(E)
+}
+
+trait Result3Helper<T, U> {
+    fn me(self, de: &ParamDeserializer, f: impl Fn(U) -> String) -> Result<T, ParseFail>;
+}
+
+impl<T, U> Result3Helper<T, U> for Result3<T, U> {
+    fn me(self, de: &ParamDeserializer, f: impl Fn(U) -> String) -> Result<T, ParseFail> {
+		match self{
+			Self::Ok(r) => Ok(r),
+			Self::ParseFail(e) => Err(e),
+			Self::Err(e) => Err(de.err(&f(e)))
+		}
     }
 }
 
-impl<'a, 'b, 'de> Deserializer<'de> for &'b mut EnumDeserializer<'a, 'de> {
+impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ParamDeserializer<'a, 'de> {
     type Error = ParseFail;
 
     fn deserialize_any<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
@@ -42,84 +120,91 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut EnumDeserializer<'a, 'de> {
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.mes())
+        let s = self.arg()?;
+        match s.as_str() {
+            "t" => visitor.visit_bool(true),
+            "f" => visitor.visit_bool(false),
+            "true" => visitor.visit_bool(true),
+            "false" => visitor.visit_bool(false),
+            _ => Err(self.err("failed to parse bool")),
+        }
     }
 
     fn deserialize_i8<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.mes())
+        visitor.visit_i8(self.parse::<i8>().me(self, |e| e.to_string())?)
     }
 
     fn deserialize_i16<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.mes())
+        visitor.visit_i16(self.parse::<i16>().me(self, |e| e.to_string())?)
     }
 
     fn deserialize_i32<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.mes())
+        visitor.visit_i32(self.parse::<i32>().me(self, |e| e.to_string())?)
     }
 
     fn deserialize_i64<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.mes())
+        visitor.visit_i64(self.parse::<i64>().me(self, |e| e.to_string())?)
     }
 
     fn deserialize_u8<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.mes())
+        visitor.visit_u8(self.parse::<u8>().me(self, |e| e.to_string())?)
     }
 
     fn deserialize_u16<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.mes())
+        visitor.visit_u16(self.parse::<u16>().me(self, |e| e.to_string())?)
     }
 
     fn deserialize_u32<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.mes())
+        visitor.visit_u32(self.parse::<u32>().me(self, |e| e.to_string())?)
     }
 
     fn deserialize_u64<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.mes())
+        visitor.visit_u64(self.parse::<u64>().me(self, |e| e.to_string())?)
     }
 
     fn deserialize_f32<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.mes())
+        visitor.visit_f32(self.parse::<f32>().me(self, |e| e.to_string())?)
     }
 
     fn deserialize_f64<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.mes())
+        visitor.visit_f64(self.parse::<f64>().me(self, |e| e.to_string())?)
     }
 
     fn deserialize_char<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.mes())
+        visitor.visit_char(self.parse::<char>().me(self, |e| e.to_string())?)
     }
 
     fn deserialize_str<V>(self, visitor: V) -> Result<V::Value, Self::Error>
@@ -127,13 +212,16 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut EnumDeserializer<'a, 'de> {
         V: serde::de::Visitor<'de>,
     {
         Err(self.err("deserializing &str is not supported"))
+
+        //serde default visitor doesn't accept visit_str to deserialize &str
+        //visitor.visit_str(&self.args.arg())
     }
 
     fn deserialize_string<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.mes())
+        visitor.visit_string(self.arg()?)
     }
 
     fn deserialize_bytes<V>(self, visitor: V) -> Result<V::Value, Self::Error>
@@ -154,14 +242,18 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut EnumDeserializer<'a, 'de> {
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.mes())
+		if self.has_item(){
+        	visitor.visit_some(self)
+		} else{
+			visitor.visit_none()
+		}
     }
 
     fn deserialize_unit<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.err("deserializing unit is not supported"))
+        Err(self.err("deserializing Unit is not supported"))
     }
 
     fn deserialize_unit_struct<V>(
@@ -172,7 +264,7 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut EnumDeserializer<'a, 'de> {
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.err("deserializing unit struct is not supported"))
+        Err(self.err("deserializing Unit Struct is not supported"))
     }
 
     fn deserialize_newtype_struct<V>(
@@ -183,14 +275,14 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut EnumDeserializer<'a, 'de> {
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.err("deserializing tuple struct is not supported"))
+        Err(self.err("deserializing Tuple Struct is not supported"))
     }
 
     fn deserialize_seq<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.mes())
+        todo!()
     }
 
     fn deserialize_tuple<V>(self, len: usize, visitor: V) -> Result<V::Value, Self::Error>
@@ -228,32 +320,34 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut EnumDeserializer<'a, 'de> {
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.mes())
+        
+        Err(self.err("deserializing Map is not supported"))
     }
 
     fn deserialize_enum<V>(
         self,
-        _name: &'static str,
-        _variants: &'static [&'static str],
+        name: &'static str,
+        variants: &'static [&'static str],
         visitor: V,
     ) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        visitor.visit_enum(self)
+        todo!()
     }
 
     fn deserialize_identifier<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        visitor.visit_string(self.de.b.item.typename.clone())
+        todo!()
     }
 
     fn deserialize_ignored_any<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.err("deserializing ignored any is not supported"))
+        Err(self.err("deserializing IgnoredAny is not supported"))
+        
     }
 }

@@ -24,8 +24,3 @@ pub use crate::serde::serializer::MunyoSerializer;
 pub use crate::error::munyo_error::Error;
 pub type Result<T> = std::result::Result<T, Error>;
 
-fn hoge() {
-    let s = "{}";
-    let j: () = serde_json::from_str(s).unwrap();
-    return;
-}

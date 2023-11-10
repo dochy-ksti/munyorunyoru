@@ -6,13 +6,8 @@ use std::{
 use super::builder::{Builder, MetaBuilder};
 
 #[derive(Debug, Clone, Default)]
-pub struct DefaultMetaBuilder {}
+pub struct DefaultMetaBuilder;
 
-impl DefaultMetaBuilder {
-    pub fn new() -> Self {
-        Self {}
-    }
-}
 
 impl MetaBuilder for DefaultMetaBuilder {
     type Item = DefaultBuilder;

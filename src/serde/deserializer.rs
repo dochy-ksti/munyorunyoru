@@ -9,11 +9,10 @@ use crate::{
         builder_tree::{BuilderTree, TreeItem},
         process_file_text::{into_parse_error, parse_text},
     },
-    DefaultMetaBuilder,
-	Error
+    DefaultMetaBuilder, Error,
 };
 
-use super::vec_deserializer::VecDeserializer;
+use super::vec_access::VecAccess;
 
 pub struct MunyoDeserializer<'de> {
     pub(crate) path: PathItem,
@@ -24,8 +23,8 @@ pub struct MunyoDeserializer<'de> {
 impl<'de> MunyoDeserializer<'de> {
     pub fn new(text: &'de str, path: Option<PathBuf>) -> Result<Self, Error> {
         let path = PathItem::new(path);
-        let mut tree = parse_text(text, &DefaultMetaBuilder::new())
-            .map_err(|e| Self::into_error(text, e, &path))?;
+        let mut tree =
+            parse_text(text, &DefaultMetaBuilder).map_err(|e| Self::into_error(text, e, &path))?;
         tree.root.reverse();
         Ok(Self { text, tree, path })
     }
@@ -203,7 +202,7 @@ impl<'de, 'a> Deserializer<'de> for &'a mut MunyoDeserializer<'de> {
         V: serde::de::Visitor<'de>,
     {
         let vec: Vec<TreeItem<DefaultBuilder>> = std::mem::replace(&mut self.tree.root, vec![]);
-        match visitor.visit_seq(VecDeserializer::new(&*self, vec)) {
+        match visitor.visit_seq(VecAccess::new(&*self, vec)) {
             Ok(r) => Ok(r),
             Err(e) => Err(self.into_munyo_error(e)),
         }

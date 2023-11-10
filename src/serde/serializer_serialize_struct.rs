@@ -2,6 +2,8 @@ use serde::ser;
 
 use crate::MunyoSerializer;
 
+use super::serializer::{ResultSHelper, ResultHelper};
+
 impl<'a> ser::SerializeStruct for &'a mut MunyoSerializer {
     type Ok = ();
 
@@ -15,12 +17,12 @@ impl<'a> ser::SerializeStruct for &'a mut MunyoSerializer {
     where
         T: serde::Serialize,
     {
-        let mut se = MunyoSerializer::new();
-        value.serialize(&mut se)?;
-        todo!()
+        self.state.add_param_key(key).me(|| format!("param key failed {key}"))?;
+        value.serialize(&mut **self)
+        
     }
 
     fn end(self) -> Result<Self::Ok, Self::Error> {
-        todo!()
+        self.state.end_param().me(|| "end param failed".to_string())
     }
 }
