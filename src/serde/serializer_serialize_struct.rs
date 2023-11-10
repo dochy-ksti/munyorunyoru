@@ -2,7 +2,7 @@ use serde::ser;
 
 use crate::MunyoSerializer;
 
-use super::serializer::{ResultSHelper, ResultHelper};
+use super::serializer::{ResultHelper, ResultSHelper};
 
 impl<'a> ser::SerializeStruct for &'a mut MunyoSerializer {
     type Ok = ();
@@ -17,13 +17,54 @@ impl<'a> ser::SerializeStruct for &'a mut MunyoSerializer {
     where
         T: serde::Serialize,
     {
-        self.state.add_param_key(key).me(|| format!("param key failed {key}"))?;
+        self.state
+            .add_param_key(key)
+            .me(|| format!("param key failed {key}"))?;
         value.serialize(&mut **self)
-        
     }
 
     fn end(self) -> Result<Self::Ok, Self::Error> {
-		Ok(())
+        Ok(())
         //self.state.end_param().me(|| "end param failed".to_string())
+    }
+}
+impl<'a> ser::SerializeSeq for &'a mut MunyoSerializer {
+    type Ok = ();
+
+    type Error = crate::Error;
+
+    fn serialize_element<T: ?Sized>(&mut self, value: &T) -> Result<(), Self::Error>
+    where
+        T: serde::Serialize,
+    {
+        T::serialize(value, &mut **self)
+    }
+
+    fn end(self) -> Result<Self::Ok, Self::Error> {
+        self.state
+            .end_seq()
+            .me(|| format!("unexpected end of seq"))?;
+        Ok(())
+    }
+}
+
+impl<'a> ser::SerializeTupleVariant for &'a mut MunyoSerializer {
+    type Ok = ();
+
+    type Error = crate::Error;
+
+    fn serialize_field<T: ?Sized>(&mut self, value: &T) -> Result<(), Self::Error>
+    where
+        T: serde::Serialize,
+    {
+        value.serialize(&mut **self)?;
+        Ok(())
+    }
+
+    fn end(self) -> Result<Self::Ok, Self::Error> {
+        self.state
+            .end_line()
+            .me(|| format!("unexpected end of tuple"))?;
+        Ok(())
     }
 }

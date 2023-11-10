@@ -103,11 +103,18 @@ impl SerializeState {
         self.output.push_str(&name);
         Ok(())
     }
-    // pub(crate) fn end_param(&mut self) -> Result{
-    // 	match self.state{
-    // 		WfEndParam => self.state = WfParamKey,
-    // 		_ => return Err(()),
-    // 	}
-    // 	Ok(())
-    // }
+    pub(crate) fn add_none(&mut self) -> Result {
+        match self.state {
+            WfParamValue => {
+                self.state = WfParamKey;
+                while let Some(c) = self.output.pop() {
+                    if c == '|' {
+                        break;
+                    }
+                }
+                Ok(())
+            }
+            _ => Err(()),
+        }
+    }
 }

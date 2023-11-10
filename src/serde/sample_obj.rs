@@ -1,13 +1,15 @@
 use anyhow::anyhow;
 use serde::{Deserialize, Serialize};
 
-use crate::Error;
+use crate::{Error, RestOf};
 
 #[derive(Serialize, Deserialize, PartialEq, Debug)]
 enum SampleEnum {
     Item1(Color, SampleObj, SampleObj2, Vec<SampleEnum>),
     Item2(usize),
     Item3(Vec<SampleEnum>),
+    Item4(SampleObj2),
+    Item5(usize, RestOf),
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug)]
@@ -24,13 +26,12 @@ impl SampleObj {
 
 #[derive(Serialize, Deserialize, PartialEq, Debug)]
 pub(crate) struct SampleObj2 {
-    nom: usize,
-    s2: String,
+    nom: Option<usize>,
 }
 
 impl SampleObj2 {
-    pub(crate) fn new(nom: usize, s2: String) -> Self {
-        Self { nom, s2 }
+    pub(crate) fn new(nom: Option<usize>) -> Self {
+        Self { nom }
     }
 }
 
@@ -81,13 +82,13 @@ fn des() -> Result<(), Error> {
         SampleEnum::Item1(
             Color::new(),
             SampleObj::new(4, "masa".to_string()),
-            SampleObj2::new(5, "moso".to_string()),
+            SampleObj2::new(Some(5)),
             vec![
                 SampleEnum::Item2(8),
-                SampleEnum::Item3(vec![SampleEnum::Item2(20), SampleEnum::Item2(15)]),
+                SampleEnum::Item3(vec![SampleEnum::Item4(SampleObj2::new(None))]),
             ],
         ),
-        SampleEnum::Item2(30),
+        SampleEnum::Item5(30, RestOf::new("   hoge\n".to_string())),
     ]; //, SampleEnum::SampleObj(5, SampleObj{ num : 4 })];
     let mut ser = crate::MunyoSerializer::new();
     o.serialize(&mut ser)?;

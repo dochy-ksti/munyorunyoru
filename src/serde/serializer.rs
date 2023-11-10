@@ -150,14 +150,14 @@ impl<'a> serde::ser::Serializer for &'a mut MunyoSerializer {
     }
 
     fn serialize_none(self) -> Result<Self::Ok, Self::Error> {
-        todo!()
+        self.state.add_none().me(|| "add none failed".to_string())
     }
 
     fn serialize_some<T: ?Sized>(self, value: &T) -> Result<Self::Ok, Self::Error>
     where
         T: serde::Serialize,
     {
-        todo!()
+        value.serialize(self)
     }
 
     fn serialize_unit(self) -> Result<Self::Ok, Self::Error> {
@@ -265,46 +265,6 @@ impl<'a> serde::ser::Serializer for &'a mut MunyoSerializer {
     }
 }
 
-impl<'a> ser::SerializeSeq for &'a mut MunyoSerializer {
-    type Ok = ();
-
-    type Error = Error;
-
-    fn serialize_element<T: ?Sized>(&mut self, value: &T) -> Result<(), Self::Error>
-    where
-        T: serde::Serialize,
-    {
-        T::serialize(value, &mut **self)
-    }
-
-    fn end(self) -> Result<Self::Ok, Self::Error> {
-        self.state
-            .end_seq()
-            .me(|| format!("unexpected end of seq"))?;
-        Ok(())
-    }
-}
-
-impl<'a> ser::SerializeTupleVariant for &'a mut MunyoSerializer {
-    type Ok = ();
-
-    type Error = Error;
-
-    fn serialize_field<T: ?Sized>(&mut self, value: &T) -> Result<(), Self::Error>
-    where
-        T: serde::Serialize,
-    {
-        value.serialize(&mut **self)?;
-        Ok(())
-    }
-
-    fn end(self) -> Result<Self::Ok, Self::Error> {
-        self.state
-            .end_line()
-            .me(|| format!("unexpected end of tuple"))?;
-        Ok(())
-    }
-}
 impl<'a> ser::SerializeMap for &'a mut MunyoSerializer {
     type Ok = ();
 
