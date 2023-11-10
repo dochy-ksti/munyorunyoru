@@ -13,7 +13,6 @@ enum State {
     WfArg,
     WfParamKey,
     WfParamValue,
-	WfEndParam,
 }
 
 pub(crate) enum Er {
@@ -38,8 +37,10 @@ impl SerializeState {
     }
 
     pub(crate) fn start_seq(&mut self) -> Result {
-        if self.state != WfSeq {
-            return Err(());
+        match self.state {
+            WfSeq => {}
+            WfArg | WfParamKey => self.output.push('\n'),
+            WfLine | WfParamValue => return Err(()),
         }
         self.indent_level += 1;
         self.state = WfLine;
@@ -49,8 +50,8 @@ impl SerializeState {
         match self.state {
             WfLine => {
                 self.indent_level -= 1;
-                self.output.push('\n');
-                self.state = WfSeq;
+                //self.output.push('\n');
+                self.state = WfLine;
                 Ok(())
             }
             _ => Err(()),
@@ -69,18 +70,19 @@ impl SerializeState {
     }
     pub(crate) fn end_line(&mut self) -> Result {
         match self.state {
-            WfArg | WfParamKey => {
+            WfArg | WfParamKey | WfSeq => {
                 self.output.push('\n');
                 self.state = WfLine;
                 Ok(())
             }
-            WfSeq | WfLine | WfParamValue | WfEndParam => Err(()),
+            WfLine => Ok(()),
+            WfParamValue => Err(()),
         }
     }
     pub(crate) fn add_arg(&mut self, arg: &str) -> ResultS {
         match self.state {
             WfArg => {}
-            WfParamValue => self.state = WfEndParam,
+            WfParamValue => self.state = WfParamKey,
             WfParamKey => return Err(Er::Message(format!("param expected {arg}"))),
             _ => return Err(Er::None),
         }
@@ -97,15 +99,15 @@ impl SerializeState {
             _ => return Err(Er::Message(format!("param struct is not expected {name}"))),
         }
         self.state = WfParamValue;
-		self.output.push('|');
+        self.output.push('|');
         self.output.push_str(&name);
         Ok(())
     }
-	pub(crate) fn end_param(&mut self) -> Result{
-		match self.state{
-			WfEndParam => self.state = WfParamKey,
-			_ => return Err(()),
-		}
-		Ok(())
-	}
+    // pub(crate) fn end_param(&mut self) -> Result{
+    // 	match self.state{
+    // 		WfEndParam => self.state = WfParamKey,
+    // 		_ => return Err(()),
+    // 	}
+    // 	Ok(())
+    // }
 }

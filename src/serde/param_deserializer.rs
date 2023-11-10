@@ -1,6 +1,6 @@
 use std::{collections::BTreeMap, str::FromStr};
 
-use serde::Deserializer;
+use serde::{de::SeqAccess, Deserializer};
 
 use crate::{
     builder::default_builder::{DefaultBuilder, DefaultItem},
@@ -11,8 +11,7 @@ use crate::{
 
 pub(crate) struct ParamDeserializer<'a, 'de: 'a> {
     pub(crate) de: &'a MunyoDeserializer<'de>,
-    pub(crate) params: BTreeMap<String, String>,
-    pub(crate) children: Vec<TreeItem<DefaultBuilder>>,
+    pub(crate) params: &'a BTreeMap<String, String>,
     pub(crate) start_index: usize,
     pub(crate) fields: &'static [&'static str],
     pub(crate) field_counter: usize,
@@ -21,16 +20,13 @@ pub(crate) struct ParamDeserializer<'a, 'de: 'a> {
 impl<'a, 'de> ParamDeserializer<'a, 'de> {
     pub(crate) fn new(
         de: &'a MunyoDeserializer<'de>,
-        b: &mut TreeItem<DefaultBuilder>,
+        params: &'a BTreeMap<String, String>,
+		start_index : usize,
         fields: &'static [&'static str],
     ) -> Self {
-        let params = std::mem::replace(&mut b.item.params, BTreeMap::new());
-        let start_index = b.start_index;
-        let children = std::mem::replace(&mut b.children, Vec::new());
         Self {
             de,
-            params,
-            children,
+            params: params,
             start_index,
             fields,
             field_counter: 0,
@@ -41,55 +37,42 @@ impl<'a, 'de> ParamDeserializer<'a, 'de> {
         ParseFail::msg(self.start_index, msg.to_string())
     }
 
-    pub(crate) fn option_arg(&mut self) -> Option<String> {
-        if let Some(field) = self.fields.get(self.field_counter) {
-            self.field_counter += 1;
-            self.params.remove(*field)
-        } else {
-            None
-        }
-    }
-
     pub(crate) fn arg(&mut self) -> Result<String, ParseFail> {
-        self.option_arg()
-            .ok_or_else(|| self.err(&format!("param {} is not found", self.prev_field())))
-    }
-
-    fn prev_field(&self) -> &'static str {
-        let default = "{unknown}";
-        if self.field_counter == 0 {
-            return default;
-        }
-        if let Some(f) = self.fields.get(self.field_counter - 1) {
-            *f
+		if let Some(field) = self.fields.get(self.field_counter) {
+            self.field_counter += 1;
+            if let Some(arg) = self.params.get(*field) {
+                Ok(arg.to_string())
+            } else{
+				Err(self.err(&format!("param {} is not found", *field)))
+			}
         } else {
-            default
+            Err(self.err("this struct has no more fields to deserialize"))
         }
     }
 
     fn parse<T: FromStr>(&mut self) -> Result3<T, T::Err> {
-		match self.arg(){
-			Err(e) => Result3::ParseFail(e),
-			Ok(arg) => match arg.parse(){
-				Ok(r) => Result3::Ok(r),
-				Err(e) => Result3::Err(e),
-			}
-		}
+        match self.arg() {
+            Err(e) => Result3::ParseFail(e),
+            Ok(arg) => match arg.parse() {
+                Ok(r) => Result3::Ok(r),
+                Err(e) => Result3::Err(e),
+            },
+        }
     }
 
-	fn has_item(&self) -> bool{
-		if let Some(field) = self.fields.get(self.field_counter) {
+    fn has_item(&self) -> bool {
+        if let Some(field) = self.fields.get(self.field_counter) {
             self.params.contains_key(*field)
         } else {
             false
         }
-	}
+    }
 }
 
-enum Result3<T, E>{
-	Ok(T),
-	ParseFail(ParseFail),
-	Err(E)
+enum Result3<T, E> {
+    Ok(T),
+    ParseFail(ParseFail),
+    Err(E),
 }
 
 trait Result3Helper<T, U> {
@@ -98,11 +81,11 @@ trait Result3Helper<T, U> {
 
 impl<T, U> Result3Helper<T, U> for Result3<T, U> {
     fn me(self, de: &ParamDeserializer, f: impl Fn(U) -> String) -> Result<T, ParseFail> {
-		match self{
-			Self::Ok(r) => Ok(r),
-			Self::ParseFail(e) => Err(e),
-			Self::Err(e) => Err(de.err(&f(e)))
-		}
+        match self {
+            Self::Ok(r) => Ok(r),
+            Self::ParseFail(e) => Err(e),
+            Self::Err(e) => Err(de.err(&f(e))),
+        }
     }
 }
 
@@ -242,11 +225,11 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ParamDeserializer<'a, 'de> {
     where
         V: serde::de::Visitor<'de>,
     {
-		if self.has_item(){
-        	visitor.visit_some(self)
-		} else{
-			visitor.visit_none()
-		}
+        if self.has_item() {
+            visitor.visit_some(self)
+        } else {
+            visitor.visit_none()
+        }
     }
 
     fn deserialize_unit<V>(self, visitor: V) -> Result<V::Value, Self::Error>
@@ -320,7 +303,6 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ParamDeserializer<'a, 'de> {
     where
         V: serde::de::Visitor<'de>,
     {
-        
         Err(self.err("deserializing Map is not supported"))
     }
 
@@ -348,6 +330,16 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ParamDeserializer<'a, 'de> {
         V: serde::de::Visitor<'de>,
     {
         Err(self.err("deserializing IgnoredAny is not supported"))
-        
+    }
+}
+
+impl<'a, 'b, 'de> SeqAccess<'de> for &'b mut ParamDeserializer<'a, 'de> {
+    type Error = ParseFail;
+
+    fn next_element_seed<T>(&mut self, seed: T) -> Result<Option<T::Value>, Self::Error>
+    where
+        T: serde::de::DeserializeSeed<'de>,
+    {
+        seed.deserialize(&mut **self).map(|r| Some(r))
     }
 }

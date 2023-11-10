@@ -15,7 +15,8 @@ pub(crate) struct VecAccess<'a, 'de: 'a> {
 }
 
 impl<'a, 'de> VecAccess<'a, 'de> {
-    pub(crate) fn new(de: &'a MunyoDeserializer<'de>, b: Vec<TreeItem<DefaultBuilder>>) -> Self {
+    pub(crate) fn new(de: &'a MunyoDeserializer<'de>, mut b: Vec<TreeItem<DefaultBuilder>>) -> Self {
+		b.reverse();
         Self { de, b }
     }
 }

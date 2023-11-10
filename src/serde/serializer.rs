@@ -285,39 +285,6 @@ impl<'a> ser::SerializeSeq for &'a mut MunyoSerializer {
     }
 }
 
-impl<'a> ser::SerializeTuple for &'a mut MunyoSerializer {
-    type Ok = ();
-
-    type Error = Error;
-
-    fn serialize_element<T: ?Sized>(&mut self, _value: &T) -> Result<(), Self::Error>
-    where
-        T: serde::Serialize,
-    {
-        todo!()
-    }
-
-    fn end(self) -> Result<Self::Ok, Self::Error> {
-        todo!()
-    }
-}
-
-impl<'a> ser::SerializeTupleStruct for &'a mut MunyoSerializer {
-    type Ok = ();
-
-    type Error = Error;
-
-    fn serialize_field<T: ?Sized>(&mut self, _value: &T) -> Result<(), Self::Error>
-    where
-        T: serde::Serialize,
-    {
-        todo!()
-    }
-
-    fn end(self) -> Result<Self::Ok, Self::Error> {
-        todo!()
-    }
-}
 impl<'a> ser::SerializeTupleVariant for &'a mut MunyoSerializer {
     type Ok = ();
 
@@ -372,6 +339,40 @@ impl<'a> ser::SerializeStructVariant for &'a mut MunyoSerializer {
         _key: &'static str,
         _value: &T,
     ) -> Result<(), Self::Error>
+    where
+        T: serde::Serialize,
+    {
+        todo!()
+    }
+
+    fn end(self) -> Result<Self::Ok, Self::Error> {
+        todo!()
+    }
+}
+
+impl<'a> ser::SerializeTuple for &'a mut MunyoSerializer {
+    type Ok = ();
+
+    type Error = Error;
+
+    fn serialize_element<T: ?Sized>(&mut self, _value: &T) -> Result<(), Self::Error>
+    where
+        T: serde::Serialize,
+    {
+        todo!()
+    }
+
+    fn end(self) -> Result<Self::Ok, Self::Error> {
+        todo!()
+    }
+}
+
+impl<'a> ser::SerializeTupleStruct for &'a mut MunyoSerializer {
+    type Ok = ();
+
+    type Error = Error;
+
+    fn serialize_field<T: ?Sized>(&mut self, _value: &T) -> Result<(), Self::Error>
     where
         T: serde::Serialize,
     {

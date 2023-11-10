@@ -23,9 +23,9 @@ pub struct MunyoDeserializer<'de> {
 impl<'de> MunyoDeserializer<'de> {
     pub fn new(text: &'de str, path: Option<PathBuf>) -> Result<Self, Error> {
         let path = PathItem::new(path);
-        let mut tree =
+        let tree =
             parse_text(text, &DefaultMetaBuilder).map_err(|e| Self::into_error(text, e, &path))?;
-        tree.root.reverse();
+        
         Ok(Self { text, tree, path })
     }
 

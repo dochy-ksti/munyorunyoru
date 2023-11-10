@@ -1,5 +1,5 @@
 use std::{
-    collections::BTreeMap,
+    collections::{BTreeMap, btree_map::Entry},
     fmt::{Debug, Display},
 };
 
@@ -40,13 +40,12 @@ impl Builder for DefaultBuilder {
     type Item = DefaultItem;
 
     fn set_param(&mut self, param_name: String, argument: String) -> Result<(), String> {
-        let b = self.params.insert(param_name, argument);
-        if let Some(param_name) = b {
-            return Err(format!(
-                "{param_name} is applied multiple times for {} {}",
-                &self.typename, &self.content
-            ));
-        }
+		match self.params.entry(param_name){
+			Entry::Occupied(e) =>{
+				return Err(format!("'{}' is applied multiple times", e.key()));
+			}
+			Entry::Vacant(e) =>{ e.insert(argument); }
+		}
         Ok(())
     }
 

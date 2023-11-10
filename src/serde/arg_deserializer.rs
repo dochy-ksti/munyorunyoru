@@ -7,18 +7,24 @@ use crate::{
     lang::builder_tree::TreeItem, MunyoDeserializer,
 };
 
-use super::arguments::Arguments;
+use super::{arguments::Arguments, param_deserializer::ParamDeserializer, vec_access::VecAccess};
 
 pub(crate) struct ArgDeserializer<'a, 'de: 'a> {
     pub(crate) de: &'a MunyoDeserializer<'de>,
     pub(crate) b: TreeItem<DefaultBuilder>,
     args: Arguments,
+    children_deserialized: bool,
 }
 
 impl<'a, 'de> ArgDeserializer<'a, 'de> {
     pub(crate) fn new(de: &'a MunyoDeserializer<'de>, b: TreeItem<DefaultBuilder>) -> Self {
         let args = Arguments::new(&b.item.content);
-        Self { de, b, args }
+        Self {
+            de,
+            b,
+            args,
+            children_deserialized: false,
+        }
     }
 
     pub(crate) fn err(&self, msg: &str) -> ParseFail {
@@ -212,7 +218,13 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ArgDeserializer<'a, 'de> {
     where
         V: serde::de::Visitor<'de>,
     {
-        todo!()
+        if self.children_deserialized {
+            Err(self.err("only one children can be deserialized"))
+        } else {
+            self.children_deserialized = true;
+            let children = std::mem::replace(&mut self.b.children, Vec::new());
+            visitor.visit_seq(VecAccess::new(self.de, children))
+        }
     }
 
     fn deserialize_tuple<V>(self, len: usize, visitor: V) -> Result<V::Value, Self::Error>
@@ -250,8 +262,9 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ArgDeserializer<'a, 'de> {
     where
         V: serde::de::Visitor<'de>,
     {
-        println!("deserialize struct {name}");
-        visitor.visit_seq(self)
+        let mut p =
+            ParamDeserializer::new(self.de, &self.b.item.params, self.b.start_index, fields);
+        visitor.visit_seq(&mut p)
     }
 
     fn deserialize_enum<V>(

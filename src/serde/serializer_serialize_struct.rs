@@ -23,6 +23,7 @@ impl<'a> ser::SerializeStruct for &'a mut MunyoSerializer {
     }
 
     fn end(self) -> Result<Self::Ok, Self::Error> {
-        self.state.end_param().me(|| "end param failed".to_string())
+		Ok(())
+        //self.state.end_param().me(|| "end param failed".to_string())
     }
 }
