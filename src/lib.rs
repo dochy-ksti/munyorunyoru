@@ -9,6 +9,7 @@ mod builder;
 pub mod error;
 mod file_io;
 mod lang;
+pub mod samples;
 mod serde;
 mod test_parser;
 #[cfg(test)]
@@ -23,4 +24,3 @@ pub use crate::serde::serializer::MunyoSerializer;
 
 pub use crate::error::munyo_error::Error;
 pub type Result<T> = std::result::Result<T, Error>;
-
