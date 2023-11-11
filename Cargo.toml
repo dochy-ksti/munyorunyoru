@@ -5,7 +5,7 @@ edition = "2021"
 
 
 [dependencies]
-anyhow = {version = "1", features = ["backtrace"]}
+anyhow = { version = "1", features = ["backtrace"] }
 shrink_pool = "1"
 async-channel = "1"
 thiserror = "1"
@@ -14,3 +14,6 @@ pest = "2"
 pest_derive = "2"
 
 serde = { version = "1", features = ["derive"] }
+
+[workspace]
+members = ["munyo_derive"]
