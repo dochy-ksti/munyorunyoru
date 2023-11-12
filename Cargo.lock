@@ -196,6 +196,17 @@ dependencies = [
 name = "munyo_derive"
 version = "0.1.0"
 dependencies = [
+ "proc-macro2",
+ "quote",
+ "serde",
+ "syn",
+]
+
+[[package]]
+name = "munyo_derive_test"
+version = "0.1.0"
+dependencies = [
+ "munyo_derive",
  "serde",
 ]
 

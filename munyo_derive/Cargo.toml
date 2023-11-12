@@ -8,3 +8,6 @@ proc-macro = true
 
 [dependencies]
 serde = { version = "1", features = ["derive"] }
+proc-macro2 = "1"
+quote = "1"
+syn = "2"
