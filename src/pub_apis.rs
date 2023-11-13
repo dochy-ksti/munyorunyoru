@@ -13,9 +13,11 @@ where
 pub fn from_file<'de, P, T>(path : P) -> Result<Vec<T>>
 	where P : AsRef<Path>, T : de::DeserializeOwned
 {
-	let s = std::fs::read_to_string(path.as_ref()).map_err(|e| 
+	
+	let s = std::fs::read_to_string(&path).map_err(|e| 
 		crate::Error::ReadFile(path.as_ref().to_path_buf(), format!("{}", e)))?;
-	from_str(&s)
+	let mut de = MunyoDeserializer::new(&s, Some(path.as_ref().to_path_buf()))?;
+    de::Deserialize::deserialize(&mut de)
 }
 
 pub fn to_string<T>(items: &[T]) -> Result<String>
