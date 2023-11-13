@@ -17,8 +17,8 @@ use super::{
 
 use pest::Parser;
 
-pub fn process_file_text<MB, B, T>(
-    text: String,
+pub fn from_str_with_metabuilder<MB, B, T>(
+    text: &str,
     meta_builder: &MB,
 ) -> Result<Processed<T>, ParseError>
 where
@@ -26,19 +26,19 @@ where
     B: Builder<Item = T>,
 {
     Ok(Processed::new(
-        in_process_file_text(&text, meta_builder).map_err(|e| into_parse_error(e, &text))?
+        in_process_file_text(&text, meta_builder).map_err(|e| into_parse_error(e, &text))?,
     ))
 }
 
-pub(crate) fn into_parse_error(fail : ParseFail, text : &str) -> ParseError{
-	let lookup = LineColLookup::new(&text);
-	let r = lookup.line_col(fail.start_index).unwrap();
-	ParseError::new(
-		r.line,
-		r.col,
-		text[r.line_start..r.line_end].to_string(),
-		fail.message,
-	)
+pub(crate) fn into_parse_error(fail: ParseFail, text: &str) -> ParseError {
+    let lookup = LineColLookup::new(&text);
+    let r = lookup.line_col(fail.start_index).unwrap();
+    ParseError::new(
+        r.line,
+        r.col,
+        text[r.line_start..r.line_end].to_string(),
+        fail.message,
+    )
 }
 
 fn in_process_file_text<MB, B, T>(text: &str, meta_builder: &MB) -> Result<Vec<T>, ParseFail>
@@ -50,7 +50,10 @@ where
     tree.finish()
 }
 
-pub(crate) fn parse_text<MB, B, T>(text: &str, meta_builder: &MB) -> Result<BuilderTree<B>, ParseFail>
+pub(crate) fn parse_text<MB, B, T>(
+    text: &str,
+    meta_builder: &MB,
+) -> Result<BuilderTree<B>, ParseFail>
 where
     MB: MetaBuilder<Item = B>,
     B: Builder<Item = T>,
@@ -61,8 +64,6 @@ where
 
     parse_pairs(pair.into_inner(), meta_builder)
 }
-
-
 
 fn parse_pairs<MB, B>(mut pairs: Pairs, meta_builder: &MB) -> Result<BuilderTree<B>, ParseFail>
 where

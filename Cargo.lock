@@ -206,6 +206,7 @@ dependencies = [
 name = "munyo_derive_test"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "munyo",
  "munyo_derive",
  "serde",

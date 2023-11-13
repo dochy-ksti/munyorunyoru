@@ -7,7 +7,7 @@ use crate::{
     error::{munyo_error::PathItem, parse_fail::ParseFail},
     lang::{
         builder_tree::{BuilderTree, TreeItem},
-        process_file_text::{into_parse_error, parse_text},
+        from_str_with_metabuilder::{into_parse_error, parse_text},
     },
     DefaultMetaBuilder, Error,
 };

@@ -18,6 +18,10 @@ impl MunyoSerializer {
     pub fn output(&self) -> &str {
         &self.state.output
     }
+
+	pub fn into_string(self) -> String{
+		self.state.output
+	}
 }
 
 pub(crate) trait ResultHelper {

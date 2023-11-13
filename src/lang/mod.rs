@@ -1,5 +1,5 @@
 pub(crate) mod state;
-pub(crate) mod process_file_text;
+pub(crate) mod from_str_with_metabuilder;
 pub(crate) mod munyo_parser;
 pub(crate) mod parse_line_contents;
 pub(crate) mod parse_content;

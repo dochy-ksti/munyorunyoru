@@ -9,3 +9,4 @@ edition = "2021"
 munyo = { path = "../" }
 munyo_derive = { path = "../munyo_derive" }
 serde = { version = "1", features = ["derive"] }
+anyhow = "1"

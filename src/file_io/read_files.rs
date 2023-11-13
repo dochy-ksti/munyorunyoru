@@ -8,7 +8,7 @@ use shrink_pool::ShrinkPool;
 use crate::{
     builder::builder::{Builder, MetaBuilder},
     error::munyo_error::PathItem,
-    lang::process_file_text::process_file_text,
+    lang::from_str_with_metabuilder::from_str_with_metabuilder,
     Error,
 };
 
@@ -38,14 +38,16 @@ where
             let builder = builder.clone();
             match std::fs::read_to_string(&path) {
                 Ok(s) => {
-                    pool.execute(move || match process_file_text(s, builder.as_ref()) {
-                        Ok(_) => {}
-                        Err(e) => {
-                            sender
-                                .send_blocking(Err(Error::Parse(PathItem::new(Some(path)), e)))
-                                .expect("async_channel::send_blocking failed");
-                        }
-                    });
+                    pool.execute(
+                        move || match from_str_with_metabuilder(&s, builder.as_ref()) {
+                            Ok(_) => {}
+                            Err(e) => {
+                                sender
+                                    .send_blocking(Err(Error::Parse(PathItem::new(Some(path)), e)))
+                                    .expect("async_channel::send_blocking failed");
+                            }
+                        },
+                    );
                 }
                 Err(e) => {
                     sender
