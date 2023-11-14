@@ -2,6 +2,7 @@ pub(crate) mod concurrent;
 use std::path::PathBuf;
 
 /// File's path and parsed items.
+#[derive(Debug, Clone)]
 pub struct Data<T> {
     pub path: PathBuf,
     pub items: Vec<T>,

@@ -35,10 +35,10 @@ impl Clone for Concurrent {
 }
 
 impl Concurrent {
-    /// Create Concurrent with its thread-pool's size(num_cpus).
+    /// Create Concurrent with the thread-pool's size(num_cpus).
     ///
     /// This will create a thread pool. If multiple Concurrents have sufficient tasks,
-    /// the sum of thread count will surpass num_cpus.
+    /// the sum of threads will surpass num_cpus.
     ///
     /// If you want to share the pool, use clone().
     ///
@@ -49,10 +49,10 @@ impl Concurrent {
         }
     }
 
-    /// Read files and build items from them with meta_builder.
+    /// Read files and build items with meta_builder.
     ///
     /// Reading starts in the order given, and parsing and building will follow.
-    /// But it's concurrent process and the items will be sent as soon as they are ready, so the order of finished items is unknown.
+    /// But it's a concurrent process and the items will be sent as soon as they are ready, so the order of finished items is unknown.
     pub fn read_files_with_builder<I, P, T, B, MB>(
         &self,
         pathes: I,
@@ -73,6 +73,10 @@ impl Concurrent {
         })
     }
 
+    /// Read files and deserialize items from them.
+    ///
+    /// Reading starts in the order given, and parsing and deserializing will follow.
+    /// But it's a concurrent process and the items will be sent as soon as they are ready, so the order of finished items is unknown.
     pub fn deserialize_files<I, P, T>(&self, pathes: I) -> Receiver<Result<Data<T>, Error>>
     where
         I: Iterator<Item = P>,
