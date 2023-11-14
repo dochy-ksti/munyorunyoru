@@ -22,6 +22,7 @@ impl serde::ser::Serialize for Sample1 {
     where
         S: serde::Serializer,
     {
+        serializer.serialize_str(value))
         (self.u1 as serde::Serialize).serialize(serializer)?;
 		serializer.serialize_str(&self.s)
     }
