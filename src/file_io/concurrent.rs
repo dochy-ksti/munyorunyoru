@@ -9,7 +9,7 @@ use shrink_pool::ShrinkPool;
 
 use crate::builder::builder::{Builder, MetaBuilder};
 
-use super::{data::Data, receiver::Receiver};
+use super::{Data, Receiver};
 
 static IO_THREAD: OnceLock<ShrinkPool> = OnceLock::new();
 
@@ -17,21 +17,42 @@ fn io_thread() -> &'static ShrinkPool {
     IO_THREAD.get_or_init(|| ShrinkPool::new(1))
 }
 
-/// Read files with a thread and parse them with a thread pool concurrently.
+/// Read files with a thread and parse them in a thread pool concurrently.
 /// The thread and the pool's threads are automatically destroyed when no tasks are assigned for them.
 /// When a task is assigned after that, a new thread is spawned. It costs some, so you may want to
-/// assign as much tasks as possible at once to avoid the respawn-cost.
+/// assign as much tasks as possible at once to avoid the respawn cost.
 pub struct Concurrent {
     pool: Arc<ShrinkPool>,
 }
 
+impl Clone for Concurrent {
+    /// clone Concurrent. The cloned Concurrent shares the thread pool with the original.
+    fn clone(&self) -> Self {
+        Self {
+            pool: self.pool.clone(),
+        }
+    }
+}
+
 impl Concurrent {
-    /// Create this with the thread-pool's size.
+    /// Create Concurrent with its thread-pool's size(num_cpus).
+    ///
+    /// This will create a thread pool. If multiple Concurrents have sufficient tasks,
+    /// the sum of thread count will surpass num_cpus.
+    ///
+    /// If you want to share the pool, use clone().
+    ///
+    /// IO thread is always shared.
     pub fn new(num_cpus: usize) -> Self {
         Self {
             pool: Arc::new(ShrinkPool::new(num_cpus)),
         }
     }
+
+    /// Read files and build items from them with meta_builder.
+    ///
+    /// Reading starts in the order given, and parsing and building will follow.
+    /// But it's concurrent process and the items will be sent as soon as they are ready, so the order of finished items is unknown.
     pub fn read_files_with_builder<I, P, T, B, MB>(
         &self,
         pathes: I,
@@ -64,7 +85,7 @@ impl Concurrent {
         })
     }
 
-    pub fn inner<I, P, F, T>(&self, pathes: I, f: F) -> Receiver<Result<Data<T>, Error>>
+    fn inner<I, P, F, T>(&self, pathes: I, f: F) -> Receiver<Result<Data<T>, Error>>
     where
         I: Iterator<Item = P>,
         P: AsRef<Path>,
@@ -100,5 +121,13 @@ impl Concurrent {
             }
         });
         Receiver::new(receiver)
+    }
+
+    /// Do something with the thread pool.
+    pub fn do_something<F>(&self, f: F)
+    where
+        F: FnOnce() + Send + 'static,
+    {
+        self.pool.execute(move || f())
     }
 }

@@ -7,7 +7,7 @@
 
 pub mod builder;
 pub mod error;
-mod file_io;
+pub mod file_io;
 mod lang;
 mod pub_apis;
 pub mod samples;
