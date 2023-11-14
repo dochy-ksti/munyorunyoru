@@ -231,7 +231,7 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ArgDeserializer<'a, 'de> {
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.err("deserializing Tuple is not supported"))
+        visitor.visit_seq(self)
     }
 
     fn deserialize_tuple_struct<V>(

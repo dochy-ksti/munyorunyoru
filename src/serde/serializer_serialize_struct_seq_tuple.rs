@@ -68,3 +68,20 @@ impl<'a> ser::SerializeTupleVariant for &'a mut MunyoSerializer {
         Ok(())
     }
 }
+impl<'a> ser::SerializeTuple for &'a mut MunyoSerializer {
+    type Ok = ();
+
+    type Error = crate::Error;
+
+    fn serialize_element<T: ?Sized>(&mut self, value: &T) -> Result<(), Self::Error>
+    where
+        T: serde::Serialize,
+    {
+        value.serialize(&mut **self)?;
+		Ok(())
+    }
+
+    fn end(self) -> Result<Self::Ok, Self::Error> {
+        Ok(())
+    }
+}

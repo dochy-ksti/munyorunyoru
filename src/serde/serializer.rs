@@ -222,7 +222,7 @@ impl<'a> serde::ser::Serializer for &'a mut MunyoSerializer {
     }
 
     fn serialize_tuple(self, _len: usize) -> Result<Self::SerializeTuple, Self::Error> {
-        Err(err("tuples are not supported"))
+        Ok(self)
     }
 
     fn serialize_tuple_struct(
@@ -314,22 +314,7 @@ impl<'a> ser::SerializeStructVariant for &'a mut MunyoSerializer {
     }
 }
 
-impl<'a> ser::SerializeTuple for &'a mut MunyoSerializer {
-    type Ok = ();
 
-    type Error = Error;
-
-    fn serialize_element<T: ?Sized>(&mut self, _value: &T) -> Result<(), Self::Error>
-    where
-        T: serde::Serialize,
-    {
-        todo!()
-    }
-
-    fn end(self) -> Result<Self::Ok, Self::Error> {
-        todo!()
-    }
-}
 
 impl<'a> ser::SerializeTupleStruct for &'a mut MunyoSerializer {
     type Ok = ();
