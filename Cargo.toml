@@ -9,7 +9,6 @@ anyhow = { version = "1", features = ["backtrace"] }
 shrink_pool = "1"
 async-channel = "1"
 thiserror = "1.0.49"
-num_cpus = "1"
 pest = "2"
 pest_derive = "2"
 
