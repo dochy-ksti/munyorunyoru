@@ -35,6 +35,7 @@ impl serde::ser::Serialize for Sample1 {
     }
 }
 
+
 impl<'de> serde::de::Deserialize<'de> for Sample1 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
