@@ -112,13 +112,15 @@ impl Concurrent {
                 match std::fs::read_to_string(&path) {
                     Ok(s) => {
                         pool.execute(move || {
-                            sender.send_blocking(f((path, s))).expect("sender failed")
+                            //the channel has sufficient size, so no blocking occurs.
+                            sender.send_blocking(f((path, s))).ok();
+                            //when receiver is dropped, sending fails. it's OK.
                         });
                     }
                     Err(e) => {
                         sender
                             .send_blocking(Err(Error::ReadFile(path, format!("{e}"))))
-                            .expect("async_channel::send_blocking failed");
+                            .ok();
                         return;
                     }
                 }
@@ -128,10 +130,18 @@ impl Concurrent {
     }
 
     /// Do something with the thread pool.
-    pub fn do_something<F>(&self, f: F)
+    pub fn do_something_with_pool<F>(&self, f: F)
     where
         F: FnOnce() + Send + 'static,
     {
         self.pool.execute(move || f())
+    }
+
+	/// Do something with the io thread.
+    pub fn do_something_with_io_thread<F>(&self, f: F)
+    where
+        F: FnOnce() + Send + 'static,
+    {
+		io_thread().execute(move || f());
     }
 }
