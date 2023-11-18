@@ -11,7 +11,7 @@ async-channel = "1"
 thiserror = "1.0.49"
 pest = "2"
 pest_derive = "2"
-
+num_cpus = "1"
 serde = { version = "1", features = ["derive"] }
 
 [workspace]

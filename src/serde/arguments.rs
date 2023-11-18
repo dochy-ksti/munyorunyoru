@@ -14,21 +14,26 @@ impl Arguments {
     /// Args are splitted by whitespaces.
     /// This method takes an arg and moves the cursor to the next arg.
     pub(crate) fn arg(&mut self) -> String {
-        discard_spaces(&mut self.s);
+        //may be useful, but may be needless friendliness.
+        //discard_spaces(&mut self.s);
+
         let s = get_nonspace(&mut self.s);
         discard_space(&mut self.s);
         s
     }
 
-    /// may be empty
+    /// May be empty.
     ///
-    /// When you first call rest(), all contents will be returned.
-    ///	When you call rest() after arg(), prececded whitespaces will be trimmed.
+    /// All remained arguments including whitespaces are returned.
     pub(crate) fn rest(&mut self) -> String {
         self.s.reverse();
         let r = std::mem::replace(&mut self.s, vec![]);
 
         unchecked(r)
+    }
+
+    pub(crate) fn is_empty(&self) -> bool {
+        self.s.is_empty()
     }
 }
 
@@ -36,7 +41,7 @@ fn unchecked(vec: Vec<u8>) -> String {
     unsafe { String::from_utf8_unchecked(vec) }
 }
 
-fn discard_spaces(s: &mut Vec<u8>) {
+fn _discard_spaces(s: &mut Vec<u8>) {
     loop {
         if s.is_empty() {
             return;

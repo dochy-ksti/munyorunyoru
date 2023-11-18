@@ -17,7 +17,7 @@ fn io_thread() -> &'static ShrinkPool {
     IO_THREAD.get_or_init(|| ShrinkPool::new(1))
 }
 
-/// Read files with a thread and parse them in a thread pool concurrently.
+/// Read files in a thread and parse them in a thread pool concurrently.
 /// The thread and the pool's threads are automatically destroyed when no tasks are assigned for them.
 /// When a task is assigned after that, a new thread is spawned. It costs some, so you may want to
 /// assign as much tasks as possible at once to avoid the respawn cost.
@@ -35,17 +35,24 @@ impl Clone for Concurrent {
 }
 
 impl Concurrent {
-    /// Create Concurrent with the thread-pool's size(num_cpus).
+    /// Create Concurrent with the thread-pool's size = num_cpus::get().
     ///
-    /// This will create a thread pool. If multiple Concurrents have sufficient tasks,
+    /// This creates a thread pool. If multiple Concurrents have sufficient tasks,
     /// the sum of threads will surpass num_cpus.
     ///
     /// If you want to share the pool, use clone().
     ///
     /// IO thread is always shared.
-    pub fn new(num_cpus: usize) -> Self {
+    pub fn new() -> Self {
+        Self::with_pool_size(num_cpus::get())
+    }
+
+    /// Create Concurrent with the thread-pool's size.
+    ///
+    /// If you want to share the pool, use clone().
+    pub fn with_pool_size(pool_size: usize) -> Self {
         Self {
-            pool: Arc::new(ShrinkPool::new(num_cpus)),
+            pool: Arc::new(ShrinkPool::new(pool_size)),
         }
     }
 
@@ -114,7 +121,7 @@ impl Concurrent {
                         pool.execute(move || {
                             //the channel has sufficient size, so no blocking occurs.
                             sender.send_blocking(f((path, s))).ok();
-                            //when receiver is dropped, sending fails. it's OK.
+                            //when receiver is dropped, sending fails. It's OK.
                         });
                     }
                     Err(e) => {
@@ -129,7 +136,7 @@ impl Concurrent {
         Receiver::new(receiver)
     }
 
-    /// Do something with the thread pool.
+    /// Do something in this thread pool.
     pub fn do_something_with_pool<F>(&self, f: F)
     where
         F: FnOnce() + Send + 'static,
@@ -137,11 +144,11 @@ impl Concurrent {
         self.pool.execute(move || f())
     }
 
-	/// Do something with the io thread.
+    /// Do something in the io thread.
     pub fn do_something_with_io_thread<F>(&self, f: F)
     where
         F: FnOnce() + Send + 'static,
     {
-		io_thread().execute(move || f());
+        io_thread().execute(move || f());
     }
 }

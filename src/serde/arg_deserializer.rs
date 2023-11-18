@@ -262,6 +262,11 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ArgDeserializer<'a, 'de> {
     where
         V: serde::de::Visitor<'de>,
     {
+		
+		if self.args.is_empty() == false{
+			let rest = self.args.rest();
+			return Err(self.err(&format!("All args must be used. remaining args \"{}\"", rest)));
+		}
         let mut p =
             ParamDeserializer::new(self.de, &self.b.item.params, self.b.start_index, fields);
         visitor.visit_seq(&mut p)
