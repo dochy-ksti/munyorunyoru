@@ -1,6 +1,6 @@
 use serde::de::{MapAccess, SeqAccess};
 
-use crate::error::parse_fail::ParseFail;
+use crate::error::{parse_fail::ParseFail, serde_inner_error::SerdeInnerError};
 
 use super::arg_deserializer::ArgDeserializer;
 

@@ -161,7 +161,9 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ArgDeserializer<'a, 'de> {
     where
         V: serde::de::Visitor<'de>,
     {
-        visitor.visit_string(self.args.arg())
+        visitor
+            .visit_string(self.args.arg())
+            .me(self, |e:ParseFail| e.to_string())
     }
 
     fn deserialize_bytes<V>(self, visitor: V) -> Result<V::Value, Self::Error>
@@ -231,7 +233,7 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ArgDeserializer<'a, 'de> {
     where
         V: serde::de::Visitor<'de>,
     {
-        visitor.visit_seq(self)
+        visitor.visit_seq(&mut *self).me(self,|e| e.to_string())
     }
 
     fn deserialize_tuple_struct<V>(
@@ -262,11 +264,13 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ArgDeserializer<'a, 'de> {
     where
         V: serde::de::Visitor<'de>,
     {
-		
-		if self.args.is_empty() == false{
-			let rest = self.args.rest();
-			return Err(self.err(&format!("All args must be used. remaining args \"{}\"", rest)));
-		}
+        if self.args.is_empty() == false {
+            let rest = self.args.rest();
+            return Err(self.err(&format!(
+                "All args must be used. remaining args \"{}\"",
+                rest
+            )));
+        }
         let mut p =
             ParamDeserializer::new(self.de, &self.b.item.params, self.b.start_index, fields);
         visitor.visit_seq(&mut p)

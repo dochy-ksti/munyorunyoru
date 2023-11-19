@@ -12,8 +12,8 @@ pub enum Error {
     Parse(PathItem, ParseError),
     #[error("`{0}`:{1}")]
     Deserialize(PathItem, ParseError),
-    #[error("{0}")]
-    DeserializeCustom(String),
+    // #[error("{0}")]
+    // DeserializeCustom(String),
     #[error("{0}")]
     Serialize(anyhow::Error),
     #[error("{0}")]
@@ -47,7 +47,7 @@ impl serde::de::Error for Error {
     where
         T: Display,
     {
-        Self::DeserializeCustom(format!("{}", msg))
+        Self::Message(anyhow::Error::msg(msg.to_string()))
     }
 }
 

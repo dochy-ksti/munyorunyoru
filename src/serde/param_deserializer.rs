@@ -89,6 +89,16 @@ impl<T, U> Result3Helper<T, U> for Result3<T, U> {
     }
 }
 
+trait ResultHelper<T> {
+    fn me(self, de: &ParamDeserializer) -> Result<T, ParseFail>;
+}
+
+impl<T> ResultHelper<T> for Result<T,ParseFail>{
+    fn me(self, de: &ParamDeserializer) -> Result<T, ParseFail> {
+        self.map_err(|e| de.err(&format!("{}", e.to_string())))
+    }
+}
+
 impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ParamDeserializer<'a, 'de> {
     type Error = ParseFail;
 

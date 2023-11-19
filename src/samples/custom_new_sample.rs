@@ -4,11 +4,10 @@ use super::color::Color;
 
 #[derive(Serialize, Deserialize, PartialEq, Debug)]
 enum Enum {
-    Variant(CustomStruct),
+    CustomStruct(CustomStruct),
 }
 
-/// A sample of custom new()
-/// This struct has completely different data structure from its representation in the Munyo language.
+/// This struct has completely different data structure from its representation in Munyo.
 #[derive(PartialEq, Debug)]
 struct CustomStruct {
     byte: u8,
@@ -71,6 +70,7 @@ impl<'de> serde::de::Deserialize<'de> for CustomStruct {
                 write!(formatter, "CustomStruct")
             }
 
+			/// Tuple is (de)serialized as a sequence.
             fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
             where
                 A: serde::de::SeqAccess<'de>,
@@ -92,7 +92,7 @@ impl<'de> serde::de::Deserialize<'de> for CustomStruct {
                 ))
             }
         }
-        deserializer.deserialize_tuple(2, TupleVisitor)
+        deserializer.deserialize_tuple(3, TupleVisitor)
     }
 }
 
@@ -123,7 +123,7 @@ fn test() -> crate::Result<()> {
         2.56,
         ParamStruct::new("name".to_string(), Color::new(5, 5, 5)),
     );
-    let vec = vec![Enum::Variant(s)];
+    let vec = vec![Enum::CustomStruct(s)];
     let s = crate::to_string(&vec)?;
     println!("{}", &s);
     let r: Vec<Enum> = crate::from_str(&s)?;
