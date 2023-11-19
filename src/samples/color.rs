@@ -6,7 +6,7 @@ use serde::ser::Serialize;
 use crate::error::parse_fail::ParseFail;
 
 /// A sample for implementing custom serde::ser::Serialize & serde::de::Deserialize for Munyo
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone)]
 pub struct Color {
     pub r: u8,
     pub g: u8,
