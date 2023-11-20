@@ -1,4 +1,4 @@
-use crate::lang::make_escaped_string::{self, make_escaped_string};
+use crate::lang::make_escaped_string::make_escaped_string;
 
 pub(crate) struct SerializeState {
     pub(crate) output: String,
@@ -22,9 +22,6 @@ pub(crate) enum Er {
 type Result = std::result::Result<(), ()>;
 type ResultS = std::result::Result<(), Er>;
 
-fn message(s: &str) -> Er {
-    Er::Message(s.to_string())
-}
 use State::*;
 
 impl SerializeState {
@@ -50,7 +47,6 @@ impl SerializeState {
         match self.state {
             WfLine => {
                 self.indent_level -= 1;
-                //self.output.push('\n');
                 self.state = WfLine;
                 Ok(())
             }

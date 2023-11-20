@@ -1,4 +1,4 @@
-use anyhow::anyhow;
+
 use serde::{Deserialize, Serialize};
 
 use crate::{samples::color::Color, Error, RestOf};
@@ -52,7 +52,7 @@ fn des() -> Result<(), Error> {
     let mut ser = crate::MunyoSerializer::new();
     o.serialize(&mut ser)?;
     println!("{}", ser.output());
-    let mut de = crate::MunyoDeserializer::new(ser.output(), None)?;
+    let mut de = crate::MunyoDeserializer::new(ser.output())?;
     let deserialized: Vec<SampleEnum> = Deserialize::deserialize(&mut de)?;
     let mut ser = crate::MunyoSerializer::new();
     deserialized.serialize(&mut ser)?;

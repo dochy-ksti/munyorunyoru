@@ -1,10 +1,10 @@
-use std::path::PathBuf;
+use std::path::{PathBuf, Path};
 
 use serde::Deserializer;
 
 use crate::{
     builder::default_builder::DefaultBuilder,
-    error::{deserialize_error::DeserializeError, munyo_error::PathItem, parse_fail::ParseFail},
+    error::{deserialize_error::DeserializeError, munyo_error::PathItem},
     lang::{
         builder_tree::{BuilderTree, TreeItem},
         from_str_with_metabuilder::{into_parse_error, parse_text},
@@ -21,7 +21,14 @@ pub struct MunyoDeserializer<'de> {
 }
 
 impl<'de> MunyoDeserializer<'de> {
-    pub fn new(text: &'de str, path: Option<PathBuf>) -> Result<Self, Error> {
+	pub fn new(text : &'de str) -> Result<Self, Error>{
+		Self::inner_new(text, None)
+	}
+	pub fn with_path<P : AsRef<Path>>(text: &'de str, path: P) -> Result<Self, Error> {
+		Self::inner_new(text, Some(path.as_ref().to_path_buf()))
+	}
+
+    fn inner_new(text: &'de str, path: Option<PathBuf>) -> Result<Self, Error> {
         let path = PathItem::new(path);
         let tree = parse_text(text, &DefaultMetaBuilder)
             .map_err(|e| Self::into_error(text, DeserializeError::Fail(e), &path))?;
@@ -219,7 +226,7 @@ impl<'de, 'a> Deserializer<'de> for &'a mut MunyoDeserializer<'de> {
         }
     }
 
-    fn deserialize_tuple<V>(self, len: usize, visitor: V) -> Result<V::Value, Self::Error>
+    fn deserialize_tuple<V>(self, _len: usize, _visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
@@ -228,9 +235,9 @@ impl<'de, 'a> Deserializer<'de> for &'a mut MunyoDeserializer<'de> {
 
     fn deserialize_tuple_struct<V>(
         self,
-        name: &'static str,
-        len: usize,
-        visitor: V,
+        _name: &'static str,
+        _len: usize,
+        _visitor: V,
     ) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
@@ -238,7 +245,7 @@ impl<'de, 'a> Deserializer<'de> for &'a mut MunyoDeserializer<'de> {
         Err(mes())
     }
 
-    fn deserialize_map<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    fn deserialize_map<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
@@ -247,9 +254,9 @@ impl<'de, 'a> Deserializer<'de> for &'a mut MunyoDeserializer<'de> {
 
     fn deserialize_struct<V>(
         self,
-        name: &'static str,
-        fields: &'static [&'static str],
-        visitor: V,
+        _name: &'static str,
+        _fields: &'static [&'static str],
+        _visitor: V,
     ) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
@@ -259,9 +266,9 @@ impl<'de, 'a> Deserializer<'de> for &'a mut MunyoDeserializer<'de> {
 
     fn deserialize_enum<V>(
         self,
-        name: &'static str,
-        variants: &'static [&'static str],
-        visitor: V,
+        _name: &'static str,
+        _variants: &'static [&'static str],
+        _visitor: V,
     ) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
@@ -269,14 +276,14 @@ impl<'de, 'a> Deserializer<'de> for &'a mut MunyoDeserializer<'de> {
         Err(mes())
     }
 
-    fn deserialize_identifier<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    fn deserialize_identifier<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
         Err(mes())
     }
 
-    fn deserialize_ignored_any<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    fn deserialize_ignored_any<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {

@@ -20,7 +20,7 @@ fn it_works() -> Result<(), Error> {
 }
 
 //#[test]
-fn output_sample() -> Result<(), ParseError> {
+fn _output_sample() -> Result<(), ParseError> {
     let path = "sample.munyo";
     let unparsed_file = fs::read_to_string(path).expect("cannot read file");
     let r = from_str_with_metabuilder(&unparsed_file, &DefaultMetaBuilder)?;

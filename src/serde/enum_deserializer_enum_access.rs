@@ -1,9 +1,6 @@
-use serde::{
-    de::{EnumAccess, VariantAccess},
-    Deserializer,
-};
+use serde::de::{EnumAccess, VariantAccess};
 
-use crate::{error::{parse_fail::ParseFail, deserialize_error::DeserializeError}, serde::arg_deserializer::ArgDeserializer};
+use crate::error::deserialize_error::DeserializeError;
 
 use super::enum_deserializer::EnumDeserializer;
 
@@ -35,7 +32,7 @@ impl<'a, 'b, 'de> VariantAccess<'de> for &'b mut EnumDeserializer<'a, 'de> {
         seed.deserialize(&mut self.de)
     }
 
-    fn tuple_variant<V>(self, len: usize, visitor: V) -> Result<V::Value, Self::Error>
+    fn tuple_variant<V>(self, _len: usize, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
@@ -44,8 +41,8 @@ impl<'a, 'b, 'de> VariantAccess<'de> for &'b mut EnumDeserializer<'a, 'de> {
 
     fn struct_variant<V>(
         self,
-        fields: &'static [&'static str],
-        visitor: V,
+        _fields: &'static [&'static str],
+        _visitor: V,
     ) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,

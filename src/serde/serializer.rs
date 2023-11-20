@@ -174,8 +174,8 @@ impl<'a> serde::ser::Serializer for &'a mut MunyoSerializer {
 
     fn serialize_unit_variant(
         self,
-        name: &'static str,
-        variant_index: u32,
+        _name: &'static str,
+        _variant_index: u32,
         variant: &'static str,
     ) -> Result<Self::Ok, Self::Error> {
         self.state
@@ -188,13 +188,13 @@ impl<'a> serde::ser::Serializer for &'a mut MunyoSerializer {
 
     fn serialize_newtype_struct<T: ?Sized>(
         self,
-        name: &'static str,
-        value: &T,
+        _name: &'static str,
+        _value: &T,
     ) -> Result<Self::Ok, Self::Error>
     where
         T: serde::Serialize,
     {
-        todo!()
+        Err(err("tuple struct is not supported"))
     }
 
     fn serialize_newtype_variant<T: ?Sized>(

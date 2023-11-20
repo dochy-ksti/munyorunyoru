@@ -2,33 +2,28 @@ use std::{collections::BTreeMap, str::FromStr};
 
 use serde::{de::SeqAccess, Deserializer};
 
-use crate::{
-    builder::default_builder::{DefaultBuilder, DefaultItem},
-    error::{parse_fail::ParseFail, deserialize_error::DeserializeError},
-    lang::builder_tree::TreeItem,
-    MunyoDeserializer,
-};
+use crate::{error::deserialize_error::DeserializeError, MunyoDeserializer};
 
 pub(crate) struct ParamDeserializer<'a, 'de: 'a> {
-    pub(crate) de: &'a MunyoDeserializer<'de>,
+    //this is currently unused but logically this struct has it, I think.
+    _de: &'a MunyoDeserializer<'de>,
     pub(crate) params: &'a BTreeMap<String, String>,
     pub(crate) fields: &'static [&'static str],
     pub(crate) field_counter: usize,
 }
 
-fn err(s : &str)  -> DeserializeError{
-	DeserializeError::Msg(anyhow::anyhow!("{s}"))
+fn err(s: &str) -> DeserializeError {
+    DeserializeError::Msg(anyhow::anyhow!("{s}"))
 }
 
 impl<'a, 'de> ParamDeserializer<'a, 'de> {
     pub(crate) fn new(
-        de: &'a MunyoDeserializer<'de>,
+        _de: &'a MunyoDeserializer<'de>,
         params: &'a BTreeMap<String, String>,
-		start_index : usize,
         fields: &'static [&'static str],
     ) -> Self {
         Self {
-            de,
+            _de,
             params,
             fields,
             field_counter: 0,
@@ -36,13 +31,13 @@ impl<'a, 'de> ParamDeserializer<'a, 'de> {
     }
 
     pub(crate) fn arg(&mut self) -> Result<String, DeserializeError> {
-		if let Some(field) = self.fields.get(self.field_counter) {
+        if let Some(field) = self.fields.get(self.field_counter) {
             self.field_counter += 1;
             if let Some(arg) = self.params.get(*field) {
                 Ok(arg.to_string())
-            } else{
-				Err(err(&format!("param {} is not found", *field)))
-			}
+            } else {
+                Err(err(&format!("param {} is not found", *field)))
+            }
         } else {
             Err(err("this struct has no more fields to deserialize"))
         }
@@ -74,11 +69,11 @@ enum Result3<T, E> {
 }
 
 trait Result3Helper<T, U> {
-    fn me(self, de: &ParamDeserializer, f: impl Fn(U) -> String) -> Result<T, DeserializeError>;
+    fn me(self, f: impl Fn(U) -> String) -> Result<T, DeserializeError>;
 }
 
 impl<T, U> Result3Helper<T, U> for Result3<T, U> {
-    fn me(self, de: &ParamDeserializer, f: impl Fn(U) -> String) -> Result<T, DeserializeError> {
+    fn me(self, f: impl Fn(U) -> String) -> Result<T, DeserializeError> {
         match self {
             Self::Ok(r) => Ok(r),
             Self::DeserializeError(e) => Err(e),
@@ -87,7 +82,6 @@ impl<T, U> Result3Helper<T, U> for Result3<T, U> {
     }
 }
 
-
 impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ParamDeserializer<'a, 'de> {
     type Error = DeserializeError;
 
@@ -95,7 +89,7 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ParamDeserializer<'a, 'de> {
     where
         V: serde::de::Visitor<'de>,
     {
-        unimplemented!()
+        Err(err("deserialize any is not supported"))
     }
 
     fn deserialize_bool<V>(self, visitor: V) -> Result<V::Value, Self::Error>
@@ -108,7 +102,7 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ParamDeserializer<'a, 'de> {
             "f" => visitor.visit_bool(false),
             "true" => visitor.visit_bool(true),
             "false" => visitor.visit_bool(false),
-            _ => Err(err("failed to parse bool")),
+            _ => Err(err(&format!("failed to parse bool: input '{s}'"))),
         }
     }
 
@@ -116,80 +110,80 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ParamDeserializer<'a, 'de> {
     where
         V: serde::de::Visitor<'de>,
     {
-        visitor.visit_i8(self.parse::<i8>().me(self, |e| e.to_string())?)
+        visitor.visit_i8(self.parse::<i8>().me(|e| e.to_string())?)
     }
 
     fn deserialize_i16<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        visitor.visit_i16(self.parse::<i16>().me(self, |e| e.to_string())?)
+        visitor.visit_i16(self.parse::<i16>().me(|e| e.to_string())?)
     }
 
     fn deserialize_i32<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        visitor.visit_i32(self.parse::<i32>().me(self, |e| e.to_string())?)
+        visitor.visit_i32(self.parse::<i32>().me(|e| e.to_string())?)
     }
 
     fn deserialize_i64<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        visitor.visit_i64(self.parse::<i64>().me(self, |e| e.to_string())?)
+        visitor.visit_i64(self.parse::<i64>().me(|e| e.to_string())?)
     }
 
     fn deserialize_u8<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        visitor.visit_u8(self.parse::<u8>().me(self, |e| e.to_string())?)
+        visitor.visit_u8(self.parse::<u8>().me(|e| e.to_string())?)
     }
 
     fn deserialize_u16<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        visitor.visit_u16(self.parse::<u16>().me(self, |e| e.to_string())?)
+        visitor.visit_u16(self.parse::<u16>().me(|e| e.to_string())?)
     }
 
     fn deserialize_u32<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        visitor.visit_u32(self.parse::<u32>().me(self, |e| e.to_string())?)
+        visitor.visit_u32(self.parse::<u32>().me(|e| e.to_string())?)
     }
 
     fn deserialize_u64<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        visitor.visit_u64(self.parse::<u64>().me(self, |e| e.to_string())?)
+        visitor.visit_u64(self.parse::<u64>().me(|e| e.to_string())?)
     }
 
     fn deserialize_f32<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        visitor.visit_f32(self.parse::<f32>().me(self, |e| e.to_string())?)
+        visitor.visit_f32(self.parse::<f32>().me(|e| e.to_string())?)
     }
 
     fn deserialize_f64<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        visitor.visit_f64(self.parse::<f64>().me(self, |e| e.to_string())?)
+        visitor.visit_f64(self.parse::<f64>().me(|e| e.to_string())?)
     }
 
     fn deserialize_char<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        visitor.visit_char(self.parse::<char>().me(self, |e| e.to_string())?)
+        visitor.visit_char(self.parse::<char>().me(|e| e.to_string())?)
     }
 
-    fn deserialize_str<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    fn deserialize_str<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
@@ -206,14 +200,14 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ParamDeserializer<'a, 'de> {
         visitor.visit_string(self.arg()?)
     }
 
-    fn deserialize_bytes<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    fn deserialize_bytes<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
         Err(err("deserializing byte arrays is not supported"))
     }
 
-    fn deserialize_byte_buf<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    fn deserialize_byte_buf<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
@@ -231,7 +225,7 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ParamDeserializer<'a, 'de> {
         }
     }
 
-    fn deserialize_unit<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    fn deserialize_unit<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
@@ -240,8 +234,8 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ParamDeserializer<'a, 'de> {
 
     fn deserialize_unit_struct<V>(
         self,
-        name: &'static str,
-        visitor: V,
+        _name: &'static str,
+        _visitor: V,
     ) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
@@ -251,8 +245,8 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ParamDeserializer<'a, 'de> {
 
     fn deserialize_newtype_struct<V>(
         self,
-        name: &'static str,
-        visitor: V,
+        _name: &'static str,
+        _visitor: V,
     ) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
@@ -260,25 +254,29 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ParamDeserializer<'a, 'de> {
         Err(err("deserializing tuple struct is not supported"))
     }
 
-    fn deserialize_seq<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    fn deserialize_seq<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(err("deserializing vec in the parameter position is not supported"))
+        Err(err(
+            "deserializing vec in the parameter position is not supported",
+        ))
     }
 
-    fn deserialize_tuple<V>(self, len: usize, visitor: V) -> Result<V::Value, Self::Error>
+    fn deserialize_tuple<V>(self, _len: usize, _visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(err("deserializing tuple is not supported in the parameter position"))
+        Err(err(
+            "deserializing tuple is not supported in the parameter position",
+        ))
     }
 
     fn deserialize_tuple_struct<V>(
         self,
-        name: &'static str,
-        len: usize,
-        visitor: V,
+        _name: &'static str,
+        _len: usize,
+        _visitor: V,
     ) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
@@ -286,7 +284,7 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ParamDeserializer<'a, 'de> {
         Err(err("deserializing tuple struct is not supported"))
     }
 
-    fn deserialize_map<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    fn deserialize_map<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
@@ -295,36 +293,42 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ParamDeserializer<'a, 'de> {
 
     fn deserialize_struct<V>(
         self,
-        name: &'static str,
-        fields: &'static [&'static str],
-        visitor: V,
+        _name: &'static str,
+        _fields: &'static [&'static str],
+        _visitor: V,
     ) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(err("deserializing struct is not supported in the parameter position"))
+        Err(err(
+            "deserializing struct is not supported in the parameter position",
+        ))
     }
 
     fn deserialize_enum<V>(
         self,
-        name: &'static str,
-        variants: &'static [&'static str],
-        visitor: V,
+        _name: &'static str,
+        _variants: &'static [&'static str],
+        _visitor: V,
     ) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(err("deserializing enum in the parameter position is not supported"))
+        Err(err(
+            "deserializing enum in the parameter position is not supported",
+        ))
     }
 
-    fn deserialize_identifier<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    fn deserialize_identifier<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        todo!()
+        Err(err(
+            "deserializing identifier in the parameter position is not supported",
+        ))
     }
 
-    fn deserialize_ignored_any<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    fn deserialize_ignored_any<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
