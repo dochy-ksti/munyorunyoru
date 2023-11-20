@@ -3,8 +3,10 @@ use std::str::FromStr;
 use serde::Deserializer;
 
 use crate::{
-    builder::default_builder::DefaultBuilder, error::parse_fail::ParseFail,
-    lang::builder_tree::TreeItem, MunyoDeserializer,
+    builder::default_builder::DefaultBuilder,
+    error::{deserialize_error::DeserializeError, parse_fail::ParseFail},
+    lang::builder_tree::TreeItem,
+    MunyoDeserializer,
 };
 
 use super::{arguments::Arguments, param_deserializer::ParamDeserializer, vec_access::VecAccess};
@@ -27,27 +29,27 @@ impl<'a, 'de> ArgDeserializer<'a, 'de> {
         }
     }
 
-    pub(crate) fn err(&self, msg: &str) -> ParseFail {
-        ParseFail::msg(self.b.start_index, msg.to_string())
-    }
-
     fn parse<T: FromStr>(&mut self) -> Result<T, T::Err> {
         self.args.arg().parse()
     }
 }
 
 trait ResultHelper<T, U> {
-    fn me(self, de: &ArgDeserializer, f: impl Fn(U) -> String) -> Result<T, ParseFail>;
+    fn me(self, de: &ArgDeserializer, f: impl Fn(U) -> String) -> Result<T, DeserializeError>;
 }
 
 impl<T, U> ResultHelper<T, U> for Result<T, U> {
-    fn me(self, de: &ArgDeserializer, f: impl Fn(U) -> String) -> Result<T, ParseFail> {
-        self.map_err(|e| de.err(&f(e)))
+    fn me(self, de: &ArgDeserializer, f: impl Fn(U) -> String) -> Result<T, DeserializeError> {
+        self.map_err(|e| err(&f(e)))
     }
 }
 
+fn err(msg: &str) -> DeserializeError {
+    DeserializeError::msg(msg)
+}
+
 impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ArgDeserializer<'a, 'de> {
-    type Error = ParseFail;
+    type Error = DeserializeError;
 
     fn deserialize_any<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
     where
@@ -66,7 +68,7 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ArgDeserializer<'a, 'de> {
             "f" => visitor.visit_bool(false),
             "true" => visitor.visit_bool(true),
             "false" => visitor.visit_bool(false),
-            _ => Err(self.err("failed to parse bool")),
+            _ => Err(err("failed to parse bool")),
         }
     }
 
@@ -151,7 +153,7 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ArgDeserializer<'a, 'de> {
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.err("deserializing &str is not supported"))
+        Err(err("deserializing &str is not supported"))
 
         //serde default visitor doesn't accept visit_str to deserialize &str
         //visitor.visit_str(&self.args.arg())
@@ -161,37 +163,37 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ArgDeserializer<'a, 'de> {
     where
         V: serde::de::Visitor<'de>,
     {
-        visitor
-            .visit_string(self.args.arg())
-            .me(self, |e:ParseFail| e.to_string())
+        visitor.visit_string(self.args.arg())
     }
 
     fn deserialize_bytes<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.err("deserializing byte arrays is not supported"))
+        Err(err("deserializing byte arrays is not supported"))
     }
 
     fn deserialize_byte_buf<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.err("deserializing byte buf is not supported"))
+        Err(err("deserializing byte buf is not supported"))
     }
 
     fn deserialize_option<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.err("deserializing Option is not supported in argument position"))
+        Err(err(
+            "deserializing Option is not supported in argument position",
+        ))
     }
 
     fn deserialize_unit<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.err("deserializing Unit is not supported"))
+        Err(err("deserializing Unit is not supported"))
     }
 
     fn deserialize_unit_struct<V>(
@@ -202,7 +204,7 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ArgDeserializer<'a, 'de> {
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.err("deserializing Unit Struct is not supported"))
+        Err(err("deserializing Unit Struct is not supported"))
     }
 
     fn deserialize_newtype_struct<V>(
@@ -213,7 +215,7 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ArgDeserializer<'a, 'de> {
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.err("deserializing Tuple Struct is not supported"))
+        Err(err("deserializing Tuple Struct is not supported"))
     }
 
     fn deserialize_seq<V>(self, visitor: V) -> Result<V::Value, Self::Error>
@@ -221,7 +223,7 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ArgDeserializer<'a, 'de> {
         V: serde::de::Visitor<'de>,
     {
         if self.children_deserialized {
-            Err(self.err("only one children can be deserialized"))
+            Err(err("only one children can be deserialized"))
         } else {
             self.children_deserialized = true;
             let children = std::mem::replace(&mut self.b.children, Vec::new());
@@ -233,7 +235,7 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ArgDeserializer<'a, 'de> {
     where
         V: serde::de::Visitor<'de>,
     {
-        visitor.visit_seq(&mut *self).me(self,|e| e.to_string())
+        visitor.visit_seq(&mut *self)
     }
 
     fn deserialize_tuple_struct<V>(
@@ -245,14 +247,14 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ArgDeserializer<'a, 'de> {
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.err("deserializing Tuple Struct is not supported"))
+        Err(err("deserializing tuple struct is not supported"))
     }
 
     fn deserialize_map<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.err("deserializing Map is not supported"))
+        Err(err("deserializing map is not supported"))
     }
 
     fn deserialize_struct<V>(
@@ -266,7 +268,7 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ArgDeserializer<'a, 'de> {
     {
         if self.args.is_empty() == false {
             let rest = self.args.rest();
-            return Err(self.err(&format!(
+            return Err(err(&format!(
                 "All args must be used. remaining args \"{}\"",
                 rest
             )));
@@ -285,7 +287,9 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ArgDeserializer<'a, 'de> {
     where
         V: serde::de::Visitor<'de>,
     {
-        todo!()
+        Err(err(
+            "deserializing enum is not supported in the argument position",
+        ))
     }
 
     fn deserialize_identifier<V>(self, visitor: V) -> Result<V::Value, Self::Error>

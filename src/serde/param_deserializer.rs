@@ -4,7 +4,7 @@ use serde::{de::SeqAccess, Deserializer};
 
 use crate::{
     builder::default_builder::{DefaultBuilder, DefaultItem},
-    error::parse_fail::ParseFail,
+    error::{parse_fail::ParseFail, deserialize_error::DeserializeError},
     lang::builder_tree::TreeItem,
     MunyoDeserializer,
 };
@@ -12,9 +12,12 @@ use crate::{
 pub(crate) struct ParamDeserializer<'a, 'de: 'a> {
     pub(crate) de: &'a MunyoDeserializer<'de>,
     pub(crate) params: &'a BTreeMap<String, String>,
-    pub(crate) start_index: usize,
     pub(crate) fields: &'static [&'static str],
     pub(crate) field_counter: usize,
+}
+
+fn err(s : &str)  -> DeserializeError{
+	DeserializeError::Msg(anyhow::anyhow!("{s}"))
 }
 
 impl<'a, 'de> ParamDeserializer<'a, 'de> {
@@ -26,33 +29,28 @@ impl<'a, 'de> ParamDeserializer<'a, 'de> {
     ) -> Self {
         Self {
             de,
-            params: params,
-            start_index,
+            params,
             fields,
             field_counter: 0,
         }
     }
 
-    pub(crate) fn err(&self, msg: &str) -> ParseFail {
-        ParseFail::msg(self.start_index, msg.to_string())
-    }
-
-    pub(crate) fn arg(&mut self) -> Result<String, ParseFail> {
+    pub(crate) fn arg(&mut self) -> Result<String, DeserializeError> {
 		if let Some(field) = self.fields.get(self.field_counter) {
             self.field_counter += 1;
             if let Some(arg) = self.params.get(*field) {
                 Ok(arg.to_string())
             } else{
-				Err(self.err(&format!("param {} is not found", *field)))
+				Err(err(&format!("param {} is not found", *field)))
 			}
         } else {
-            Err(self.err("this struct has no more fields to deserialize"))
+            Err(err("this struct has no more fields to deserialize"))
         }
     }
 
     fn parse<T: FromStr>(&mut self) -> Result3<T, T::Err> {
         match self.arg() {
-            Err(e) => Result3::ParseFail(e),
+            Err(e) => Result3::DeserializeError(e),
             Ok(arg) => match arg.parse() {
                 Ok(r) => Result3::Ok(r),
                 Err(e) => Result3::Err(e),
@@ -71,36 +69,27 @@ impl<'a, 'de> ParamDeserializer<'a, 'de> {
 
 enum Result3<T, E> {
     Ok(T),
-    ParseFail(ParseFail),
+    DeserializeError(DeserializeError),
     Err(E),
 }
 
 trait Result3Helper<T, U> {
-    fn me(self, de: &ParamDeserializer, f: impl Fn(U) -> String) -> Result<T, ParseFail>;
+    fn me(self, de: &ParamDeserializer, f: impl Fn(U) -> String) -> Result<T, DeserializeError>;
 }
 
 impl<T, U> Result3Helper<T, U> for Result3<T, U> {
-    fn me(self, de: &ParamDeserializer, f: impl Fn(U) -> String) -> Result<T, ParseFail> {
+    fn me(self, de: &ParamDeserializer, f: impl Fn(U) -> String) -> Result<T, DeserializeError> {
         match self {
             Self::Ok(r) => Ok(r),
-            Self::ParseFail(e) => Err(e),
-            Self::Err(e) => Err(de.err(&f(e))),
+            Self::DeserializeError(e) => Err(e),
+            Self::Err(e) => Err(err(&f(e))),
         }
     }
 }
 
-trait ResultHelper<T> {
-    fn me(self, de: &ParamDeserializer) -> Result<T, ParseFail>;
-}
-
-impl<T> ResultHelper<T> for Result<T,ParseFail>{
-    fn me(self, de: &ParamDeserializer) -> Result<T, ParseFail> {
-        self.map_err(|e| de.err(&format!("{}", e.to_string())))
-    }
-}
 
 impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ParamDeserializer<'a, 'de> {
-    type Error = ParseFail;
+    type Error = DeserializeError;
 
     fn deserialize_any<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
     where
@@ -119,7 +108,7 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ParamDeserializer<'a, 'de> {
             "f" => visitor.visit_bool(false),
             "true" => visitor.visit_bool(true),
             "false" => visitor.visit_bool(false),
-            _ => Err(self.err("failed to parse bool")),
+            _ => Err(err("failed to parse bool")),
         }
     }
 
@@ -204,7 +193,7 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ParamDeserializer<'a, 'de> {
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.err("deserializing &str is not supported"))
+        Err(err("deserializing &str is not supported"))
 
         //serde default visitor doesn't accept visit_str to deserialize &str
         //visitor.visit_str(&self.args.arg())
@@ -221,14 +210,14 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ParamDeserializer<'a, 'de> {
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.err("deserializing byte arrays is not supported"))
+        Err(err("deserializing byte arrays is not supported"))
     }
 
     fn deserialize_byte_buf<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.err("deserializing byte buf is not supported"))
+        Err(err("deserializing byte buf is not supported"))
     }
 
     fn deserialize_option<V>(self, visitor: V) -> Result<V::Value, Self::Error>
@@ -246,7 +235,7 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ParamDeserializer<'a, 'de> {
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.err("deserializing Unit is not supported"))
+        Err(err("deserializing unit is not supported"))
     }
 
     fn deserialize_unit_struct<V>(
@@ -257,7 +246,7 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ParamDeserializer<'a, 'de> {
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.err("deserializing Unit Struct is not supported"))
+        Err(err("deserializing unit struct is not supported"))
     }
 
     fn deserialize_newtype_struct<V>(
@@ -268,21 +257,21 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ParamDeserializer<'a, 'de> {
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.err("deserializing Tuple Struct is not supported"))
+        Err(err("deserializing tuple struct is not supported"))
     }
 
     fn deserialize_seq<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        todo!()
+        Err(err("deserializing vec in the parameter position is not supported"))
     }
 
     fn deserialize_tuple<V>(self, len: usize, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.err("deserializing Tuple is not supported"))
+        Err(err("deserializing tuple is not supported in the parameter position"))
     }
 
     fn deserialize_tuple_struct<V>(
@@ -294,14 +283,14 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ParamDeserializer<'a, 'de> {
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.err("deserializing Tuple Struct is not supported"))
+        Err(err("deserializing tuple struct is not supported"))
     }
 
     fn deserialize_map<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.err("deserializing Map is not supported"))
+        Err(err("deserializing map is not supported"))
     }
 
     fn deserialize_struct<V>(
@@ -313,7 +302,7 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ParamDeserializer<'a, 'de> {
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.err("deserializing Map is not supported"))
+        Err(err("deserializing struct is not supported in the parameter position"))
     }
 
     fn deserialize_enum<V>(
@@ -325,7 +314,7 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ParamDeserializer<'a, 'de> {
     where
         V: serde::de::Visitor<'de>,
     {
-        todo!()
+        Err(err("deserializing enum in the parameter position is not supported"))
     }
 
     fn deserialize_identifier<V>(self, visitor: V) -> Result<V::Value, Self::Error>
@@ -339,12 +328,12 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ParamDeserializer<'a, 'de> {
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(self.err("deserializing IgnoredAny is not supported"))
+        Err(err("deserializing IgnoredAny is not supported"))
     }
 }
 
 impl<'a, 'b, 'de> SeqAccess<'de> for &'b mut ParamDeserializer<'a, 'de> {
-    type Error = ParseFail;
+    type Error = DeserializeError;
 
     fn next_element_seed<T>(&mut self, seed: T) -> Result<Option<T::Value>, Self::Error>
     where

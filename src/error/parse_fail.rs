@@ -6,7 +6,7 @@ use pest::RuleType;
 
 use crate::lang::munyo_parser::Pair;
 
-pub struct ParseFail {
+pub(crate) struct ParseFail {
     pub(crate) start_index: usize,
     pub(crate) message: anyhow::Error,
 }
@@ -104,8 +104,8 @@ impl std::fmt::Display for ParseFail {
     }
 }
 
-impl std::fmt::Debug for ParseFail{
+impl std::fmt::Debug for ParseFail {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-		write!(f, "{}\n{}", &self.message, self.message.backtrace())
+        write!(f, "{}\n{}", &self.message, self.message.backtrace())
     }
 }

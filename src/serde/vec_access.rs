@@ -2,7 +2,7 @@ use serde::de::{EnumAccess, SeqAccess};
 
 use crate::{
     builder::default_builder::DefaultBuilder,
-    error::{parse_error::ParseError, parse_fail::ParseFail},
+    error::{parse_error::ParseError, parse_fail::ParseFail, deserialize_error::DeserializeError},
     lang::builder_tree::TreeItem,
     MunyoDeserializer,
 };
@@ -22,7 +22,7 @@ impl<'a, 'de> VecAccess<'a, 'de> {
 }
 
 impl<'de, 'a> SeqAccess<'de> for VecAccess<'a, 'de> {
-    type Error = ParseFail;
+    type Error = DeserializeError;
 
     fn next_element_seed<T>(&mut self, seed: T) -> Result<Option<T::Value>, Self::Error>
     where
@@ -32,7 +32,12 @@ impl<'de, 'a> SeqAccess<'de> for VecAccess<'a, 'de> {
             return Ok(None);
         }
         let item = self.b.pop().unwrap();
+		let start_index = item.start_index;
         let mut d = EnumDeserializer::new(self.de, item);
         seed.deserialize(&mut d).map(|a| Some(a))
+			.map_err(|e| match e{
+				DeserializeError::Fail(e) => DeserializeError::Fail(e),
+				DeserializeError::Msg(e) => DeserializeError::Fail(ParseFail::new(start_index,e))
+			})
     }
 }
