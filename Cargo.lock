@@ -193,26 +193,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "munyo_derive"
-version = "0.1.0"
-dependencies = [
- "proc-macro2",
- "quote",
- "serde",
- "syn",
-]
-
-[[package]]
-name = "munyo_derive_test"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "munyo",
- "munyo_derive",
- "serde",
-]
-
-[[package]]
 name = "num_cpus"
 version = "1.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"

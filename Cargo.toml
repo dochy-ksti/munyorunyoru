@@ -15,4 +15,4 @@ num_cpus = "1"
 serde = { version = "1", features = ["derive"] }
 
 [workspace]
-members = ["munyo_derive", "munyo_derive_test"]
+members = []
