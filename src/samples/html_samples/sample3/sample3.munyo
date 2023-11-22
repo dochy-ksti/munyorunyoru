@@ -1,21 +1,6 @@
->>Text|BR
->\H3 ribbon1
-	Welcome to my Blog!
->\P
-	This is a sample html document.
+H3 Domain Specific Sample|class ribbon1
 
-	Tags and texts are separated in this sample,
-	which means a tag and a text can't be mixed in a line.
-
-	You can write a long sentence without line concatenation.
-
-	A normal line is interpreted as a text line automatically,
-	but tags must be prefixed with ">\\", which is a bit noisy.
-
-	|| ↑ empty line
-	An empty line translates to a &lt;BR&gt; tag.
-
-	These settings are written in a first line.
->\Blockquote
-	>\P
-		sample blockquote.
+Alice I’ve arrived in Honolulu.
+Bob I’m on the Moon!
+Alice Let’s observe quantum entanglement and confirm the violation of Bell’s inequality.
+Bob Let’s do it!
