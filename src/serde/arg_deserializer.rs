@@ -230,9 +230,10 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ArgDeserializer<'a, 'de> {
         if self.children_deserialized {
             Err(err("only one children can be deserialized"))
         } else {
-            self.children_deserialized = true;
             let children = std::mem::replace(&mut self.b.children, Vec::new());
-            visitor.visit_seq(VecAccess::new(self.de, children))
+            let r = visitor.visit_seq(VecAccess::new(self.de, children));
+            self.children_deserialized = true;
+            r
         }
     }
 
