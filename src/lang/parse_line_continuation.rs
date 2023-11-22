@@ -49,6 +49,7 @@ pub(crate) fn parse_line_continuation(pair: Pair) -> Result<LineResult, ParseFai
         Rule::normal_end => Ok(LineResult {
             content: String::new(),
             params: parse_normal_end(pair.into_inner())?.params,
+            define_canceled : false,
         }),
         Rule::backslash_comment_end => {
             let mut r = parse_backslash_comment_end(pair.into_inner())?;
@@ -56,6 +57,7 @@ pub(crate) fn parse_line_continuation(pair: Pair) -> Result<LineResult, ParseFai
             Ok(LineResult {
                 content: r.content,
                 params: r.params,
+                define_canceled : false,
             })
         }
         Rule::backslash_end => {
@@ -64,6 +66,7 @@ pub(crate) fn parse_line_continuation(pair: Pair) -> Result<LineResult, ParseFai
             Ok(LineResult {
                 content: r.content,
                 params: r.params,
+                define_canceled : false,
             })
         }
         Rule::single_bar => parse_single_bar(pair.into_inner()),
@@ -71,6 +74,7 @@ pub(crate) fn parse_line_continuation(pair: Pair) -> Result<LineResult, ParseFai
         Rule::double_bars => Ok(LineResult {
             content: String::new(),
             params: parse_double_bars(pair.into_inner())?.params,
+            define_canceled : false,
         }),
         _ => unreachable!(),
     }
@@ -132,6 +136,7 @@ fn parse_continued_line(mut pairs: Pairs) -> Result<LineResult, ParseFail> {
             Ok(LineResult {
                 content: String::new(),
                 params: params.params,
+                define_canceled : false,
             })
         }
         _ => unreachable!(),
@@ -153,7 +158,7 @@ fn parse_continued_line_with_content(mut pairs: Pairs) -> Result<LineResult, Par
             _ => unreachable!(),
         }
     }
-    Ok(LineResult { content, params })
+    Ok(LineResult::new(content, params, false))
 }
 
 fn parse_continued_line_without_content(pairs: Pairs) -> Result<Params, ParseFail> {

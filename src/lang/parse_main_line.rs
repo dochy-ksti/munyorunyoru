@@ -9,11 +9,12 @@ use super::{
 pub(crate) struct LineResult {
     pub(crate) content: String,
     pub(crate) params: Vec<String>,
+    pub(crate) define_canceled : bool,
 }
 
 impl LineResult {
-    pub(crate) fn new(content: String, params: Vec<String>) -> Self {
-        Self { content, params }
+    pub(crate) fn new(content: String, params: Vec<String>, define_canceled : bool) -> Self {
+        Self { content, params, define_canceled }
     }
 }
 
@@ -40,14 +41,7 @@ pub(crate) fn parse_main_line(pairs: Pairs) -> Result<LineResult, ParseFail> {
         }
     }
 
-    match line_type {
-        LineType::Canceled | LineType::Normal => {}
-        LineType::CharSingle => content.push('>'),
-        LineType::CharDouble => content.push_str(">>"),
-        LineType::CharTriple => content.push_str(">>>"),
-    }
-
-    Ok(LineResult::new(content, params))
+    Ok(LineResult::new(content, params, line_type == LineType::Canceled))
 }
 
 fn parse_line_start_symbol(pair: Pair) -> Result<LineType, ParseFail> {
@@ -60,6 +54,7 @@ fn parse_line_start_symbol(pair: Pair) -> Result<LineType, ParseFail> {
     }
 }
 
+#[derive(PartialEq)]
 pub(crate) enum LineType {
     Normal,
     Canceled,

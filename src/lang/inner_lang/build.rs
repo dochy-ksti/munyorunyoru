@@ -21,7 +21,7 @@ where
 {
     let (def, _emp) = state.default_types();
 
-    let (name, arg) = if def.is_empty() {
+    let (name, arg) = if def.is_empty() || r.define_canceled{
         let mut p = InnerLangParser::parse(Rule::content, &r.content)
             //anything other than preceding space is accepted in this grammar
             .map_err(|_| anyhow!("preceding space is not allowed in this context"))?;
