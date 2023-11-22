@@ -13,8 +13,8 @@ pub(crate) struct LineResult {
 }
 
 impl LineResult {
-    pub(crate) fn new(content: String, params: Vec<String>, define_canceled : bool) -> Self {
-        Self { content, params, define_canceled }
+    pub(crate) fn new(content: String, params: Vec<String>) -> Self {
+        Self { content, params, define_canceled : false }
     }
 }
 
@@ -41,7 +41,7 @@ pub(crate) fn parse_main_line(pairs: Pairs) -> Result<LineResult, ParseFail> {
         }
     }
 
-    Ok(LineResult::new(content, params, line_type == LineType::Canceled))
+    Ok(LineResult{ content, params, define_canceled : line_type == LineType::Canceled })
 }
 
 fn parse_line_start_symbol(pair: Pair) -> Result<LineType, ParseFail> {

@@ -46,36 +46,20 @@ pub(crate) fn set_results(
 
 pub(crate) fn parse_line_continuation(pair: Pair) -> Result<LineResult, ParseFail> {
     match pair.as_rule() {
-        Rule::normal_end => Ok(LineResult {
-            content: String::new(),
-            params: parse_normal_end(pair.into_inner())?.params,
-            define_canceled : false,
-        }),
+        Rule::normal_end => Ok(LineResult::new(String::new(),parse_normal_end(pair.into_inner())?.params)),
         Rule::backslash_comment_end => {
             let mut r = parse_backslash_comment_end(pair.into_inner())?;
             r.content.insert_str(0, &r.new_line);
-            Ok(LineResult {
-                content: r.content,
-                params: r.params,
-                define_canceled : false,
-            })
+            Ok(LineResult::new(r.content,r.params))
         }
         Rule::backslash_end => {
             let mut r = parse_backslash_end(pair.into_inner())?;
             r.content.insert_str(0, &r.new_line);
-            Ok(LineResult {
-                content: r.content,
-                params: r.params,
-                define_canceled : false,
-            })
+            Ok(LineResult::new(r.content,r.params))
         }
         Rule::single_bar => parse_single_bar(pair.into_inner()),
         Rule::triple_bars => parse_triple_bars(pair.into_inner()),
-        Rule::double_bars => Ok(LineResult {
-            content: String::new(),
-            params: parse_double_bars(pair.into_inner())?.params,
-            define_canceled : false,
-        }),
+        Rule::double_bars => Ok(LineResult::new(String::new(),parse_double_bars(pair.into_inner())?.params)),
         _ => unreachable!(),
     }
 }
@@ -133,11 +117,7 @@ fn parse_continued_line(mut pairs: Pairs) -> Result<LineResult, ParseFail> {
         Rule::continued_line_with_content => parse_continued_line_with_content(p.into_inner()),
         Rule::continued_line_without_content => {
             let params = parse_continued_line_without_content(p.into_inner())?;
-            Ok(LineResult {
-                content: String::new(),
-                params: params.params,
-                define_canceled : false,
-            })
+            Ok(LineResult::new(String::new(),params.params))
         }
         _ => unreachable!(),
     }
@@ -158,7 +138,7 @@ fn parse_continued_line_with_content(mut pairs: Pairs) -> Result<LineResult, Par
             _ => unreachable!(),
         }
     }
-    Ok(LineResult::new(content, params, false))
+    Ok(LineResult::new(content, params))
 }
 
 fn parse_continued_line_without_content(pairs: Pairs) -> Result<Params, ParseFail> {
