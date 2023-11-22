@@ -1,7 +1,10 @@
 H3 Welcome to my Blog!|class ribbon1
 P This is a sample html document.\
-	A Tag and a text are unified in this sample.\
-	You can write a long sentence with line concatenation.
+	A Tag and a text are unified in this sample,\
+	which means a tag and a text can be mixed in a line.\
+	You can write a long sentence with line concatenation.\
+	This approach works when you know which tags can have text.
+	
 
 Blockquote
 	P sample blockquote.

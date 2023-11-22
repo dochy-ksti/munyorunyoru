@@ -16,6 +16,10 @@ impl<'a, 'de> EnumDeserializer<'a, 'de> {
         let de = ArgDeserializer::new(de, b);
         Self { de }
     }
+
+	pub(crate) fn end(&self) -> Result<(), DeserializeError>{
+		self.de.end()
+	}
 }
 
 fn mes() -> DeserializeError {
@@ -33,7 +37,7 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut EnumDeserializer<'a, 'de> {
     where
         V: serde::de::Visitor<'de>,
     {
-        unimplemented!()
+        Err(err("deserialize any is not supported"))
     }
 
     fn deserialize_bool<V>(self, _visitor: V) -> Result<V::Value, Self::Error>

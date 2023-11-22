@@ -3,10 +3,8 @@ use std::str::FromStr;
 use serde::Deserializer;
 
 use crate::{
-    builder::default_builder::DefaultBuilder,
-    error::deserialize_error::DeserializeError,
-    lang::builder_tree::TreeItem,
-    MunyoDeserializer,
+    builder::default_builder::DefaultBuilder, error::deserialize_error::DeserializeError,
+    lang::builder_tree::TreeItem, MunyoDeserializer,
 };
 
 use super::{arguments::Arguments, param_deserializer::ParamDeserializer, vec_access::VecAccess};
@@ -31,6 +29,13 @@ impl<'a, 'de> ArgDeserializer<'a, 'de> {
 
     fn parse<T: FromStr>(&mut self) -> Result<T, T::Err> {
         self.args.arg().parse()
+    }
+
+    pub(crate) fn end(&self) -> Result<(), DeserializeError> {
+        if self.children_deserialized == false && self.b.children.is_empty() == false {
+            return Err(err("All children must be deserialized"));
+        }
+        Ok(())
     }
 }
 
