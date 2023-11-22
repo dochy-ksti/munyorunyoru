@@ -1,0 +1,83 @@
+body {
+    max-width: 600px;
+	width: 100%;
+    margin: 0 auto;
+	text-align: center;
+}
+
+p{
+	text-align: left;
+}
+
+.ribbon1 {
+	display: inline-block;
+	position: relative;
+	height: 50px;/*リボンの高さ*/
+	line-height: 50px;/*リボンの高さ*/
+	text-align: center;
+	padding: 0 30px;/*横の大きさ*/
+	font-size: 18px;/*文字の大きさ*/
+	background: #f57a78;/*塗りつぶし色*/
+	color: #FFF;/*文字色*/
+	box-sizing: border-box;
+  }
+  
+  .ribbon1:before, .ribbon1:after {
+	position: absolute;
+	content: '';
+	width: 0px;
+	height: 0px;
+	z-index: 1;
+  }
+  
+  .ribbon1:before {
+	top: 0;
+	left: 0;
+	border-width: 25px 0px 25px 15px;
+	border-color: transparent transparent transparent #fff;
+	border-style: solid;
+  }
+  
+  .ribbon1:after {
+	top: 0;
+	right: 0;
+	border-width: 25px 15px 25px 0px;
+	border-color: transparent #fff transparent transparent;
+	border-style: solid;
+  }
+
+  blockquote {
+    position: relative;
+    padding: 10px 15px 10px 60px;
+    box-sizing: border-box;
+    font-style: italic;
+    background: #f5f5f5;
+    color: #777777;
+    border-left: 4px solid #9dd4ff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.14);
+}
+
+blockquote:before{
+    display: inline-block;
+    position: absolute;
+    top: 7px;
+    left: 0;
+    content: "“";
+    font-family: sans-serif;
+    color: #9dd4ff;
+    font-size: 90px;
+    line-height: 1;
+}
+
+blockquote p {
+    padding: 0;
+    margin: 7px 0;
+    line-height: 1.7;
+}
+
+blockquote cite {
+    display: block;
+    text-align: right;
+    color: #888888;
+    font-size: 0.9em;
+}

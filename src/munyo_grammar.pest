@@ -94,7 +94,7 @@ commented_line = {
 }
 
 line_contents = {
-    ((!">" ~ main_line) | commented_line | (&">" ~ define_stmt) | (&">" ~ main_line))
+    ((!">" ~ main_line) | commented_line | (!">\\" ~ &">" ~ define_stmt) | (&">" ~ main_line))
 }
 
 file = {
