@@ -116,7 +116,7 @@ impl Concurrent {
                 let sender = sender.clone();
                 let f = f.clone();
                 let pool = pool.clone();
-                match std::fs::read_to_string(&path) {
+                match crate::read_file(&path){
                     Ok(s) => {
                         pool.execute(move || {
                             //the channel has sufficient size, so no blocking occurs.
@@ -126,7 +126,7 @@ impl Concurrent {
                     }
                     Err(e) => {
                         sender
-                            .send_blocking(Err(Error::ReadFile(path, format!("{e}"))))
+                            .send_blocking(Err(e))
                             .ok();
                         return;
                     }

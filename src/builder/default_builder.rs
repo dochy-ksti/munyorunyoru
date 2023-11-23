@@ -68,7 +68,7 @@ impl Builder for DefaultBuilder {
     }
 }
 
-/// Untyped Munyo values.
+/// Untyped Munyo values which can be used without implementing Serialize/Deserialize
 #[derive(Clone, Default, PartialEq)]
 pub struct DefaultMunyoItem {
     pub typename: String,
