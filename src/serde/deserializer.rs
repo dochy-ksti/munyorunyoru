@@ -1,4 +1,4 @@
-use std::path::{PathBuf, Path};
+use std::path::{Path, PathBuf};
 
 use serde::Deserializer;
 
@@ -21,12 +21,12 @@ pub struct MunyoDeserializer<'de> {
 }
 
 impl<'de> MunyoDeserializer<'de> {
-	pub fn new(text : &'de str) -> Result<Self, Error>{
-		Self::inner_new(text, None)
-	}
-	pub fn with_path<P : AsRef<Path>>(text: &'de str, path: P) -> Result<Self, Error> {
-		Self::inner_new(text, Some(path.as_ref().to_path_buf()))
-	}
+    pub fn new(text: &'de str) -> Result<Self, Error> {
+        Self::inner_new(text, None)
+    }
+    pub fn with_path<P: AsRef<Path>>(text: &'de str, path: P) -> Result<Self, Error> {
+        Self::inner_new(text, Some(path.as_ref().to_path_buf()))
+    }
 
     fn inner_new(text: &'de str, path: Option<PathBuf>) -> Result<Self, Error> {
         let path = PathItem::new(path);
@@ -45,16 +45,14 @@ impl<'de> MunyoDeserializer<'de> {
             DeserializeError::Fail(e) => {
                 let e = into_parse_error(e, text);
                 Error::Deserialize(path_item.clone(), e)
-            },
-			DeserializeError::Msg(e) =>{
-				Error::Message(e)
-			}
+            }
+            DeserializeError::Msg(e) => Error::Message(e),
         }
     }
 }
 
-fn mes() -> Error{
-	Error::Message(anyhow::anyhow!("Munyo can only deserialize Vec<enum>"))
+fn mes() -> Error {
+    Error::Message(anyhow::anyhow!("Munyo can only deserialize Vec<enum>"))
 }
 
 impl<'de, 'a> Deserializer<'de> for &'a mut MunyoDeserializer<'de> {

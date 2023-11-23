@@ -22,16 +22,16 @@ impl MetaBuilder for DefaultMetaBuilder {
 #[derive(Debug)]
 pub struct DefaultBuilder {
     pub(crate) typename: String,
-    pub(crate) content: String,
+    pub(crate) argument: String,
     pub(crate) params: BTreeMap<String, String>,
-    pub(crate) children: Vec<DefaultMunyoItem>,
+    pub(crate) children: Vec<MunyoItem>,
 }
 
 impl DefaultBuilder {
     pub fn new(typename: String, argument: String) -> Self {
         Self {
             typename,
-            content: argument,
+            argument,
             params: BTreeMap::new(),
             children: vec![],
         }
@@ -39,7 +39,7 @@ impl DefaultBuilder {
 }
 
 impl Builder for DefaultBuilder {
-    type Item = DefaultMunyoItem;
+    type Item = MunyoItem;
 
     fn set_param(&mut self, param_name: String, argument: String) -> Result<(), String> {
         match self.params.entry(param_name) {
@@ -61,7 +61,7 @@ impl Builder for DefaultBuilder {
     fn finish(self) -> Result<Self::Item, String> {
         Ok(Self::Item {
             typename: self.typename,
-            content: self.content,
+            argument: self.argument,
             params: self.params,
             children: self.children,
         })
@@ -70,34 +70,34 @@ impl Builder for DefaultBuilder {
 
 /// Untyped Munyo values which can be used without implementing Serialize/Deserialize
 #[derive(Clone, Default, PartialEq)]
-pub struct DefaultMunyoItem {
+pub struct MunyoItem {
     pub typename: String,
-    pub content: String,
+    pub argument: String,
     pub params: BTreeMap<String, String>,
-    pub children: Vec<DefaultMunyoItem>,
+    pub children: Vec<MunyoItem>,
 }
 
-impl Debug for DefaultMunyoItem {
+impl Debug for MunyoItem {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write_item(self, 0, f)
     }
 }
 
-impl Display for DefaultMunyoItem {
+impl Display for MunyoItem {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write_item(self, 0, f)
     }
 }
 
 fn write_item(
-    item: &DefaultMunyoItem,
+    item: &MunyoItem,
     indent_level: usize,
     f: &mut std::fmt::Formatter<'_>,
 ) -> std::fmt::Result {
     for _ in 0..indent_level {
         write!(f, "\t")?;
     }
-    write!(f, "{}", item_format(&item.typename, &item.content))?;
+    write!(f, "{}", item_format(&item.typename, &item.argument))?;
     for (key, val) in &item.params {
         write!(f, "|{}", item_format(key, val))?;
     }
@@ -116,26 +116,23 @@ fn item_format(name: &str, val: &str) -> String {
     }
 }
 
-impl DefaultMunyoItem {
+impl MunyoItem {
     /// path is only used for error messages
-    pub fn from_str_with_path(
-        s: &str,
-        path: PathBuf,
-    ) -> crate::Result<Processed<DefaultMunyoItem>> {
+    pub fn from_str_with_path(s: &str, path: PathBuf) -> crate::Result<Processed<MunyoItem>> {
         Self::inner(s, Some(path))
     }
 
-    pub fn from_str(s: &str) -> crate::Result<Processed<DefaultMunyoItem>> {
+    pub fn from_str(s: &str) -> crate::Result<Processed<MunyoItem>> {
         Self::inner(s, None)
     }
 
-    pub fn from_file_path<P: AsRef<Path>>(path: P) -> crate::Result<Processed<DefaultMunyoItem>> {
+    pub fn from_file<P: AsRef<Path>>(path: P) -> crate::Result<Processed<MunyoItem>> {
         let buf = path.as_ref().to_path_buf();
         let s = read_file(&buf)?;
         Self::inner(&s, Some(buf))
     }
 
-    fn inner(s: &str, path: Option<PathBuf>) -> crate::Result<Processed<DefaultMunyoItem>> {
+    fn inner(s: &str, path: Option<PathBuf>) -> crate::Result<Processed<MunyoItem>> {
         crate::from_str_with_metabuilder(s, &DefaultMetaBuilder)
             .map_err(|e| crate::Error::Parse(PathItem::new(path), e))
     }

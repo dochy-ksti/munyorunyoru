@@ -18,7 +18,7 @@ pub(crate) struct ArgDeserializer<'a, 'de: 'a> {
 
 impl<'a, 'de> ArgDeserializer<'a, 'de> {
     pub(crate) fn new(de: &'a MunyoDeserializer<'de>, b: TreeItem<DefaultBuilder>) -> Self {
-        let args = Arguments::new(&b.item.content);
+        let args = Arguments::new(&b.item.argument);
         Self {
             de,
             b,

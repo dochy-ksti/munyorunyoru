@@ -13,7 +13,7 @@ mod test_parser;
 #[cfg(test)]
 mod tests;
 
-pub use crate::builder::default_builder::DefaultMunyoItem;
+pub use crate::builder::default_builder::MunyoItem;
 pub use crate::file_io::concurrent::Concurrent;
 pub use crate::lang::from_str_with_metabuilder::from_str_with_metabuilder;
 pub use crate::pub_apis::{from_file, from_str, from_str_with_path, to_string};
