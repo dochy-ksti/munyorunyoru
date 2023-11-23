@@ -37,10 +37,18 @@ pub struct Tag {
     pub params: Vec<Param>,
 }
 
+impl Tag{
+    pub fn new(name: String, params: Vec<Param>) -> Self { Self { name, params } }
+}
+
 #[derive(Debug)]
 pub struct Param {
     pub name: String,
     pub value: String,
+}
+
+impl Param {
+    pub fn new(name: String, value: String) -> Self { Self { name, value } }
 }
 
 impl HtmlBuilder {

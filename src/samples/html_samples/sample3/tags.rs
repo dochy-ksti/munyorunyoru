@@ -52,13 +52,7 @@ fn balloon(is_l: bool, text: &str, r: &mut Vec<HtmlItem>) {
 }
 
 fn tag(name: &str, params: Vec<Param>, children: Vec<HtmlItem>) -> HtmlItem {
-    HtmlItem::Tag(
-        Tag {
-            name: name.to_string(),
-            params,
-        },
-        children,
-    )
+    HtmlItem::Tag(Tag::new(name.to_string(),params),children)
 }
 
 fn text(s: &str) -> HtmlItem {
@@ -66,8 +60,5 @@ fn text(s: &str) -> HtmlItem {
 }
 
 fn class(class: &Class) -> Vec<Param> {
-    vec![Param {
-        name: "class".to_string(),
-        value: class.class.clone(),
-    }]
+    vec![Param::new("class".to_string(), class.class.clone())]
 }
