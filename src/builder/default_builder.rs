@@ -1,13 +1,15 @@
 use std::{
-    collections::{BTreeMap, btree_map::Entry},
+    collections::{btree_map::Entry, BTreeMap},
     fmt::{Debug, Display},
+    path::{Path, PathBuf},
 };
+
+use crate::{error::munyo_error::PathItem, lang::processed::Processed, read_file};
 
 use super::builder::{Builder, MetaBuilder};
 
 #[derive(Debug, Clone, Default)]
 pub struct DefaultMetaBuilder;
-
 
 impl MetaBuilder for DefaultMetaBuilder {
     type Item = DefaultBuilder;
@@ -22,7 +24,7 @@ pub struct DefaultBuilder {
     pub(crate) typename: String,
     pub(crate) content: String,
     pub(crate) params: BTreeMap<String, String>,
-    pub(crate) children: Vec<DefaultItem>,
+    pub(crate) children: Vec<DefaultMunyoItem>,
 }
 
 impl DefaultBuilder {
@@ -37,15 +39,17 @@ impl DefaultBuilder {
 }
 
 impl Builder for DefaultBuilder {
-    type Item = DefaultItem;
+    type Item = DefaultMunyoItem;
 
     fn set_param(&mut self, param_name: String, argument: String) -> Result<(), String> {
-		match self.params.entry(param_name){
-			Entry::Occupied(e) =>{
-				return Err(format!("'{}' is applied multiple times", e.key()));
-			}
-			Entry::Vacant(e) =>{ e.insert(argument); }
-		}
+        match self.params.entry(param_name) {
+            Entry::Occupied(e) => {
+                return Err(format!("'{}' is applied multiple times", e.key()));
+            }
+            Entry::Vacant(e) => {
+                e.insert(argument);
+            }
+        }
         Ok(())
     }
 
@@ -64,28 +68,29 @@ impl Builder for DefaultBuilder {
     }
 }
 
+/// Untyped Munyo values.
 #[derive(Clone, Default, PartialEq)]
-pub struct DefaultItem {
+pub struct DefaultMunyoItem {
     pub typename: String,
     pub content: String,
     pub params: BTreeMap<String, String>,
-    pub children: Vec<DefaultItem>,
+    pub children: Vec<DefaultMunyoItem>,
 }
 
-impl Debug for DefaultItem {
+impl Debug for DefaultMunyoItem {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write_item(self, 0, f)
     }
 }
 
-impl Display for DefaultItem {
+impl Display for DefaultMunyoItem {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write_item(self, 0, f)
     }
 }
 
 fn write_item(
-    item: &DefaultItem,
+    item: &DefaultMunyoItem,
     indent_level: usize,
     f: &mut std::fmt::Formatter<'_>,
 ) -> std::fmt::Result {
@@ -108,5 +113,30 @@ fn item_format(name: &str, val: &str) -> String {
         name.to_string()
     } else {
         format!("{} {}", name, val)
+    }
+}
+
+impl DefaultMunyoItem {
+    /// path is only used for error messages
+    pub fn from_str_with_path(
+        s: &str,
+        path: PathBuf,
+    ) -> crate::Result<Processed<DefaultMunyoItem>> {
+        Self::inner(s, Some(path))
+    }
+
+    pub fn from_str(s: &str) -> crate::Result<Processed<DefaultMunyoItem>> {
+        Self::inner(s, None)
+    }
+
+    pub fn from_file_path<P: AsRef<Path>>(path: P) -> crate::Result<Processed<DefaultMunyoItem>> {
+        let buf = path.as_ref().to_path_buf();
+        let s = read_file(&buf)?;
+        Self::inner(&s, Some(buf))
+    }
+
+    fn inner(s: &str, path: Option<PathBuf>) -> crate::Result<Processed<DefaultMunyoItem>> {
+        crate::from_str_with_metabuilder(s, &DefaultMetaBuilder)
+            .map_err(|e| crate::Error::Parse(PathItem::new(path), e))
     }
 }

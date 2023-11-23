@@ -16,8 +16,7 @@ where
 pub fn from_file<P, T>(path : P) -> Result<Vec<T>>
 	where P : AsRef<Path>, T : de::DeserializeOwned
 {
-	let s = std::fs::read_to_string(&path).map_err(|e| 
-		crate::Error::ReadFile(path.as_ref().to_path_buf(), format!("{}", e)))?;
+	let s = crate::read_file(&path)?;
 	let mut de = MunyoDeserializer::with_path(&s, path.as_ref().to_path_buf())?;
     de::Deserialize::deserialize(&mut de)
 }

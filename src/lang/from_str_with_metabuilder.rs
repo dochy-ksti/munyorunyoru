@@ -17,6 +17,7 @@ use super::{
 
 use pest::Parser;
 
+/// The most primitive interface which isn't good for generic usage.
 pub fn from_str_with_metabuilder<MB, B, T>(
     text: &str,
     meta_builder: &MB,
