@@ -2,6 +2,11 @@
 #![warn(unreachable_pub)]
 #![warn(unused_crate_dependencies)]
 
+//! Munyo is a language. The goal of this language is to be the most efficient way to handwrite data.
+//! 
+//! Typename
+
+
 pub mod builder;
 pub mod error;
 pub mod file_io;
@@ -29,3 +34,4 @@ pub(crate) fn read_file<P: AsRef<Path>>(path: P) -> crate::Result<String> {
     std::fs::read_to_string(&path)
         .map_err(|e| crate::Error::ReadFile(path.as_ref().to_path_buf(), e.to_string()))
 }
+

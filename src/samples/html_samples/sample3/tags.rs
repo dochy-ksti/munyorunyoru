@@ -4,29 +4,33 @@ use crate::{
 };
 use serde::{Deserialize, Serialize};
 
+// This enum defines the syntax.
 #[derive(Serialize, Deserialize)]
-pub enum Tags {
+pub enum Item {
+	// RestOf captures all the remaining string of the line except parameters.
     Alice(RestOf),
     Bob(RestOf),
+	// struct captures parameters as fields.
     H3(RestOf, Class),
 }
 
+// This struct captures the parameter "class"
 #[derive(Serialize, Deserialize)]
 pub struct Class {
     pub class: String,
 }
 
-pub fn to_html_items(items: &[Tags]) -> Vec<HtmlItem> {
+pub fn to_html_items(items: &[Item]) -> Vec<HtmlItem> {
     let mut r: Vec<HtmlItem> = vec![];
     for item in items {
         match item {
-            Tags::Alice(t) => {
+            Item::Alice(t) => {
                 balloon(true, &t.arg, &mut r);
             }
-            Tags::Bob(t) => {
+            Item::Bob(t) => {
                 balloon(false, &t.arg, &mut r);
             }
-            Tags::H3(t, c) => {
+            Item::H3(t, c) => {
                 r.push(tag("h3", class(c), vec![text(&t.arg)]));
             }
         }
@@ -52,7 +56,7 @@ fn balloon(is_l: bool, text: &str, r: &mut Vec<HtmlItem>) {
 }
 
 fn tag(name: &str, params: Vec<Param>, children: Vec<HtmlItem>) -> HtmlItem {
-    HtmlItem::Tag(Tag::new(name.to_string(),params),children)
+    HtmlItem::Tag(Tag::new(name.to_string(), params), children)
 }
 
 fn text(s: &str) -> HtmlItem {
