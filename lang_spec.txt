@@ -1,11 +1,10 @@
-Munyorunyoru is a indent-based simple markup language.
+Munyo is a indent-based simple data language.
 
 type-name argument|param-name argument|param-name...
 	type-name argument|param-name argument|param-name...
 
 Child items must be indented. Indents must be tab(ASCII code 9).
 Separaters are single whitespace and '|'(ASCII code 124). Two whitespaces are recognized as the argument starts with one whitespace.
-Argument is a chunk. You can separate it in your code if you want.
 Arguments are optional.
 
 	type-name|param-name|param-name arg|...
@@ -19,7 +18,7 @@ Arguments are optional.
 	name argument\
 	continuation of the argument...
 
-Backslash with line-break means argument\ncontinuation. Two arguments are separated with 'LF'(ASCII Code 10) and tabs are ignored.
+Backslash with line-break means argument\ncontinuation. Two arguments are separated with the line-break code and tabs are ignored.
 
 	name argument\
 continuation...

@@ -9,3 +9,5 @@ pub(crate) mod builder_tree;
 pub(crate) mod processed;
 pub(crate) mod make_escaped_string;
 mod inner_lang;
+
+pub use processed::Processed;

@@ -1,3 +1,0 @@
-line = { (!"\r" ~ ANY)* ~ "\r\n" }
-
-file = { SOI ~ line+ ~ EOI }

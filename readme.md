@@ -1,5 +1,8 @@
+# Munyo
+
 Munyo is a data language. You can create a domain-specific language with just a little coding.
 
+## Munyo Source File
 ```
 H3 Domain Specific Sample|class ribbon1
 
@@ -8,12 +11,10 @@ Bob I’m on the Moon!
 Alice Let’s observe quantum entanglement and confirm the violation of Bell’s inequality.
 Bob Let’s do it!
 ```
-↑ Munyo source file.
-
+## Generated HTML
 ![Screenshot of the HTML page created from the DSL.](dsl_sample.png)
 
-↑ HTML created from the source file.
-
+## Rust Code
 ```Rust
 use crate::{
     samples::html_samples::html_builder::{HtmlItem, Param, Tag},
@@ -104,14 +105,21 @@ fn test() -> crate::Result<()> {
     Ok(())
 }
 ```
-
-↑ The code to generate HTML
-
 The goal of this language is to be the most efficient way to handwrite data.
 
-This crate also has the concurrent versions of the functions for deserializing, and runtime agnostic async fn to get deserialized data concurrently.
+This crate also has the concurrent version of the functions for deserializing, and runtime agnostic async fn to receive the deserialized data concurrently.
 
-Please read [doc](doc_address) for details.
+Please read the [document](doc_address) for details.
+
+## Usage
+
+Add these to your `cargo.toml`:
+
+```
+[dependencies]
+munyo = "0.3"
+serde = { version = "1", features = ["derive"] }
+```
 
 ## License
 
