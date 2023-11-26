@@ -4,22 +4,22 @@
 
 //! Munyo is a data language. The goal of this language is to be the most efficient way to handwrite data.
 //!
-//! All the basics to use Munyo are explained here.
+//! All the things to use Munyo are explained here.
 //!
 //! Munyo language looks like this:
 //! ```text
 //! Typename arg1 arg2|param_name1 value1|param_name2 value2
 //! ```
 //! The start of the line is typename, and it's followed by args. They are delimited by space.
-//! If the type has params, the line is followed by "|param_name value".
+//! If the type has params, the line is followed by "|param_name value"s.
 //!
 //! Here is the Rust code corresponds to this.
 //! ```
 //! use serde::{Serialize, Deserialize};
 //!
-//! // Munyo needs `serde` to (de)serialize.
+//! // Munyo basically needs `serde` to (de)serialize.
 //! #[derive(Serialize, Deserialize, PartialEq, Debug)]
-//! // A line is (de)serialized to one of the enum variant.
+//! // A line is deserialized to one of the enum variant.
 //! enum EnumName{
 //! 	Typename(String, usize, ParamStruct)
 //! }
@@ -33,10 +33,10 @@
 //! //Let's deserialize.
 //! fn main() -> munyo::Result<()>{
 //! 	let munyo_text =
-//! "Typename args_are_delimited_by_space 32|param_name1 2.1|param_name2 params string is not delimited";
+//! "Typename args_are_delimited_by_spaces 32|param_name1 2.1|param_name2 params string is not delimited";
 //! 	let items : Vec<EnumName> = munyo::from_str(munyo_text)?;
 //! 	assert_eq!(items[0], EnumName::Typename(
-//! 		"args_are_delimited_by_space".to_string(),
+//! 		"args_are_delimited_by_spaces".to_string(),
 //! 		32,
 //! 		ParamStruct{
 //! 			param_name1 : 2.1,
@@ -46,27 +46,27 @@
 //! 	Ok(())
 //! }
 //! ```
-//! As described above, args are delimited by space,
+//! As described above, args are delimited by spaces,
 //! but param value is not delimited(param_name is delimited from param_value by space, just in case.)
 //!
-//! You can use RestOf to ignore the delimiters(space) in the argument.
+//! You can use RestOf to ignore the spaces in the argument.
 //! ```
 //! use serde::Deserialize;
 //! // derive(Serialize) is not mandatory.
 //! #[derive(Deserialize, PartialEq, Debug)]
 //! enum EnumName2{
-//! 	Variant(usize, munyo::RestOf)
+//! 	Typename(usize, munyo::RestOf)
 //! }
 //! fn main() -> munyo::Result<()>{
 //! 	let items : Vec<EnumName2> = munyo::from_str(
-//! 		"Variant 10 RestOf can ignore spaces in the arg")?;
-//! 	assert_eq!(items[0], EnumName2::Variant(10, munyo::RestOf::new(
+//! 		"Typename 10 RestOf can ignore spaces in the arg")?;
+//! 	assert_eq!(items[0], EnumName2::Typename(10, munyo::RestOf::new(
 //! 		"RestOf can ignore spaces in the arg".to_string())));
 //! 	Ok(())
 //! }
 //! ```
 //! Munyo can't (de)serialize arbitrary rust data structures. It can only (de)serializes Vec of enum.
-//! A line of Munyo text is (de)serialized to one of the enum variant, but StructVariant is not supported.
+//! A line of Munyo text is deserialized to one of the enum variant, but StructVariant is not supported.
 //! ```
 //! enum Enum{
 //! 	// Not supported
@@ -77,19 +77,19 @@
 //! 	UnitVariant
 //! }
 //! ```
-//! All values must implement Serialize/Deserialize trait to serialize/deserialize.
+//! All values must implement Serialize/Deserialize trait of `serde` to serialize/deserialize.
 //! You can easily do that with #[derive(Serialize, Deserialize)].
 //! You can also implement them by yourself.[example1][example2]
 //! ```
 //! use serde::Deserialize;
 //! #[derive(Deserialize, Debug, PartialEq)]
 //! enum Enum{
-//! 	Variant(munyo::samples::color::Color)
+//! 	Typename(munyo::samples::color::Color)
 //! }
 //! fn main() -> munyo::Result<()>{
-//! 	// Color has an original implementation to deserialize #xxx_xxx_xxx to RGB values.
-//! 	let v : Vec<Enum> = munyo::from_str("Variant #120_220_10")?;
-//! 	assert_eq!(v[0], Enum::Variant(munyo::samples::color::Color::new(120,220,10)));
+//! 	// Color has an original implementation to deserialize the str "#xxx_xxx_xxx" to RGB.
+//! 	let v : Vec<Enum> = munyo::from_str("Typename #120_220_10")?;
+//! 	assert_eq!(v[0], Enum::Typename(munyo::samples::color::Color::new(120,220,10)));
 //! 	Ok(())
 //! }
 //! ```
@@ -104,20 +104,20 @@
 //! A line can have only one children, and it's also `Vec<enum>`.
 //! ```
 //! use serde::Deserialize;
-//! #[derive(Deserialize)]
+//! #[derive(Deserialize, Debug, PartialEq)]
 //! enum Parent{
 //! 	//Only one children is allowed.
 //! 	ParentItem1(String, Vec<Child>),
 //! 	//Children's type can be the same as the parent.
 //! 	ParentItem2(usize, Vec<Parent>)
 //! }
-//! #[derive(Deserialize)]
+//! #[derive(Deserialize, Debug, PartialEq)]
 //! enum Child{
 //! 	ChildItem1(StructsCanHaveOption),
 //! 	ChildItem2
 //! }
 //!
-//! #[derive(Deserialize)]
+//! #[derive(Deserialize, Debug, PartialEq)]
 //! struct StructsCanHaveOption{
 //! 	name1 : Option<u32>
 //! }
@@ -132,18 +132,37 @@
 //! 	ParentItem2 10|| Non-string arguments can't be empty.
 //! 		|| No children
 //! "###)?;
+//! 	assert_eq!(&v[0], &Parent::ParentItem1("aaa".to_string(), vec![
+//! 		Child::ChildItem1(StructsCanHaveOption{ name1 : Some(100) }),
+//! 		Child::ChildItem2]));
+//! 	assert_eq!(&v[1], &Parent::ParentItem2(20, vec![
+//! 		Parent::ParentItem1("".to_string(), vec![
+//! 			Child::ChildItem1(StructsCanHaveOption{ name1 : None })
+//! 		]),
+//! 		Parent::ParentItem2(10, vec![])
+//! 	]));
 //! 	Ok(())
 //! }
 //! ```
 //! As described above, String argument can be empty, and from '||' to the end of the line
-//! is considered as a comment in Munyo. Struct's fields can be Option, but args can't.
+//! is considered as a comment in Munyo. Fields of structs can be Option, but args can't.
 //!
 //! In Munyo, '\\' and '|' are special characters, so you need to escape them as '\\\\', '\\|' to
 //! write them as normal characters. Also, '\t','\r','\n' can be used for tab, carriage-return,
-//! and new line.
+//! and newline.
 //!
 //! There are three types of line continuations in Munyo:
-//! ```text
+//! ```
+//! #[derive(serde::Deserialize, Debug,PartialEq)]
+//! enum Enum{
+//! 	Foo(munyo::RestOf, Struct)
+//! }
+//! #[derive(serde::Deserialize, Debug,PartialEq)]
+//! struct Struct{
+//! 	param : String
+//! }
+//! fn main() -> munyo::Result<()>{
+//! 	let text = r###"
 //! || '|' at the end of the line
 //! Foo This line is continued |
 //! 		to the next line. The next line can have arbitrary number |
@@ -158,9 +177,28 @@
 //! || '|' at the start of the next line
 //! Foo In this case, arg can't be continued. Only params can be attached in the next line.
 //! 		|param value
+//! "###;
+//! 	let v : Vec<Enum> = munyo::from_str(text)?;
+//! 	fn get(foo : &Enum) -> &str{
+//! 		match foo{
+//! 			Enum::Foo(rest_of, _) => &rest_of.arg
+//! 		}
+//! 	}
+//! 	assert_eq!(get(&v[0]), "This line is continued to the next line. The next line can have arbitrary number of tabs at the start. The tabs are ignored.");
+//! 	assert_eq!(get(&v[1]), r###"If you put '\' at the end of the line,
+//! the line is continued to the next line,
+//! and those lines are separated with line-break code used in the text."###);
+//! 	assert_eq!(get(&v[2]), "In this case, arg can't be continued. Only params can be attached in the next line.");
+//! 	if let Enum::Foo(_,s) = &v[2]{
+//! 		assert_eq!(&s.param, "value");
+//! 	}
+//! 	Ok(())
+//! }
 //! ```
+//! An empty line or a line which only has a comment or tabs is ignored.
+//! 
 //! If you want to write line continuation with comments, you can use '|||' and '||\\'. Check the
-//! [language specification]() for details.
+//! [language specifications]() for details.
 //!
 //! You can use [MunyoItem] to serialize/deserialize Munyo without serde.
 //! ```
@@ -199,5 +237,5 @@ pub type Result<T> = std::result::Result<T, Error>;
 use std::path::Path;
 pub(crate) fn read_file<P: AsRef<Path>>(path: P) -> crate::Result<String> {
     std::fs::read_to_string(&path)
-        .map_err(|e| crate::Error::ReadFile(path.as_ref().to_path_buf(), e.to_string()))
+        .map_err(|e| crate::Error::ReadFile(path.as_ref().to_path_buf(), e.into()))
 }

@@ -7,17 +7,15 @@ use super::parse_error::ParseError;
 #[derive(Error, Debug)]
 pub enum Error {
     #[error("failed to read `{0}`, {1}")]
-    ReadFile(PathBuf, String),
+    ReadFile(PathBuf, anyhow::Error),
     #[error("`{0}`:{1}")]
     Parse(PathItem, ParseError),
     #[error("`{0}`:{1}")]
     Deserialize(PathItem, ParseError),
-    // #[error("{0}")]
-    // DeserializeCustom(String),
     #[error("{0}")]
     Serialize(anyhow::Error),
     #[error("{0}")]
-    SerializeCustom(String),
+    SerializeCustom(anyhow::Error),
     #[error("{0}")]
     Message(anyhow::Error),
 }
@@ -56,7 +54,7 @@ impl serde::ser::Error for Error {
     where
         T: Display,
     {
-        Self::SerializeCustom(format!("{msg}"))
+        Self::SerializeCustom(anyhow::Error::msg(msg.to_string()))
     }
 }
 
