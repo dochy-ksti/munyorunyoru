@@ -210,7 +210,35 @@
 //! 	Ok(())
 //! }
 //! ```
-//!
+//! A line can have any number of args and structs, and zero or one children.
+//! On the other hand, a line can't have two params with the same name.
+//! ```text
+//! || Multiple "param1" not allowed
+//! Foo|param1 value|param1 value2
+//! ```
+//! On the other hand, a line with multiple structs which have the fields with the same name is allowed.
+//! Those fields capture the same value.
+//! ```
+//! use serde::Deserialize;
+//! #[derive(Deserialize, Debug, PartialEq)]
+//! enum Enum{
+//!     Foo(S1, S2)
+//! }
+//! #[derive(Deserialize, Debug, PartialEq)]
+//! struct S1{
+//!     param_name1 : String,
+//! }
+//! #[derive(Deserialize, Debug, PartialEq)]
+//! struct S2{
+//!     param_name1 : usize,
+//! }
+//! fn main() -> munyo::Result<()>{
+//!     let v : Vec<Enum> = munyo::from_str("Foo|param_name1 20")?;
+//!     assert_eq!(&v[0], &Enum::Foo(S1{param_name1 : "20".to_string()}, S2{param_name1 : 20 }));
+//!     Ok(())
+//! }
+//! ```
+//! I think that's all.
 
 pub mod builder;
 pub mod error;
