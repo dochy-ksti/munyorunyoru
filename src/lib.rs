@@ -62,6 +62,10 @@
 //! 		"Typename 10 RestOf can ignore spaces in the arg")?;
 //! 	assert_eq!(items[0], EnumName2::Typename(10, munyo::RestOf::new(
 //! 		"RestOf can ignore spaces in the arg".to_string())));
+//! 	let items : Vec<EnumName2> = munyo::from_str(
+//! 		"Typename 30  Preceding spaces and spaces before the end of the line are also captured in RestOf   ")?;
+//! 	assert_eq!(items[0], EnumName2::Typename(30, munyo::RestOf::new(
+//! 		" Preceding spaces and spaces before the end of the line are also captured in RestOf   ".to_string())));
 //! 	Ok(())
 //! }
 //! ```
@@ -124,10 +128,10 @@
 //! fn main() -> munyo::Result<()>{
 //! 	let v : Vec<Parent> = munyo::from_str(r###"
 //! ParentItem1 aaa
-//! 	ChildItem1|name1 100
+//! 	ChildItem1|  name1 100|| Preceding spaces before param names are ignored.
 //! 	ChildItem2
 //! ParentItem2 20
-//! 	ParentItem1|| String argument can be empty
+//! 	ParentItem1|| String arguments can be empty
 //! 		ChildItem1|| param of Option can be omitted
 //! 	ParentItem2 10|| Non-string arguments can't be empty.
 //! 		|| No children
@@ -144,7 +148,7 @@
 //! 	Ok(())
 //! }
 //! ```
-//! As described above, String argument can be empty, and from '||' to the end of the line
+//! As described above, String arguments can be empty, and from '||' to the end of the line
 //! is considered as a comment in Munyo. Fields of structs can be Option, but args can't.
 //!
 //! In Munyo, '\\' and '|' are special characters, so you need to escape them as '\\\\', '\\|' to
@@ -203,10 +207,12 @@
 //! You can use [MunyoItem] to serialize/deserialize Munyo without serde.
 //! ```
 //! fn main() -> munyo::Result<()>{
-//! 	let v = munyo::MunyoItem::from_str("Foo 20|param value")?.result;
-//! 	assert_eq!(&v[0].typename,"Foo");
-//! 	assert_eq!(&v[0].argument,"20");
-//! 	assert_eq!(v[0].params.get("param"), Some(&"value".to_string()));
+//! 	let v = munyo::MunyoItem::from_str("Typename  argu ment  |   param  value ")?.result;
+//! 	assert_eq!(&v[0].typename, "Typename");
+//! 	// One space works as a delimiter. Other spaces are recognised as characters.
+//! 	assert_eq!(&v[0].argument, " argu ment  ");
+//! 	// Preceding spaces of param names are ignored. Spaces before the end of the line are also recognised as characters.
+//! 	assert_eq!(v[0].params.get("param").unwrap(), " value ");
 //! 	Ok(())
 //! }
 //! ```
@@ -269,7 +275,7 @@ pub(crate) fn read_file<P: AsRef<Path>>(path: P) -> crate::Result<String> {
 }
 
 #[doc(hidden)]
-/// This is only meant for tests.
+/// This is only meant for testing.
 ///
 /// File survives until the NamedTempFile drops
 pub fn temp(s: &str) -> std::io::Result<tempfile::NamedTempFile> {

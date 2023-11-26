@@ -21,6 +21,11 @@ fn io_thread() -> &'static ShrinkPool {
 /// The thread and the pool's threads are automatically destroyed when no tasks are assigned for them.
 /// When a task is assigned after that, a new thread is spawned. It costs some, so you may want to
 /// assign as much tasks as possible at once to avoid the respawn cost.
+/// 
+/// # Example
+/// ```
+/// 
+/// ```
 pub struct Concurrent {
     pool: Arc<ShrinkPool>,
 }
@@ -56,10 +61,7 @@ impl Concurrent {
         }
     }
 
-    /// Read files and build items with meta_builder.
-    ///
-    /// Reading starts in the order given, and parsing and building will follow.
-    /// But it's a concurrent process and the items will be sent as soon as they are ready, so the order of finished items is unknown.
+    /// Read files and build items with meta_builder. This is not meant for general usage.
     pub fn read_files_with_builder<I, P, T, B, MB>(
         &self,
         pathes: I,
@@ -84,6 +86,8 @@ impl Concurrent {
     ///
     /// Reading starts in the order given, and parsing and deserializing will follow.
     /// But it's a concurrent process and the items will be sent as soon as they are ready, so the order of finished items is unknown.
+	/// 
+	/// See [Concurrent] to know how to use this.
     pub fn deserialize_files<I, P, T>(&self, pathes: I) -> Receiver<Result<Data<T>, Error>>
     where
         I: Iterator<Item = P>,
@@ -116,7 +120,7 @@ impl Concurrent {
                 let sender = sender.clone();
                 let f = f.clone();
                 let pool = pool.clone();
-                match crate::read_file(&path){
+                match crate::read_file(&path) {
                     Ok(s) => {
                         pool.execute(move || {
                             //the channel has sufficient size, so no blocking occurs.
@@ -125,9 +129,7 @@ impl Concurrent {
                         });
                     }
                     Err(e) => {
-                        sender
-                            .send_blocking(Err(e))
-                            .ok();
+                        sender.send_blocking(Err(e)).ok();
                         return;
                     }
                 }
@@ -136,7 +138,7 @@ impl Concurrent {
         Receiver::new(receiver)
     }
 
-    /// Do something in this thread pool.
+    /// Do something in this thread pool. Maybe useful, maybe not.
     pub fn do_something_with_pool<F>(&self, f: F)
     where
         F: FnOnce() + Send + 'static,
@@ -144,7 +146,7 @@ impl Concurrent {
         self.pool.execute(move || f())
     }
 
-    /// Do something in the io thread.
+    /// Do something in the io thread. Maybe useful, maybe not.
     pub fn do_something_with_io_thread<F>(&self, f: F)
     where
         F: FnOnce() + Send + 'static,
