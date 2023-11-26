@@ -189,14 +189,14 @@
 //! the line is continued to the next line,
 //! and those lines are separated with line-break code used in the text."###);
 //! 	assert_eq!(get(&v[2]), "In this case, arg can't be continued. Only params can be attached in the next line.");
-//! 	if let Enum::Foo(_,s) = &v[2]{
-//! 		assert_eq!(&s.param, "value");
-//! 	}
+//! 	let Enum::Foo(_,s) = &v[2];
+//! 	assert_eq!(&s.param, "value");
+//!
 //! 	Ok(())
 //! }
 //! ```
 //! An empty line or a line which only has a comment or tabs is ignored.
-//! 
+//!
 //! If you want to write line continuation with comments, you can use '|||' and '||\\'. Check the
 //! [language specifications]() for details.
 //!
@@ -266,4 +266,16 @@ use std::path::Path;
 pub(crate) fn read_file<P: AsRef<Path>>(path: P) -> crate::Result<String> {
     std::fs::read_to_string(&path)
         .map_err(|e| crate::Error::ReadFile(path.as_ref().to_path_buf(), e.into()))
+}
+
+#[doc(hidden)]
+/// This is only meant for tests.
+///
+/// File survives until the NamedTempFile drops
+pub fn temp(s: &str) -> std::io::Result<tempfile::NamedTempFile> {
+    use std::io::{Seek, SeekFrom, Write};
+    let mut t = tempfile::NamedTempFile::new()?;
+    writeln!(t, "{s}")?;
+    t.seek(SeekFrom::Start(0))?;
+    Ok(t)
 }

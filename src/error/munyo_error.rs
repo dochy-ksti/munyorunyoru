@@ -69,3 +69,9 @@ impl From<async_channel::RecvError> for Error {
         Self::Message(e.into())
     }
 }
+
+impl From<std::io::Error> for Error{
+    fn from(value: std::io::Error) -> Self {
+        Self::Message(value.into())
+    }
+}

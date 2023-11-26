@@ -68,7 +68,7 @@ impl Builder for DefaultBuilder {
     }
 }
 
-/// Untyped Munyo values which can be used without implementing Serialize/Deserialize
+/// Untyped Munyo value which can be used without implementing Serialize/Deserialize
 #[derive(Clone, Default, PartialEq)]
 pub struct MunyoItem {
     pub typename: String,
@@ -117,15 +117,45 @@ fn item_format(name: &str, val: &str) -> String {
 }
 
 impl MunyoItem {
-    /// path is only used for error messages
-    pub fn from_str_with_path(s: &str, path: PathBuf) -> crate::Result<Processed<MunyoItem>> {
-        Self::inner(s, Some(path))
+    /// Deserialize `MunyoItem` from `&str` of the Munyo language.
+    /// `path` is only used for error messages.
+    ///
+    /// See [from_str](Self::from_str) for details;
+    pub fn from_str_with_path<P: AsRef<Path>>(
+        s: &str,
+        path: P,
+    ) -> crate::Result<Processed<MunyoItem>> {
+        Self::inner(s, Some(path.as_ref().to_path_buf()))
     }
 
+    /// Deserialize `MunyoItem` from `&str` of the Munyo language.
+    /// # Example
+    /// ```
+    /// # fn main() -> munyo::Result<()>{
+    /// 	let v = munyo::MunyoItem::from_str("Typename  argu ment  |   param  value ")?.result;
+    /// 	assert_eq!(&v[0].typename, "Typename");
+    /// 	assert_eq!(&v[0].argument, " argu ment  ");
+    /// 	assert_eq!(v[0].params.get("param").unwrap(), " value ");
+    /// # 	Ok(())
+    /// # }
+    /// ```
     pub fn from_str(s: &str) -> crate::Result<Processed<MunyoItem>> {
         Self::inner(s, None)
     }
 
+    /// Deserialize `MunyoItem` from `path` of the source file of the Munyo language.
+    /// # Example
+    /// ```
+    /// # fn main() -> munyo::Result<()>{
+    /// let s = "foo";
+    /// // create a file with text "foo" and get the path
+    /// # 	let file = munyo::temp(s)?;
+    /// # 	let path = file.path();
+    /// let v = munyo::MunyoItem::from_file(path)?.result;
+    /// assert_eq!(&v[0].typename, "foo");
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn from_file<P: AsRef<Path>>(path: P) -> crate::Result<Processed<MunyoItem>> {
         let buf = path.as_ref().to_path_buf();
         let s = read_file(&buf)?;

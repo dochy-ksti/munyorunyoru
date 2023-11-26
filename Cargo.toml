@@ -13,6 +13,8 @@ pest = "2"
 pest_derive = "2"
 num_cpus = "1"
 serde = { version = "1", features = ["derive"] }
+tempfile = "3"
 
 [workspace]
 members = []
+
