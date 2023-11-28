@@ -1,3 +1,4 @@
+#![allow(missing_docs)]
 use std::path::{Path, PathBuf};
 
 use serde::Deserializer;
@@ -14,6 +15,9 @@ use crate::{
 
 use super::vec_access::VecAccess;
 
+/// Deserializer to communicaet with Serde
+/// 
+/// This is not menat for general use. See [from_str](crate::from_str), [from_file](crate::from_file)
 pub struct MunyoDeserializer<'de> {
     pub(crate) path: PathItem,
     pub(crate) text: &'de str,

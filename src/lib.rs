@@ -84,7 +84,8 @@
 //! ```
 //! All values must implement Serialize/Deserialize trait of `serde` to serialize/deserialize.
 //! You can easily do that with #[derive(Serialize, Deserialize)].
-//! You can also implement them by yourself.[example1][example2]
+//! You can also implement them by yourself.
+//! [example1](crate::samples::color)[example2](crate::samples::custom_new_sample)
 //! ```
 //! use serde::Deserialize;
 //! #[derive(Deserialize, Debug, PartialEq)]

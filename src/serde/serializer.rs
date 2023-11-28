@@ -1,9 +1,13 @@
+#![allow(missing_docs)]
 use serde::ser;
 
 use crate::Error;
 
 use super::serialize_state::{Er, SerializeState};
 
+/// Serializer to communicate with Serde.
+/// 
+/// This is not meant for general use. See [to_string](crate::to_string)
 pub struct MunyoSerializer {
     pub(crate) state: SerializeState,
 }

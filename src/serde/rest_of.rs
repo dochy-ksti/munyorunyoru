@@ -5,10 +5,12 @@ use serde::de::Visitor;
 /// You need to use this as the last argument, otherwise deserialization will fail.
 #[derive(Debug, PartialEq, Clone, Eq, Hash, PartialOrd, Ord, Default)]
 pub struct RestOf {
+    /// The captured string
     pub arg: String,
 }
 
 impl RestOf{
+    /// Creates RestOf
 	pub fn new(arg : String) -> Self{ Self{ arg } }
 }
 

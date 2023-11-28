@@ -1,3 +1,5 @@
+//! Custom Serialize/Deserialize of the struct which has completely different representation
+//! from its representation in Munyo.
 use serde::{Deserialize, Serialize};
 
 use super::color::Color;
