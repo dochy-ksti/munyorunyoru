@@ -1,4 +1,5 @@
 use std::fmt::{Debug, Display};
+use std::ops::Deref;
 
 /// Pretty printable with Display trait.
 pub struct Processed<T> {
@@ -34,5 +35,13 @@ impl<T: Clone> Clone for Processed<T> {
         Self {
             result: self.result.clone(),
         }
+    }
+}
+
+impl<T> Deref for Processed<T>{
+    type Target = [T];
+
+    fn deref(&self) -> &Self::Target {
+        &self.result
     }
 }

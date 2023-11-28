@@ -18,13 +18,72 @@ fn io_thread() -> &'static ShrinkPool {
 }
 
 /// Read files in a thread and parse them in a thread pool concurrently.
-/// The thread and the pool's threads are automatically destroyed when no tasks are assigned for them.
+/// The thread and the threads of the pool are automatically destroyed when no tasks are assigned for them.
 /// When a task is assigned after that, a new thread is spawned. It costs some, so you may want to
 /// assign as much tasks as possible at once to avoid the respawn cost.
 /// 
 /// # Example
 /// ```
+/// #[derive(serde::Deserialize, Debug, PartialEq)]
+/// enum E1{
+///     Foo(usize)
+/// }
+/// #[derive(serde::Deserialize, Debug, PartialEq)]
+/// enum E2{
+///     Bar(usize)
+/// }
+/// fn main() -> munyo::Result<()>{
+///     let con = munyo::Concurrent::new();
+///     let f1 = "Foo 1";
+///     let f2 = "Foo 2";
+///     let b1 = "Bar 1";
+///     let b2 = "Bar 2";
+///     // Write these into files and get the pathes
+///     # let f1f = munyo::temp(f1)?;
+///     # let f2f = munyo::temp(f2)?;
+///     # let b1f = munyo::temp(b1)?;
+///     # let b2f = munyo::temp(b2)?;
+///     # let f1_path = f1f.path();
+///     # let f2_path = f2f.path();
+///     # let b1_path = b1f.path();
+///     # let b2_path = b2f.path();
+///     // Deserialize files in the background.
+///     let f_receiver = con.deserialize_files([f1_path, f2_path]);
+///     let b_receiver = con.deserialize_files([b1_path, b2_path]);
+///     // Prepare Future(async blocks create Futures)
+///     let fs = async{
+///         let mut fs : Vec<munyo::file_io::Data<E1>> = vec![];
+///         while let Some(Ok(data)) = f_receiver.recv_async().await{
+///             fs.push(data);
+///         }
+///         fs
+///     };
+///     // Prepare another Future(Futures do nothing until .await or block_on/executor::execute/etc...)
+///     let bs = async{
+///         use futures::{Stream, StreamExt};
+///         // receiver.receiver is an async_channel and implements futures::Stream trait,
+///         // so you can use StreamExt utility methods.
+///         let bs : Vec<munyo::file_io::Data<E2>> = b_receiver.receiver
+///             .map(|r| r.unwrap()).collect().await;
+///         bs
+///     };
+///     // Some async executor is needed to .await/block_on/etc...
+///     // futures::executor is used here.
+///     // I beilieve you can use any async executor for this library.
+///     let fs = futures::executor::block_on(fs);
 /// 
+///     // Tasks are executed in the order given in Concurrent, so you should await/block_on/etc.. in the same order,
+///     let bs = futures::executor::block_on(bs);
+///     
+///     // or maybe you should just futures::join!() all the futures.
+///     // let (fs, bs) = futures::executor::block_on(async{ futures::join!(fs, bs) });
+///
+///     assert_eq!(&fs[0].items[0], &E1::Foo(1));
+///     assert_eq!(&fs[1].items[0], &E1::Foo(2));
+///     assert_eq!(&bs[0].items[0], &E2::Bar(1));
+///     assert_eq!(&bs[1].items[0], &E2::Bar(2));
+///     Ok(())
+/// }
 /// ```
 pub struct Concurrent {
     pool: Arc<ShrinkPool>,
@@ -61,14 +120,14 @@ impl Concurrent {
         }
     }
 
-    /// Read files and build items with meta_builder. This is not meant for general usage.
+    /// Read files and build items with the meta_builder. This is not meant for general usage.
     pub fn read_files_with_builder<I, P, T, B, MB>(
         &self,
         pathes: I,
         meta_builder: MB,
     ) -> Receiver<Result<Data<T>, Error>>
     where
-        I: Iterator<Item = P>,
+        I: IntoIterator<Item = P>,
         P: AsRef<Path>,
         MB: MetaBuilder<Item = B> + Send + Sync + 'static,
         B: Builder<Item = T>,
@@ -90,7 +149,7 @@ impl Concurrent {
 	/// See [Concurrent] to know how to use this.
     pub fn deserialize_files<I, P, T>(&self, pathes: I) -> Receiver<Result<Data<T>, Error>>
     where
-        I: Iterator<Item = P>,
+        I: IntoIterator<Item = P>,
         P: AsRef<Path>,
         T: Send + 'static + DeserializeOwned,
     {
@@ -102,7 +161,7 @@ impl Concurrent {
 
     fn inner<I, P, F, T>(&self, pathes: I, f: F) -> Receiver<Result<Data<T>, Error>>
     where
-        I: Iterator<Item = P>,
+        I: IntoIterator<Item = P>,
         P: AsRef<Path>,
         F: Fn((PathBuf, String)) -> Result<Data<T>, Error> + Send + Sync + 'static,
         T: Send + 'static,
