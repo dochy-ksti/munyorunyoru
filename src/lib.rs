@@ -209,7 +209,7 @@
 //! fn main() -> munyo::Result<()>{
 //! 	let v = munyo::MunyoItem::from_str("Typename  argu ment  |   param  value ")?.result;
 //! 	assert_eq!(&v[0].typename, "Typename");
-//! 	// One space works as a delimiter. Other spaces are recognised as characters.
+//! 	// One space works as a delimiter. Other spaces are recognised as characters, like RestOf.
 //! 	assert_eq!(&v[0].argument, " argu ment  ");
 //! 	// Preceding spaces of param names are ignored. Spaces before the end of the line are recognised as characters.
 //! 	assert_eq!(v[0].params.get("param").unwrap(), " value ");
