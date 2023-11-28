@@ -1,4 +1,4 @@
-//! Custom Serialize/Deserialize of the struct which has completely different representation
+//! Custom Serialize/Deserialize of the struct which has completely different data structure
 //! from its representation in Munyo.
 use serde::{Deserialize, Serialize};
 
