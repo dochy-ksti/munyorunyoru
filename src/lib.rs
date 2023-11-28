@@ -211,7 +211,7 @@
 //! 	assert_eq!(&v[0].typename, "Typename");
 //! 	// One space works as a delimiter. Other spaces are recognised as characters.
 //! 	assert_eq!(&v[0].argument, " argu ment  ");
-//! 	// Preceding spaces of param names are ignored. Spaces before the end of the line are also recognised as characters.
+//! 	// Preceding spaces of param names are ignored. Spaces before the end of the line are recognised as characters.
 //! 	assert_eq!(v[0].params.get("param").unwrap(), " value ");
 //! 	Ok(())
 //! }
@@ -277,7 +277,7 @@ pub(crate) fn read_file<P: AsRef<Path>>(path: P) -> crate::Result<String> {
 #[doc(hidden)]
 /// This is only meant for testing.
 ///
-/// File survives until the NamedTempFile drops
+/// The created file survives until the NamedTempFile drops
 pub fn temp(s: &str) -> std::io::Result<tempfile::NamedTempFile> {
     use std::io::{Seek, SeekFrom, Write};
     let mut t = tempfile::NamedTempFile::new()?;

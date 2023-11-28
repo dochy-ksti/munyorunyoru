@@ -3,7 +3,10 @@ use std::{
     sync::{Arc, OnceLock},
 };
 
-use crate::{error::munyo_error::PathItem, from_str_with_metabuilder, Error};
+use crate::{
+    builder::default_builder::DefaultMetaBuilder, error::munyo_error::PathItem,
+    from_str_with_metabuilder, Error, MunyoItem,
+};
 use serde::de::DeserializeOwned;
 use shrink_pool::ShrinkPool;
 
@@ -21,7 +24,7 @@ fn io_thread() -> &'static ShrinkPool {
 /// The thread and the threads of the pool are automatically destroyed when no tasks are assigned for them.
 /// When a task is assigned after that, a new thread is spawned. It costs some, so you may want to
 /// assign as much tasks as possible at once to avoid the respawn cost.
-/// 
+///
 /// # Example
 /// ```
 /// #[derive(serde::Deserialize, Debug, PartialEq)]
@@ -50,7 +53,7 @@ fn io_thread() -> &'static ShrinkPool {
 ///     // Deserialize files in the background.
 ///     let f_receiver = con.deserialize_files([f1_path, f2_path]);
 ///     let b_receiver = con.deserialize_files([b1_path, b2_path]);
-///     // Prepare Future(async blocks create Futures)
+///     // Prepare Future(an async block creates Future)
 ///     let fs = async{
 ///         let mut fs : Vec<munyo::file_io::Data<E1>> = vec![];
 ///         while let Some(Ok(data)) = f_receiver.recv_async().await{
@@ -71,7 +74,7 @@ fn io_thread() -> &'static ShrinkPool {
 ///     // futures::executor is used here.
 ///     // I beilieve you can use any async executor for this library.
 ///     let fs = futures::executor::block_on(fs);
-/// 
+///
 ///     // Tasks are executed in the order given in Concurrent, so you should await/block_on/etc.. in the same order,
 ///     let bs = futures::executor::block_on(bs);
 ///     
@@ -120,6 +123,18 @@ impl Concurrent {
         }
     }
 
+    /// Read files and create MunyoItems from them. See [MunyoItem]
+    pub fn read_files_and_create_munyo_items<I, P>(
+        &self,
+        pathes: I,
+    ) -> Receiver<Result<Data<MunyoItem>, Error>>
+    where
+        I: IntoIterator<Item = P>,
+        P: AsRef<Path>,
+    {
+        self.read_files_with_builder(pathes, DefaultMetaBuilder)
+    }
+
     /// Read files and build items with the meta_builder. This is not meant for general usage.
     pub fn read_files_with_builder<I, P, T, B, MB>(
         &self,
@@ -145,8 +160,8 @@ impl Concurrent {
     ///
     /// Reading starts in the order given, and parsing and deserializing will follow.
     /// But it's a concurrent process and the items will be sent as soon as they are ready, so the order of finished items is unknown.
-	/// 
-	/// See [Concurrent] to know how to use this.
+    ///
+    /// See [Concurrent] to know how to use this.
     pub fn deserialize_files<I, P, T>(&self, pathes: I) -> Receiver<Result<Data<T>, Error>>
     where
         I: IntoIterator<Item = P>,
