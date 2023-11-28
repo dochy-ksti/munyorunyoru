@@ -1,5 +1,6 @@
 # Munyo
-
+[![crates.io link](https://img.shields.io/crates/v/munyo.svg)](https://crates.io/crates/munyo)
+[![Doc link](https://docs.rs/munyo/badge.svg)](https://docs.rs/munyo)
 ### Munyo is a data language which aims to be the most efficient way to handwrite data.
 
 For example, you can create a domain-specific language with just a little coding.
