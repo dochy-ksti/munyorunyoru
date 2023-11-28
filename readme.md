@@ -1,6 +1,8 @@
 # Munyo
 
-Munyo is a data language. You can create a domain-specific language with just a little coding.
+### Munyo is a data language which aims to be the most efficient way to handwrite data.
+
+For example, you can create a domain-specific language with just a little coding.
 
 ## Munyo Source File
 ```
@@ -37,6 +39,28 @@ pub enum Item {
 pub struct Class {
     pub class: String,
 }
+
+fn test() -> crate::Result<()> {
+    use super::super::html_builder::HtmlBuilder;
+    use crate::from_file;
+    use crate::samples::html_samples::sample3::tags::{to_html_items, Item};
+
+    let path = "src/samples/html_samples/sample3/sample3.munyo";
+    // deserialize Munyo file as Items
+    let v: Vec<Item> = from_file(path)?;
+	// convert Items to HTML
+    let b = HtmlBuilder {
+        items: to_html_items(&v),
+        title: "Sample3".to_string(),
+        stylesheet: Some("sample.css".to_string()),
+        ..Default::default()
+    };
+    let output = b.to_string();
+    std::fs::write("src/samples/html_samples/sample3/output.html", output).unwrap();
+    Ok(())
+}
+
+// --- you don't need to read below ---
 
 pub fn to_html_items(items: &[Item]) -> Vec<HtmlItem> {
     let mut r: Vec<HtmlItem> = vec![];
@@ -84,32 +108,8 @@ fn text(s: &str) -> HtmlItem {
 fn class(class: &Class) -> Vec<Param> {
     vec![Param::new("class".to_string(), class.class.clone())]
 }
-
-fn test() -> crate::Result<()> {
-    use super::super::html_builder::HtmlBuilder;
-    use crate::from_file;
-    use crate::samples::html_samples::sample3::tags::{to_html_items, Item};
-
-    let path = "src/samples/html_samples/sample3/sample3.munyo";
-    // deserialize Munyo file as Items
-    let v: Vec<Item> = from_file(path)?;
-	// convert Items to HTML
-    let b = HtmlBuilder {
-        items: to_html_items(&v),
-        title: "Sample3".to_string(),
-        stylesheet: Some("sample.css".to_string()),
-        ..Default::default()
-    };
-    let output = b.to_string();
-    std::fs::write("src/samples/html_samples/sample3/output.html", output).unwrap();
-    Ok(())
-}
 ```
-The goal of this language is to be the most efficient way to handwrite data.
-
 This crate also has the concurrent version of the functions for deserializing, and runtime agnostic async fn to receive the deserialized data concurrently.
-
-Please read the [document](doc_address) for details.
 
 ## Usage
 
