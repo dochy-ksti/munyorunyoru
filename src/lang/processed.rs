@@ -3,10 +3,12 @@ use std::ops::Deref;
 
 /// Pretty printable with Display trait.
 pub struct Processed<T> {
+	/// Processed data of the Munyo language
     pub result: Vec<T>,
 }
 
 impl<T> Processed<T> {
+	/// Creates Processed
     pub fn new(result: Vec<T>) -> Self {
         Self { result }
     }

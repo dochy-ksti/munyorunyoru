@@ -1,6 +1,7 @@
 #![allow(clippy::module_inception)]
 #![warn(unreachable_pub)]
 #![warn(unused_crate_dependencies)]
+#![warn(missing_docs)]
 
 //! Munyo is a data language. The goal of this language is to be the most efficient way to handwrite data.
 //!
@@ -266,6 +267,7 @@ pub use crate::serde::rest_of::RestOf;
 pub use crate::serde::serializer::MunyoSerializer;
 
 pub use crate::error::munyo_error::Error;
+/// Result type of Munyo
 pub type Result<T> = std::result::Result<T, Error>;
 
 use std::path::Path;

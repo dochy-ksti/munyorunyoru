@@ -1,3 +1,5 @@
+//! This module is not intended for general use
+
 pub(crate) mod state;
 pub(crate) mod from_str_with_metabuilder;
 pub(crate) mod munyo_parser;

@@ -4,18 +4,25 @@ use thiserror::Error;
 
 use super::parse_error::ParseError;
 
+/// Error type of Munyo
 #[derive(Error, Debug)]
 pub enum Error {
+	/// Failed to read file
     #[error("failed to read `{0}`, {1}")]
     ReadFile(PathBuf, anyhow::Error),
+	/// Parse error
     #[error("`{0}`:{1}")]
     Parse(PathItem, ParseError),
+	/// Error occured in the deserialization
     #[error("`{0}`:{1}")]
     Deserialize(PathItem, ParseError),
+	/// Error occured in the serialization
     #[error("{0}")]
     Serialize(anyhow::Error),
+	/// Error occured in the custom serde::Serialize implementation.
     #[error("{0}")]
     SerializeCustom(anyhow::Error),
+	/// Error occured in the various occasions
     #[error("{0}")]
     Message(anyhow::Error),
 }

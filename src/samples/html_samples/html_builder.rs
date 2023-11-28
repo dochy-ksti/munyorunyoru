@@ -1,3 +1,6 @@
+#![allow(missing_docs)]
+
+/// Simple HTML builder for samples.
 #[derive(Debug)]
 pub struct HtmlBuilder {
     pub items: Vec<HtmlItem>,

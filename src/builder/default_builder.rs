@@ -8,6 +8,7 @@ use crate::{error::munyo_error::PathItem, lang::processed::Processed, read_file}
 
 use super::builder::{Builder, MetaBuilder};
 
+/// A meta builder which builds DefaultBuilder
 #[derive(Debug, Clone, Default)]
 pub struct DefaultMetaBuilder;
 
@@ -19,6 +20,7 @@ impl MetaBuilder for DefaultMetaBuilder {
     }
 }
 
+/// A builder which builds MunyoItem
 #[derive(Debug)]
 pub struct DefaultBuilder {
     pub(crate) typename: String,
@@ -28,6 +30,7 @@ pub struct DefaultBuilder {
 }
 
 impl DefaultBuilder {
+    /// Creates DefaultBuilder
     pub fn new(typename: String, argument: String) -> Self {
         Self {
             typename,
@@ -71,9 +74,13 @@ impl Builder for DefaultBuilder {
 /// Untyped Munyo value which can be used without implementing Serialize/Deserialize
 #[derive(Clone, Default, PartialEq)]
 pub struct MunyoItem {
+	/// The typename of the line of the Munyo language
     pub typename: String,
+	/// The argument of the line of the Munyo language
     pub argument: String,
+	/// The params of the line of the Munyo language
     pub params: BTreeMap<String, String>,
+	/// The children of the line of the Munyo language
     pub children: Vec<MunyoItem>,
 }
 

@@ -1,19 +1,23 @@
+//! A sample for implementing custom serde::ser::Serialize & serde::de::Deserialize for Munyo
+#![allow(missing_docs)]
+
 use pest::Parser;
 use pest_derive::Parser;
 use serde::de::Deserialize;
 
-
-
-
 /// A sample for implementing custom serde::ser::Serialize & serde::de::Deserialize for Munyo
 #[derive(PartialEq, Debug, Clone)]
 pub struct Color {
+    /// red
     pub r: u8,
+    /// green
     pub g: u8,
+    /// blue
     pub b: u8,
 }
 
 impl Color {
+    /// Creates Color with RGB
     pub fn new(r: u8, g: u8, b: u8) -> Self {
         Self { r, g, b }
     }
@@ -42,6 +46,7 @@ impl<'de> Deserialize<'de> for Color {
         parse_color(&s).map_err(|e| serde::de::Error::custom(e))
     }
 }
+
 #[derive(Parser)]
 #[grammar_inline = r###"
 number_char = {

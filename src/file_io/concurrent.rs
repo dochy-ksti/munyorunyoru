@@ -53,7 +53,7 @@ fn io_thread() -> &'static ShrinkPool {
 ///     // Deserialize files in the background.
 ///     let f_receiver = con.deserialize_files([f1_path, f2_path]);
 ///     let b_receiver = con.deserialize_files([b1_path, b2_path]);
-///     // Prepare Future(an async block creates Future)
+///     // Prepare Future(an async block creates a Future)
 ///     let fs = async{
 ///         let mut fs : Vec<munyo::file_io::Data<E1>> = vec![];
 ///         while let Some(Ok(data)) = f_receiver.recv_async().await{
@@ -81,10 +81,22 @@ fn io_thread() -> &'static ShrinkPool {
 ///     // or maybe you should just futures::join!() all the futures.
 ///     // let (fs, bs) = futures::executor::block_on(async{ futures::join!(fs, bs) });
 ///
-///     assert_eq!(&fs[0].items[0], &E1::Foo(1));
-///     assert_eq!(&fs[1].items[0], &E1::Foo(2));
-///     assert_eq!(&bs[0].items[0], &E2::Bar(1));
-///     assert_eq!(&bs[1].items[0], &E2::Bar(2));
+/// 	// Which one comes first is not known. You must check the path
+/// 	for data in &fs{
+/// 		if &data.path == f1_path{
+/// 			assert_eq!(&data.items[0], &E1::Foo(1));
+/// 		} else if &data.path == f2_path{
+/// 			assert_eq!(&data.items[0], &E1::Foo(2));		
+/// 		}
+/// 	}
+///     
+///     for data in &bs{
+/// 		if &data.path == b1_path{
+/// 			assert_eq!(&data.items[0], &E2::Bar(1));
+/// 		} else if &data.path == b2_path{
+/// 			assert_eq!(&data.items[0], &E2::Bar(2));		
+/// 		}
+/// 	}
 ///     Ok(())
 /// }
 /// ```
