@@ -41,7 +41,7 @@ main_line = {
 content_for_empty_line = { content }
 
 define_stmt = {
-    define_stmt_start_symbol ~ content? ~ ("|" ~ content_for_empty_line?)? ~ ("||" ~ comment_char)?
+    define_stmt_start_symbol ~ content? ~ ("|" ~ content_for_empty_line?)? ~ ("||" ~ comment_text)?
 }
 
 continued_line = {

@@ -21,7 +21,7 @@ Text||\ commenting...
  some\| t\\ext|param
 |continuation
 
->>double|empty
+>>double|empty|| comment...
 hogehoge
 
 >>|emp

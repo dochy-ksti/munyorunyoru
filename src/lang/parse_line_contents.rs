@@ -68,6 +68,7 @@ fn parse_define_stmt(
                 empty_line_type =
                     parse_content(pair.into_inner().next().unwrap().into_inner(), "")?;
             }
+            Rule::comment_text => {}
             _ => unreachable!(),
         }
     }
