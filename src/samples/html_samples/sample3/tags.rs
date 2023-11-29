@@ -12,12 +12,16 @@ pub enum Item {
     Bob(RestOf),
 	// struct captures parameters as fields.
     H3(RestOf, Class),
+	
+	/// Blockquote can contain children
+    Blockquote(Vec<Item>),
+	P(RestOf, Class),
 }
 
 // This struct captures the parameter "class"
 #[derive(Serialize, Deserialize)]
 pub struct Class {
-    pub class: String,
+    pub class: Option<String>,
 }
 
 pub fn to_html_items(items: &[Item]) -> Vec<HtmlItem> {
@@ -33,6 +37,12 @@ pub fn to_html_items(items: &[Item]) -> Vec<HtmlItem> {
             Item::H3(t, c) => {
                 r.push(tag("h3", class(c), vec![text(&t.arg)]));
             }
+			Item::P(t, c) => {
+                r.push(tag("p", class(c), vec![text(&t.arg)]));
+            },
+			Item::Blockquote(vec) =>{
+				r.push(tag("blockquote", vec![], to_html_items(&vec)))
+			}
         }
     }
     r
@@ -64,5 +74,9 @@ fn text(s: &str) -> HtmlItem {
 }
 
 fn class(class: &Class) -> Vec<Param> {
-    vec![Param::new("class".to_string(), class.class.clone())]
+	if let Some(c) = &class.class{
+    	vec![Param::new("class".to_string(), c.to_string())]
+	} else{
+		vec![]
+	}
 }

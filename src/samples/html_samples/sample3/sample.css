@@ -108,3 +108,39 @@ figcaption {
 	right: -16px;
 	border-left: 16px solid #dbffb7;
 }
+blockquote {
+    position: relative;
+    padding: 10px 15px 10px 50px;
+    box-sizing: border-box;
+    font-style: italic;
+    font-weight: bold;
+	font-size: 14pt;
+    color: #464646;
+    background: #c2e8ed;
+    border: solid 1px #77c0c9;
+	width: 410px;
+	margin: 0 auto 1em;
+}
+
+blockquote:before{
+    display: inline-block;
+    position: absolute;
+    top: 12px;
+    left: 0;
+    content: "“";
+    font-family: sans-serif;
+    color: #77c0c9;
+    font-size: 70px;
+    line-height: 1;
+}
+
+blockquote p {
+    padding: 0;
+    margin: 10px 0;
+    line-height: 1.7;
+}
+
+.right{
+	text-align: right;
+	font-size: 12pt;
+}
