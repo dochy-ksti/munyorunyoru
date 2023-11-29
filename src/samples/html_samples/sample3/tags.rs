@@ -7,15 +7,15 @@ use serde::{Deserialize, Serialize};
 // This enum defines the syntax.
 #[derive(Serialize, Deserialize)]
 pub enum Item {
-	// RestOf captures all the remaining string of the line except parameters.
+    // RestOf captures all the remaining string of the line except parameters.
     Alice(RestOf),
     Bob(RestOf),
-	// struct captures parameters as fields.
+    // struct captures parameters as fields.
     H3(RestOf, Class),
-	
-	/// Blockquote can contain children
+
+    /// Blockquote can contain children
     Blockquote(Vec<Item>),
-	P(RestOf, Class),
+    P(RestOf, Class),
 }
 
 // This struct captures the parameter "class"
@@ -37,12 +37,10 @@ pub fn to_html_items(items: &[Item]) -> Vec<HtmlItem> {
             Item::H3(t, c) => {
                 r.push(tag("h3", class(c), vec![text(&t.arg)]));
             }
-			Item::P(t, c) => {
+            Item::P(t, c) => {
                 r.push(tag("p", class(c), vec![text(&t.arg)]));
-            },
-			Item::Blockquote(vec) =>{
-				r.push(tag("blockquote", vec![], to_html_items(&vec)))
-			}
+            }
+            Item::Blockquote(vec) => r.push(tag("blockquote", vec![], to_html_items(&vec))),
         }
     }
     r
@@ -74,9 +72,9 @@ fn text(s: &str) -> HtmlItem {
 }
 
 fn class(class: &Class) -> Vec<Param> {
-	if let Some(c) = &class.class{
-    	vec![Param::new("class".to_string(), c.to_string())]
-	} else{
-		vec![]
-	}
+    if let Some(c) = &class.class {
+        vec![Param::new("class".to_string(), c.to_string())]
+    } else {
+        vec![]
+    }
 }
