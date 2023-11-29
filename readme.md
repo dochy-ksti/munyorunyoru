@@ -13,6 +13,11 @@ Alice I’ve arrived in Honolulu.
 Bob I’m on the Moon!
 Alice Let’s observe quantum entanglement and confirm the violation of Bell’s inequality.
 Bob Let’s do it!
+
+Blockquote
+	P God doesn't play dice
+	|| <cite> tag is more appropriate.
+	P ーAlbert Einstein|class right
 ```
 ## Generated HTML
 ![Screenshot of the HTML page created from the DSL.](dsl_sample.png)
@@ -33,13 +38,18 @@ pub enum Item {
     Bob(RestOf),
 	// struct captures parameters as fields.
     H3(RestOf, Class),
+	
+	/// Blockquote can contain children
+    Blockquote(Vec<Item>),
+	P(RestOf, Class),
 }
 
 // This struct captures the parameter "class"
 #[derive(Serialize, Deserialize)]
 pub struct Class {
-    pub class: String,
+    pub class: Option<String>,
 }
+
 
 fn test() -> crate::Result<()> {
     use super::super::html_builder::HtmlBuilder;
@@ -62,7 +72,6 @@ fn test() -> crate::Result<()> {
 }
 
 // --- you don't need to read below ---
-
 pub fn to_html_items(items: &[Item]) -> Vec<HtmlItem> {
     let mut r: Vec<HtmlItem> = vec![];
     for item in items {
@@ -76,6 +85,12 @@ pub fn to_html_items(items: &[Item]) -> Vec<HtmlItem> {
             Item::H3(t, c) => {
                 r.push(tag("h3", class(c), vec![text(&t.arg)]));
             }
+			Item::P(t, c) => {
+                r.push(tag("p", class(c), vec![text(&t.arg)]));
+            },
+			Item::Blockquote(vec) =>{
+				r.push(tag("blockquote", vec![], to_html_items(&vec)))
+			}
         }
     }
     r
@@ -107,7 +122,11 @@ fn text(s: &str) -> HtmlItem {
 }
 
 fn class(class: &Class) -> Vec<Param> {
-    vec![Param::new("class".to_string(), class.class.clone())]
+	if let Some(c) = &class.class{
+    	vec![Param::new("class".to_string(), c.to_string())]
+	} else{
+		vec![]
+	}
 }
 ```
 This crate also contains the concurrent version of the functions to deserialize, and runtime agnostic async fn to receive the deserialized data concurrently.
