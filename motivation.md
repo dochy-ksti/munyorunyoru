@@ -1,6 +1,6 @@
 Reading needs to write correctly, but data often become unreadable.
 
-This is very old Japanese emperor list.
+This is a list of ancient Japanese emperors.
 ```json5
 {
     name : "Nintoku",
@@ -106,13 +106,13 @@ For the same reason, an item cannot have two nested data.
         //...
     ],
 ```
-Two nested data make the data incomprehensible, so an item should have zero or one children. If an item can contain only one children at most, the name "children" is verbose.
+Two nested data make the data incomprehensible, so an item should have zero or one children. If an item can contain only one children at most, there's no need to differentiate childrens, so the name "children" is verbose. Just indentation is suffice to represent children.
 
 Nested large data is difficult to understand, so programmers divide the entire nest to fit on one screen and use indentation to visually understand the structure of the data. From that perspective, using one line to one variable is very redundant. The amount of data that can be displayed on one screen is greatly reduced, making it difficult to understand the structure of the data.
 
 Let's see the first data converted to Munyo.
 ```
->>Tennou
+>>Emperor
 Nintoku 290-399
     Richu 336-405
         Iwasakanoichinobenoomoha ?-455
