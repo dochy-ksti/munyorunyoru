@@ -6,7 +6,7 @@ use pest_derive::Parser;
 use serde::de::Deserialize;
 
 /// A sample for implementing custom serde::ser::Serialize & serde::de::Deserialize for Munyo
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Default, Eq, Hash)]
 pub struct Color {
     /// red
     pub r: u8,
@@ -92,4 +92,19 @@ fn parse_color(input: &str) -> Result<Color, String> {
 
 fn parse_u8(s: &str) -> Result<u8, String> {
     Ok(s.parse::<u8>().map_err(|e| e.to_string())?)
+}
+
+#[test]
+fn test_color() -> crate::Result<()> {
+    #[derive(serde::Deserialize, PartialEq, Debug)]
+    enum Enum {
+        E(Color),
+    }
+    let v: Vec<Enum> = crate::from_str(
+        r###"
+E #100_200_10"###
+//E #100_300_10
+    )?;
+    assert_eq!(&v[0], &Enum::E(Color::new(100, 200, 10)));
+    Ok(())
 }

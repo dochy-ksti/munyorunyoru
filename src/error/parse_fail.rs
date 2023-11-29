@@ -87,15 +87,6 @@ impl<'a> PairHelper for Pair<'a> {
     }
 }
 
-impl serde::de::Error for ParseFail {
-    fn custom<T>(msg: T) -> Self
-    where
-        T: Display,
-    {
-        ParseFail::msg(0, format!("{msg}"))
-    }
-}
-
 impl std::error::Error for ParseFail {}
 
 impl std::fmt::Display for ParseFail {

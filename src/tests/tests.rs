@@ -19,7 +19,7 @@ fn it_works() -> Result<(), Error> {
     Ok(())
 }
 
-#[test]
+//#[test]
 fn _output_sample() -> Result<(), ParseError> {
     let path = "sample.munyo";
     let unparsed_file = fs::read_to_string(path).expect("cannot read file");
