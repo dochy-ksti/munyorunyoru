@@ -133,6 +133,10 @@ This crate also contains the concurrent version of the functions to deserialize,
 
 Please read the [doc](https://docs.rs/munyo) for details.
 
+## Motivation
+
+The motivation is explained [here](motivation.md)
+
 ## Usage
 
 Add these to your `cargo.toml`:
