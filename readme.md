@@ -17,7 +17,7 @@ Bob Let’s do it!
 Blockquote
 	P God doesn't play dice
 	|| <cite> tag is more appropriate.
-	P ーAlbert Einstein|class right
+	P —Albert Einstein|class right
 ```
 ## Generated HTML
 ![Screenshot of the HTML page created from the DSL.](dsl_sample.png)
