@@ -87,6 +87,8 @@ fn io_thread() -> &'static ShrinkPool {
 /// 			assert_eq!(&data.items[0], &E1::Foo(1));
 /// 		} else if &data.path == f2_path{
 /// 			assert_eq!(&data.items[0], &E1::Foo(2));		
+/// 		} else{
+/// 			unreachable!()
 /// 		}
 /// 	}
 ///     
@@ -95,6 +97,8 @@ fn io_thread() -> &'static ShrinkPool {
 /// 			assert_eq!(&data.items[0], &E2::Bar(1));
 /// 		} else if &data.path == b2_path{
 /// 			assert_eq!(&data.items[0], &E2::Bar(2));		
+/// 		} else{
+/// 			unreachable!()
 /// 		}
 /// 	}
 ///     Ok(())
