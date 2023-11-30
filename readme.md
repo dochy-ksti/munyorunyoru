@@ -135,7 +135,7 @@ Please read the [doc](https://docs.rs/munyo) for details.
 
 ## Motivation
 
-The motivation is explained [here](motivation.md)
+The motivation is explained [here](https://github.com/dochy-ksti/munyorunyoru/blob/master/motivation.md)
 
 ## Usage
 
