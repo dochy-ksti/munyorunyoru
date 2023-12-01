@@ -82,7 +82,7 @@ fn io_thread() -> &'static ShrinkPool {
 ///     // or maybe you should just futures::join!() all the futures.
 ///     // let (fs, bs) = futures::executor::block_on(async{ futures::join!(fs, bs) });
 ///
-/// 	//This library shouldn't lose value. This check should be unnecessary.
+/// 	//This library shouldn't lose values. This check should be unnecessary.
 /// 	assert_eq!(fs.len(), 2);
 /// 	assert_eq!(bs.len(), 2);
 ///
