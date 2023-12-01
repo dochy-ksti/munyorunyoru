@@ -182,17 +182,20 @@ You can overwrite them with empty items.
 
 	|| ↑ No empty-line item occured
 
+	>
+	|| ↑ Both default and empty-line item is canceled
+
 When there's no item but comments in a line, it's not considered an empty line.
 
 	>|emp
 	
-	||This line has comments, so no empty-line items appear here.
+	||This line has comments, so no empty-line item appeared here.
 
 This is recognized as:
 
 	>|emp
 	emp
-	||This line has comments, so no empty item appear here.
+	||This line has comments, so no empty-line item appeared here.
 
 When '>>' is used multiple times, it's overwritten or stacked.
 
