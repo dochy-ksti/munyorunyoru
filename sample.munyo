@@ -21,32 +21,32 @@ Text||\ commenting...
  some\| t\\ext|param
 |continuation
 
->>double|empty|| comment...
+>>double|empty
 hogehoge
 
->>|emp
+>>|emp|| comment...
 No Default
 
->>doub|
+>>doub
 hugahuga
 
->>|
+>>
 Non Default
 
 
->>ma|mo
+>>ma|mo|| comment...
 huga
 
->single|em
+>single|em||
 hegohego
 
->|em
+>|em|| comment...
 Nono Default
 
->sing|
+>sing|| comment...
 penyopenyo|param huga
 
->|
+>|| comment...
 Nonon Default
 
 >hu|katu
