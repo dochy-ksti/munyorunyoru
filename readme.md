@@ -3,7 +3,7 @@
 [![Doc link](https://docs.rs/munyo/badge.svg)](https://docs.rs/munyo)
 ### Munyo is a data language which aims to be the most efficient way to handwrite data.
 
-For example, you can create a domain-specific language with just a little coding.
+For example, you can create [a domain-specific language with just a little coding](https://github.com/dochy-ksti/munyorunyoru/tree/master/src/samples/html_samples/sample3).
 
 ## Munyo Source File
 ```
