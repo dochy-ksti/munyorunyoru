@@ -13,8 +13,8 @@ impl<'a, 'b, 'de> EnumAccess<'de> for &'b mut EnumDeserializer<'a, 'de> {
     where
         V: serde::de::DeserializeSeed<'de>,
     {
-        let hoge = seed.deserialize(&mut *self)?;
-        Ok((hoge, self))
+        let val = seed.deserialize(&mut *self)?;
+        Ok((val, self))
     }
 }
 

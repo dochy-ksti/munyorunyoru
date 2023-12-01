@@ -27,12 +27,12 @@ where
     B: Builder<Item = T>,
 {
     Ok(Processed::new(
-        in_process_file_text(&text, meta_builder).map_err(|e| into_parse_error(e, &text))?,
+        in_process_file_text(text, meta_builder).map_err(|e| into_parse_error(e, text))?,
     ))
 }
 
 pub(crate) fn into_parse_error(fail: ParseFail, text: &str) -> ParseError {
-    let lookup = LineColLookup::new(&text);
+    let lookup = LineColLookup::new(text);
     let r = lookup.line_col(fail.start_index).unwrap();
     ParseError::new(
         r.line,

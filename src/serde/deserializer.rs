@@ -15,9 +15,9 @@ use crate::{
 
 use super::vec_access::VecAccess;
 
-/// Deserializer to communicaet with Serde
+/// Deserializer to communicate with Serde
 /// 
-/// This is not menat for general use. See [from_str](crate::from_str), [from_file](crate::from_file)
+/// This is not meant for general use. See [from_str](crate::from_str), [from_file](crate::from_file)
 pub struct MunyoDeserializer<'de> {
     pub(crate) path: PathItem,
     pub(crate) text: &'de str,
@@ -221,7 +221,7 @@ impl<'de, 'a> Deserializer<'de> for &'a mut MunyoDeserializer<'de> {
     where
         V: serde::de::Visitor<'de>,
     {
-        let vec: Vec<TreeItem<DefaultBuilder>> = std::mem::replace(&mut self.tree.root, vec![]);
+        let vec: Vec<TreeItem<DefaultBuilder>> = std::mem::take(&mut self.tree.root);
         match visitor.visit_seq(VecAccess::new(&*self, vec)) {
             Ok(r) => Ok(r),
             Err(e) => Err(self.into_munyo_error(e)),

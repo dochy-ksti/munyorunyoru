@@ -1,4 +1,4 @@
-/// This trait is not menat for general use
+/// This trait is not meant for general use
 pub trait MetaBuilder
 {
 	/// Builder which is created by this meta_builder.
@@ -8,7 +8,7 @@ pub trait MetaBuilder
     fn build(&self, typename: String, argument: String) -> Result<Self::Item, String>;
 }
 
-/// This trait is not menat for general use
+/// This trait is not meant for general use
 pub trait Builder {
 	/// The item this builder builds
     type Item;

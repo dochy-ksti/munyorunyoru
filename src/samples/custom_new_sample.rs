@@ -64,7 +64,7 @@ impl<'de> serde::de::Deserialize<'de> for CustomStruct {
     {
         struct TupleVisitor;
 
-        /// To implement custom Serialize/Deserialize, the struct should be (de)serilized as a tuple.
+        /// To implement custom Serialize/Deserialize, the struct should be (de)serialized as a tuple.
         impl<'de> serde::de::Visitor<'de> for TupleVisitor {
             type Value = CustomStruct;
 

@@ -47,7 +47,7 @@ pub fn from_file<P, T>(path : P) -> Result<Vec<T>>
 	where P : AsRef<Path>, T : de::DeserializeOwned
 {
 	let s = crate::read_file(&path)?;
-	let mut de = MunyoDeserializer::with_path(&s, path.as_ref().to_path_buf())?;
+	let mut de = MunyoDeserializer::with_path(&s, path.as_ref())?;
     de::Deserialize::deserialize(&mut de)
 }
 
@@ -57,7 +57,7 @@ pub fn from_file<P, T>(path : P) -> Result<Vec<T>>
 pub fn from_str_with_path<P,T>(text : &str, path : P) -> Result<Vec<T>>
 	where P : AsRef<Path>, T : de::DeserializeOwned
 {
-	let mut de = MunyoDeserializer::with_path(text, path.as_ref().to_path_buf())?;
+	let mut de = MunyoDeserializer::with_path(text, path.as_ref())?;
     de::Deserialize::deserialize(&mut de)
 }
 

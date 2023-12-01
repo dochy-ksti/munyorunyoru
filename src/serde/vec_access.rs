@@ -39,7 +39,7 @@ impl<'de, 'a> SeqAccess<'de> for VecAccess<'a, 'de> {
         let mut d = EnumDeserializer::new(self.de, item);
         let r = seed
             .deserialize(&mut d)
-            .map(|a| Some(a))
+            .map(Some)
             .map_err(|e| map_err(e, start_index));
 
         d.end().map_err(|e| map_err(e, start_index))?;

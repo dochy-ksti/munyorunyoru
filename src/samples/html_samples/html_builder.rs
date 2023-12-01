@@ -75,7 +75,7 @@ impl HtmlBuilder {
             &self.title,
             self.stylesheet
                 .as_ref()
-                .map_or(String::new(), |s| stylesheet(&s)),
+                .map_or(String::new(), |s| stylesheet(s)),
             self.script.as_ref().map_or(String::new(), |s| script(s)),
             to_string(&self.items)
         )
@@ -104,7 +104,7 @@ fn inner(items: &[HtmlItem], indent_level: usize, r: &mut String) {
             }
             HtmlItem::Tag(t, vec) => {
                 push(&t.to_string(), indent_level, r);
-                inner(&vec, indent_level + 1, r);
+                inner(vec, indent_level + 1, r);
                 push(&t.closing_tag(), indent_level, r);
             }
         }

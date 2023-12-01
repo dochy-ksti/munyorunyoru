@@ -343,6 +343,6 @@ impl<'a, 'b, 'de> SeqAccess<'de> for &'b mut ParamDeserializer<'a, 'de> {
     where
         T: serde::de::DeserializeSeed<'de>,
     {
-        seed.deserialize(&mut **self).map(|r| Some(r))
+        seed.deserialize(&mut **self).map(Some)
     }
 }

@@ -43,7 +43,7 @@ impl<'a> ser::SerializeSeq for &'a mut MunyoSerializer {
     fn end(self) -> Result<Self::Ok, Self::Error> {
         self.state
             .end_seq()
-            .me(|| format!("unexpected end of seq"))?;
+            .me(|| "unexpected end of seq".to_string())?;
         Ok(())
     }
 }
@@ -64,7 +64,7 @@ impl<'a> ser::SerializeTupleVariant for &'a mut MunyoSerializer {
     fn end(self) -> Result<Self::Ok, Self::Error> {
         self.state
             .end_line()
-            .me(|| format!("unexpected end of tuple"))?;
+            .me(|| "unexpected end of tuple".to_string())?;
         Ok(())
     }
 }

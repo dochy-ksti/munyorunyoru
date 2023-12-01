@@ -10,5 +10,5 @@ pub(crate) fn make_escaped_string(s: &str) -> String {
             _ => r.push(c),
         }
     }
-    return r;
+    r
 }

@@ -129,7 +129,7 @@ fn class(class: &Class) -> Vec<Param> {
     }
 }
 ```
-This crate also contains the concurrent version of the functions to deserialize, and runtime agnostic async fn to receive the deserialized data concurrently.
+This crate also contains the [concurrent](https://docs.rs/munyo/latest/munyo/struct.Concurrent.html) version of the functions to deserialize, and runtime agnostic async fn to receive the deserialized data concurrently.
 
 Please read the [doc](https://docs.rs/munyo) for details.
 

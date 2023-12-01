@@ -27,7 +27,7 @@ impl Arguments {
     /// All remained arguments including whitespaces are returned.
     pub(crate) fn rest(&mut self) -> String {
         self.s.reverse();
-        let r = std::mem::replace(&mut self.s, vec![]);
+        let r = std::mem::take(&mut self.s);
 
         unchecked(r)
     }
@@ -62,9 +62,7 @@ fn discard_space(s: &mut Vec<u8>) {
     let c = s.last().unwrap();
     if c == &b' ' {
         s.pop();
-    } else {
-        return;
-    }
+    } 
 }
 
 fn get_nonspace(s: &mut Vec<u8>) -> String {

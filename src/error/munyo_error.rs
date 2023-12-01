@@ -13,16 +13,16 @@ pub enum Error {
 	/// Parse error
     #[error("`{0}`:{1}")]
     Parse(PathItem, ParseError),
-	/// Error occured in the deserialization
+	/// Error occurred in the deserialization
     #[error("`{0}`:{1}")]
     Deserialize(PathItem, ParseError),
-	/// Error occured in the serialization
+	/// Error occurred in the serialization
     #[error("{0}")]
     Serialize(anyhow::Error),
-	/// Error occured in the custom serde::Serialize implementation.
+	/// Error occurred in the custom serde::Serialize implementation.
     #[error("{0}")]
     SerializeCustom(anyhow::Error),
-	/// Error occured in the various occasions
+	/// Error occurred in the various occasions
     #[error("{0}")]
     Message(anyhow::Error),
 }

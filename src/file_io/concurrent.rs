@@ -41,7 +41,7 @@ fn io_thread() -> &'static ShrinkPool {
 ///     let f2 = "Foo 2";
 ///     let b1 = "Bar 1";
 ///     let b2 = "Bar 2";
-///     // Write these into files and get the pathes
+///     // Write these into files and get the paths
 ///     # let f1f = munyo::temp(f1)?;
 ///     # let f2f = munyo::temp(f2)?;
 ///     # let b1f = munyo::temp(b1)?;
@@ -56,7 +56,8 @@ fn io_thread() -> &'static ShrinkPool {
 ///     // Prepare Future(an async block creates a Future)
 ///     let fs = async{
 ///         let mut fs : Vec<munyo::file_io::Data<E1>> = vec![];
-///         while let Some(Ok(data)) = f_receiver.recv_async().await{
+///         while let Some(data) = f_receiver.recv_async().await{
+/// 			let data = data.unwrap();
 ///             fs.push(data);
 ///         }
 ///         fs
@@ -72,7 +73,7 @@ fn io_thread() -> &'static ShrinkPool {
 ///     };
 ///     // Some async executor is needed to .await/block_on/etc...
 ///     // futures::executor is used here.
-///     // I beilieve you can use any async executor for this library.
+///     // I believe you can use any async executor for this library.
 ///     let fs = futures::executor::block_on(fs);
 ///
 ///     // Tasks are executed in the order given in Concurrent, so you should await/block_on/etc.. in the same order,
@@ -81,12 +82,16 @@ fn io_thread() -> &'static ShrinkPool {
 ///     // or maybe you should just futures::join!() all the futures.
 ///     // let (fs, bs) = futures::executor::block_on(async{ futures::join!(fs, bs) });
 ///
+/// 	//This library shouldn't lose value. This check should be unnecessary.
+/// 	assert_eq!(fs.len(), 2);
+/// 	assert_eq!(bs.len(), 2);
+///
 /// 	// Which one comes first is not known. You must check the path
 /// 	for data in &fs{
 /// 		if &data.path == f1_path{
 /// 			assert_eq!(&data.items[0], &E1::Foo(1));
 /// 		} else if &data.path == f2_path{
-/// 			assert_eq!(&data.items[0], &E1::Foo(2));		
+/// 			assert_eq!(&data.items[0], &E1::Foo(2));
 /// 		} else{
 /// 			unreachable!()
 /// 		}
@@ -96,7 +101,7 @@ fn io_thread() -> &'static ShrinkPool {
 /// 		if &data.path == b1_path{
 /// 			assert_eq!(&data.items[0], &E2::Bar(1));
 /// 		} else if &data.path == b2_path{
-/// 			assert_eq!(&data.items[0], &E2::Bar(2));		
+/// 			assert_eq!(&data.items[0], &E2::Bar(2));
 /// 		} else{
 /// 			unreachable!()
 /// 		}
@@ -142,19 +147,19 @@ impl Concurrent {
     /// Read files and create MunyoItems from them. See [MunyoItem]
     pub fn read_files_and_create_munyo_items<I, P>(
         &self,
-        pathes: I,
+        paths: I,
     ) -> Receiver<Result<Data<MunyoItem>, Error>>
     where
         I: IntoIterator<Item = P>,
         P: AsRef<Path>,
     {
-        self.read_files_with_builder(pathes, DefaultMetaBuilder)
+        self.read_files_with_builder(paths, DefaultMetaBuilder)
     }
 
     /// Read files and build items with the meta_builder. This is not meant for general usage.
     pub fn read_files_with_builder<I, P, T, B, MB>(
         &self,
-        pathes: I,
+        paths: I,
         meta_builder: MB,
     ) -> Receiver<Result<Data<T>, Error>>
     where
@@ -164,7 +169,7 @@ impl Concurrent {
         B: Builder<Item = T>,
         T: Send + 'static,
     {
-        self.inner(pathes, move |(path, s)| {
+        self.inner(paths, move |(path, s)| {
             match from_str_with_metabuilder(s.as_str(), &meta_builder) {
                 Ok(v) => Ok(Data::new(path, v.result)),
                 Err(e) => Err(Error::Parse(PathItem::new(Some(path)), e)),
@@ -178,35 +183,35 @@ impl Concurrent {
     /// But it's a concurrent process and the items will be sent as soon as they are ready, so the order of finished items is unknown.
     ///
     /// See [Concurrent] to know how to use this.
-    pub fn deserialize_files<I, P, T>(&self, pathes: I) -> Receiver<Result<Data<T>, Error>>
+    pub fn deserialize_files<I, P, T>(&self, paths: I) -> Receiver<Result<Data<T>, Error>>
     where
         I: IntoIterator<Item = P>,
         P: AsRef<Path>,
         T: Send + 'static + DeserializeOwned,
     {
-        self.inner(pathes, move |(path, s)| match crate::from_str(s.as_str()) {
+        self.inner(paths, move |(path, s)| match crate::from_str(s.as_str()) {
             Ok(v) => Ok(Data::new(path, v)),
             Err(e) => Err(e),
         })
     }
 
-    fn inner<I, P, F, T>(&self, pathes: I, f: F) -> Receiver<Result<Data<T>, Error>>
+    fn inner<I, P, F, T>(&self, paths: I, f: F) -> Receiver<Result<Data<T>, Error>>
     where
         I: IntoIterator<Item = P>,
         P: AsRef<Path>,
         F: Fn((PathBuf, String)) -> Result<Data<T>, Error> + Send + Sync + 'static,
         T: Send + 'static,
     {
-        let pathes: Vec<PathBuf> = pathes
+        let paths: Vec<PathBuf> = paths
             .into_iter()
             .map(|p| p.as_ref().to_path_buf())
             .collect();
 
-        let (sender, receiver) = async_channel::bounded(pathes.len());
+        let (sender, receiver) = async_channel::bounded(paths.len());
         let f = Arc::new(f);
         let pool = self.pool.clone();
         io_thread().execute(move || {
-            for path in pathes.into_iter() {
+            for path in paths.into_iter() {
                 let sender = sender.clone();
                 let f = f.clone();
                 let pool = pool.clone();
@@ -233,7 +238,7 @@ impl Concurrent {
     where
         F: FnOnce() + Send + 'static,
     {
-        self.pool.execute(move || f())
+        self.pool.execute(f)
     }
 
     /// Do something in the io thread. Maybe useful, maybe not.
@@ -241,6 +246,6 @@ impl Concurrent {
     where
         F: FnOnce() + Send + 'static,
     {
-        io_thread().execute(move || f());
+        io_thread().execute(f);
     }
 }

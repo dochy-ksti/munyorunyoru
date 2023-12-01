@@ -40,7 +40,7 @@ pub fn to_html_items(items: &[Item]) -> Vec<HtmlItem> {
             Item::P(t, c) => {
                 r.push(tag("p", class(c), vec![text(&t.arg)]));
             }
-            Item::Blockquote(vec) => r.push(tag("blockquote", vec![], to_html_items(&vec))),
+            Item::Blockquote(vec) => r.push(tag("blockquote", vec![], to_html_items(vec))),
         }
     }
     r

@@ -96,7 +96,7 @@ impl SerializeState {
         }
         self.state = WfParamValue;
         self.output.push('|');
-        self.output.push_str(&name);
+        self.output.push_str(name);
         Ok(())
     }
     pub(crate) fn add_none(&mut self) -> Result {

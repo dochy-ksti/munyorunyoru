@@ -184,10 +184,10 @@ impl<'a> serde::ser::Serializer for &'a mut MunyoSerializer {
     ) -> Result<Self::Ok, Self::Error> {
         self.state
             .start_line(variant)
-            .me(|| format!("unexpected start of line"))?;
+            .me(|| "unexpected start of line".to_string())?;
         self.state
             .end_line()
-            .me(|| format!("unexpected end of line"))
+            .me(|| "unexpected end of line".to_string())
     }
 
     fn serialize_newtype_struct<T: ?Sized>(
@@ -215,13 +215,13 @@ impl<'a> serde::ser::Serializer for &'a mut MunyoSerializer {
             .start_line(variant)
             .me(|| format!("unexpected enum_variant {name} {variant}"))?;
         value.serialize(&mut *self)?;
-        self.state.end_line().me(|| format!("failed end_line"))
+        self.state.end_line().me(|| "failed end_line".to_string())
     }
 
     fn serialize_seq(self, _len: Option<usize>) -> Result<Self::SerializeSeq, Self::Error> {
         self.state
             .start_seq()
-            .me(|| format!("unexpected Vec or Array of sorts"))?;
+            .me(|| "unexpected Vec or Array of sorts".to_string())?;
         Ok(self)
     }
 

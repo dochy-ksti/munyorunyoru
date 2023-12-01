@@ -43,7 +43,7 @@ impl<'de> Deserialize<'de> for Color {
 
         // Use serde::de::Error::custom() to report errors in Deserialize.
         // When you implement Serialize, use serde::ser::Error::custom().
-        parse_color(&s).map_err(|e| serde::de::Error::custom(e))
+        parse_color(&s).map_err(serde::de::Error::custom)
     }
 }
 
@@ -91,7 +91,7 @@ fn parse_color(input: &str) -> Result<Color, String> {
 }
 
 fn parse_u8(s: &str) -> Result<u8, String> {
-    Ok(s.parse::<u8>().map_err(|e| e.to_string())?)
+    s.parse::<u8>().map_err(|e| e.to_string())
 }
 
 #[test]

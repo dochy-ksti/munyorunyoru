@@ -1,4 +1,5 @@
 #![allow(clippy::module_inception)]
+#![allow(clippy::tabs_in_doc_comments)]
 #![warn(unreachable_pub)]
 #![warn(unused_crate_dependencies)]
 #![warn(missing_docs)]
@@ -211,9 +212,9 @@
 //! fn main() -> munyo::Result<()>{
 //! 	let v = munyo::MunyoItem::from_str("Typename  argu ment  |   param  value ")?.result;
 //! 	assert_eq!(&v[0].typename, "Typename");
-//! 	// One space works as a delimiter. Other spaces are recognised as characters, like RestOf.
+//! 	// One space works as a delimiter. Other spaces are recognized as characters, like RestOf.
 //! 	assert_eq!(&v[0].argument, " argu ment  ");
-//! 	// Preceding spaces of param names are ignored. Spaces before the end of the line are recognised as characters.
+//! 	// Preceding spaces of param names are ignored. Spaces before the end of the line are recognized as characters.
 //! 	assert_eq!(v[0].params.get("param").unwrap(), " value ");
 //! 	Ok(())
 //! }
