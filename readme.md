@@ -4,7 +4,11 @@
 ### Munyo is a data language which aims to be the most efficient way to handwrite data.
 
 For example, you can create [a domain-specific language with just a little coding](https://github.com/dochy-ksti/munyorunyoru/tree/master/src/samples/html_samples/sample3). 
+
 You can write the conversation of Alice and Bob very efiiciently with this language.
+
+## Generated HTML
+![Screenshot of the HTML page created from the DSL.](dsl_sample.png)
 
 ## Munyo Source File
 ```
@@ -20,14 +24,10 @@ Blockquote
 	|| <cite> tag is more appropriate.
 	P —Albert Einstein|class right
 ```
-## Generated HTML
-![Screenshot of the HTML page created from the DSL.](dsl_sample.png)
-
-
 The Munyo language is basically:
 ```
 Typename arg1 arg2...|param_name1 param_value1|param_name2 param_value2...
-    Typename arg1...  <-Indentation means the parent item contains this.
+    Typename arg1...  <-Indentation means the parent item contains the item of this line.
 ```
 A line is statically typed, and each line needs a backing Rust data structure, which is enum variant.
 
