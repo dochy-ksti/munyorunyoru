@@ -23,6 +23,14 @@ Blockquote
 ## Generated HTML
 ![Screenshot of the HTML page created from the DSL.](dsl_sample.png)
 
+
+The Munyo language is basically:
+```
+Typename arg1 arg2...|param_name1 param_value1|param_name2 param_value2...
+    Typename arg1...  <-Indentation means the parent item contains this.
+```
+A line is statically typed, and each line needs backing Rust data structure, which is enum variant.
+
 ## Rust Code
 ```Rust
 use crate::{
@@ -48,6 +56,7 @@ pub enum Item {
 // This struct captures the parameter "class"
 #[derive(Serialize, Deserialize)]
 pub struct Class {
+	// The parameter "class" is optional
     pub class: Option<String>,
 }
 
@@ -130,13 +139,18 @@ fn class(class: &Class) -> Vec<Param> {
     }
 }
 ```
-This crate also contains the [concurrent](https://docs.rs/munyo/latest/munyo/struct.Concurrent.html) version of the functions to deserialize, and runtime agnostic async fn to receive the deserialized data concurrently.
+You can define your language with Munyo and backing Rust code. You should customize the language
+as efficient as possible for the data you want to write.
 
 Please read the [doc](https://docs.rs/munyo) for details.
 
 ## Motivation
 
 The motivation is explained [here](https://github.com/dochy-ksti/munyorunyoru/blob/master/motivation.md)
+
+## Async
+
+This crate also contains the [concurrent](https://docs.rs/munyo/latest/munyo/struct.Concurrent.html) version of the functions to deserialize, and runtime agnostic async fn to receive the deserialized data concurrently.
 
 ## Usage
 
