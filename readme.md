@@ -5,10 +5,12 @@
 
 For example, you can create [a domain-specific language with just a little coding](https://github.com/dochy-ksti/munyorunyoru/tree/master/src/samples/html_samples/sample3). 
 
-You can write the conversation of Alice and Bob very efiiciently with this language.
+You can write the conversation of Alice and Bob very efiiciently with the language.
 
 ## Generated HTML
 ![Screenshot of the HTML page created from the DSL.](dsl_sample.png)
+
+The main purpose of this library is to be used for writing data that is too large or too complex to write in JSON/TOML/YAML/etc..., so imagine a conversation between Alice and Bob that goes on long enough to become a 100k bytes of string. This DSL is designed for such situations, but this sample couldn't be made that long.
 
 ## Munyo Source File
 ```
@@ -139,7 +141,7 @@ fn class(class: &Class) -> Vec<Param> {
     }
 }
 ```
-You can define your language with Munyo and backing Rust code. You should customize the language
+You can define your language with Munyo and backing Rust code. You should make the language
 as efficient as possible for the data you want to write.
 
 Please read the [doc](https://docs.rs/munyo) for details.
