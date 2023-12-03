@@ -29,7 +29,7 @@ Blockquote
 The Munyo language is basically:
 ```
 Typename arg1 arg2...|param_name1 param_value1|param_name2 param_value2...
-    Typename arg1...  <-Indentation means the parent item contains the item of this line.
+    Typename arg1...  <-Indentation means the parent line contains the indented lines as children.
 ```
 A line is statically typed, and each line needs a backing Rust data structure, which is enum variant.
 
