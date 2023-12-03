@@ -10,7 +10,7 @@ You can write the conversation of Alice and Bob very efiiciently with the langua
 ## Generated HTML
 ![Screenshot of the HTML page created from the DSL.](dsl_sample.png)
 
-The main purpose of this library is to be used for writing data that is too large or too complex to write in JSON/TOML/YAML/etc..., so imagine a conversation between Alice and Bob that goes on long enough to become a 100k bytes of string. This DSL is designed for such situations, but this sample couldn't be made that long.
+The main purpose of this library is to be used for writing data that is too large or too complex to write in JSON/TOML/YAML/etc..., so imagine a conversation between Alice and Bob that goes on long enough to become a 10k bytes of string. This DSL is designed for such situations, but this sample couldn't be made that long.
 
 ## Munyo Source File
 ```
