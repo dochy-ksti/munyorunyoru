@@ -164,6 +164,146 @@ munyo = "0.3"
 serde = { version = "1", features = ["derive"] }
 ```
 
+## Untyped Value
+
+The above is the general usage of this library, but sometimes you can get your work done without converting text data to your own Rust data structure. [Converting to HTML is one of them](https://github.com/dochy-ksti/munyorunyoru/tree/master/src/samples/html_samples/sample4). 
+
+Munyo language can be properly and easily converted to HTML, and in this case, you don’t need to create enum variants for each HTML tag.
+
+## Munyo source file to be directly converted to HTML
+```
+|| Set default type to "Text". 
+|| In this case it makes this example more redundant, 
+|| but this functionality must be shown somewhere.
+|| See "lang_spec.txt" for details.
+>>Text
+
+|| ">\" means canceling default type, so the type of this line is "h3"
+>\h3 Domain Specific Sample|class ribbon1
+
+>\div|class balloon balloonL
+	>\div|class balloon-img
+		>\figure
+			>\img|src girl.png
+			>\figcaption Alice
+	>\div|class balloon-text
+		>\div|class balloon-text-inner
+
+			|| This line doesn't have type, 
+			|| so default type "Text" is applied.
+			I've arrived in Honolulu.
+
+>\div|class balloon balloonR
+	>\div|class balloon-img
+		>\figure
+			>\img|src boy.png
+			>\figcaption Bob
+	>\div|class balloon-text
+		>\div|class balloon-text-inner
+			I'm on the Moon!
+			...
+```
+It seems that writing source files in Munyo language to be directly converted to HTML is not a good idea.
+
+When we give "Alice" and "Bob" special treatment, the redundancy will be greatly reduced.
+```
+h3 Domain Specific Sample|class ribbon1
+
+Alice I've arrived in Honolulu.
+Bob I'm on the Moon!
+Alice Let’s observe quantum entanglement and confirm the violation of Bell’s inequality.
+Bob Let’s do it!
+
+blockquote
+	p GOD DOES NOT PLAY DICE.
+	cite —Albert Einstein
+```
+It seems that only the first capital letter of the tags has been changed to lowercase, but this time, it was possible to create the cite tag that was not created last time without coding. In addition, the code has been simplified as follows.
+```Rust
+use std::collections::BTreeMap;
+use crate::{samples::html_samples::html_builder::{HtmlItem, Param, Tag}, MunyoItem};
+
+pub fn to_html_items(items : &[MunyoItem]) -> crate::Result<Vec<HtmlItem>>{
+	let mut vec : Vec<HtmlItem> = Vec::with_capacity(items.len());
+	for item in items{
+		match item.typename.as_str(){
+			"Alice" =>{
+				if !item.children.is_empty(){
+					Err("Alice can't contain children")?
+				}
+				if !item.params.is_empty(){
+					Err("Alice can't contain params")?
+				}
+				vec.push(balloon(true, &item.argument));
+			}
+			"Bob" =>{
+				if !item.children.is_empty(){
+					Err("Bob can't contain children")?
+				}
+				if !item.params.is_empty(){
+					Err("Bob can't contain params")?
+				}
+				vec.push(balloon(false, &item.argument));
+			},
+			_ =>{
+				vec.push(tag(&item.typename, &item.argument, &item.params, &item.children)?)
+			}
+		}
+	}
+	Ok(vec)
+}
+
+fn test() -> crate::Result<()> {
+    use super::super::html_builder::HtmlBuilder;
+    use crate::samples::html_samples::sample4::untyped::to_html_items;
+    use crate::MunyoItem;
+
+    let path = "src/samples/html_samples/sample4/untyped.munyo";
+    // deserialize a Munyo file as MunyoItems.
+    // MunyoItem is the untyped data type of the Munyo language,
+	// like serde_json::value::Value
+    let v = MunyoItem::from_file(path)?;
+    let b = HtmlBuilder {
+        items: to_html_items(&v)?,
+        title: "untyped sample".to_string(),
+        stylesheet: Some("sample.css".to_string()),
+        ..Default::default()
+    };
+    let output = b.to_string();
+    std::fs::write("src/samples/html_samples/sample4/output.html", output).unwrap();
+    Ok(())
+}
+
+// --- You don't need to read below ---
+fn balloon(is_l: bool, text: &str) -> HtmlItem {
+    let bl = if is_l { "balloonL" } else { "balloonR" };
+    let pict = if is_l { "girl.png" } else { "boy.png" };
+    let speaker = if is_l { "Alice" } else { "Bob" };
+    let t = format!(
+        r###"
+<div class="balloon {}">
+  <div class="balloon-img"><figure><img src="{}" /><figcaption>{}</figcaption></figure></div>
+  <div class="balloon-text"><div class="balloon-text-inner">
+  {}
+  </div></div>
+</div>"###,
+        bl, pict, speaker, text
+    );
+    HtmlItem::Text(t)
+}
+
+fn tag(tag_name: &str, argument : &str, params: &BTreeMap<String, String>, children: &[MunyoItem]) -> crate::Result<HtmlItem>{
+	let mut children = to_html_items(children)?;
+	if !argument.is_empty(){
+		// The argument will be the first child which is text. Other children follow.
+		children.insert(0,HtmlItem::Text(argument.to_string()));
+	}
+    Ok(HtmlItem::Tag(Tag::new(tag_name.to_string(), params.iter()
+		.map(|(name,value)| Param::new(name.to_string(), value.to_string()))
+		.collect()), children))
+}
+```
+
 ## License
 
 Licensed under either of [Apache License, Version 2.0](LICENSE-APACHE) or

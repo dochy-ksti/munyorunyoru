@@ -1,4 +1,4 @@
-The above is the general usage of this library, but sometimes you can get your work done without converting text data to your own Rust data structure. Converting to HTML is one of them. 
+The above is the general usage of this library, but sometimes you can get your work done without converting text data to your own Rust data structure. [Converting to HTML is one of them](https://github.com/dochy-ksti/munyorunyoru/tree/master/src/samples/html_samples/sample4). 
 
 Munyo language can be easily converted to HTML, and in this case, you don’t need to create enum variants for each HTML tag.
 ```
