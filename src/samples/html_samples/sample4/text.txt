@@ -1,0 +1,46 @@
+The above is the general usage of this library, but sometimes you can get your work done without converting text data to your own Rust data structure. Converting to HTML is one of them. 
+
+Munyo language can be easily converted to HTML, and in this case, you don’t need to create enum variants for each HTML tag.
+
+|| Set default type to "Text". In this case it's more redundant, but I want to show the functionality here
+>>Text
+
+|| ">\" means canceling default type, so the type of this line is "h3"
+>\h3 Domain Specific Sample|class ribbon1
+
+>\div|class balloon balloonL
+	>\div|class balloon-img
+		>\figure
+			>\img|src girl.png
+			>\figcaption Alice
+	>\div|class balloon-text
+		>\div|class balloon-text-inner
+
+			|| This line doesn't have type, so default type "Text" is applied.
+			I've arrived in Honolulu.
+
+>\div|class balloon balloonR
+	>\div|class balloon-img
+		>\figure
+			>\img|src boy.png
+			>\figcaption Bob
+	>\div|class balloon-text
+		>\div|class balloon-text-inner
+			I'm on the Moon!
+
+It seems that writing HTML directly in Munyo language is as bad as HTML.
+
+When we convert most tags as they are, and give "Alice" and "Bob" special treatment, the redundancy will be greatly reduced.
+
+h3 Domain Specific Sample|class ribbon1
+
+Alice I've arrived in Honolulu.
+Bob I'm on the Moon!
+Alice Let’s observe quantum entanglement and confirm the violation of Bell’s inequality.
+Bob Let’s do it!
+
+blockquote
+	p GOD DOES NOT PLAY DICE WITH THE UNIVERSE.
+	cite —Albert Einstein
+
+It seems that only the first capital letter has been changed to lowercase, but this time, it was possible to create the cite tag that was not created last time with no code. In addition, the code has been simplified as follows.
