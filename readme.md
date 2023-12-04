@@ -83,7 +83,6 @@ fn test() -> crate::Result<()> {
     Ok(())
 }
 
-// --- you don't need to read below ---
 pub fn to_html_items(items: &[Item]) -> Vec<HtmlItem> {
     let mut r: Vec<HtmlItem> = vec![];
     for item in items {
@@ -164,11 +163,13 @@ munyo = "0.3"
 serde = { version = "1", features = ["derive"] }
 ```
 
-## Untyped Value
+# Untyped Value
+
+This document is already too long as a Readme, but there are still many things that have not been explained enough. Please bear with us for a while longer if you don’t mind.
 
 The above is the general usage of this library, but sometimes you can get your work done without converting text data to your own Rust data structure. [Converting to HTML is one of them](https://github.com/dochy-ksti/munyorunyoru/tree/master/src/samples/html_samples/sample4). 
 
-Munyo language can be properly and easily converted to HTML, and in this case, you don’t need to create enum variants for each HTML tag.
+Munyo language can be properly and easily converted to HTML, and in this case, you don’t need to create enum variant for each HTML tag.
 
 ## Munyo source file to be directly converted to HTML
 ```
@@ -203,9 +204,11 @@ Munyo language can be properly and easily converted to HTML, and in this case, y
 			I'm on the Moon!
 			...
 ```
-It seems that writing source files in Munyo language to be directly converted to HTML is not a good idea.
+It seems that writing a source file in Munyo language to be directly converted to HTML is not a good idea.
 
 When we give "Alice" and "Bob" special treatment, the redundancy will be greatly reduced.
+
+## Convert Munyo file to HTML with untyped MunyoValue
 ```
 h3 Domain Specific Sample|class ribbon1
 
@@ -218,7 +221,7 @@ blockquote
 	p GOD DOES NOT PLAY DICE.
 	cite —Albert Einstein
 ```
-It seems that only the first capital letter of the tags has been changed to lowercase, but this time, it was possible to create the cite tag that was not created last time without coding. In addition, the code has been simplified as follows.
+It seems that only the first capital letter of the tags has been changed to lowercase, but this time, it was possible to create the "cite" tag without coding. In addition, the code has been simplified as follows.
 ```Rust
 use std::collections::BTreeMap;
 use crate::{samples::html_samples::html_builder::{HtmlItem, Param, Tag}, MunyoItem};
@@ -274,7 +277,6 @@ fn test() -> crate::Result<()> {
     Ok(())
 }
 
-// --- You don't need to read below ---
 fn balloon(is_l: bool, text: &str) -> HtmlItem {
     let bl = if is_l { "balloonL" } else { "balloonR" };
     let pict = if is_l { "girl.png" } else { "boy.png" };
@@ -295,7 +297,7 @@ fn balloon(is_l: bool, text: &str) -> HtmlItem {
 fn tag(tag_name: &str, argument : &str, params: &BTreeMap<String, String>, children: &[MunyoItem]) -> crate::Result<HtmlItem>{
 	let mut children = to_html_items(children)?;
 	if !argument.is_empty(){
-		// The argument will be the first child which is text. Other children follow.
+		// The argument is the first child which is text.
 		children.insert(0,HtmlItem::Text(argument.to_string()));
 	}
     Ok(HtmlItem::Tag(Tag::new(tag_name.to_string(), params.iter()
