@@ -165,7 +165,7 @@ serde = { version = "1", features = ["derive"] }
 
 # Untyped Value
 
-This document is already too long as a Readme, but there are still many things that have not been explained enough. Please bear with us for a while longer if you don’t mind.
+This document is already too long as a readme, but there are still many things that have not been explained enough. Please read if you don’t mind.
 
 The above is the general usage of this library, but sometimes you can get your work done without converting text data to your own Rust data structure. [Converting to HTML is one of them](https://github.com/dochy-ksti/munyorunyoru/tree/master/src/samples/html_samples/sample4). 
 
@@ -179,7 +179,8 @@ Munyo language can be naturally converted to HTML, and in this case, you don’t
 || See "lang_spec.txt" for details.
 >>Text
 
-|| ">\" means canceling default type, so the type of this line is "h3"
+|| ">\" means canceling default type, 
+|| so the type of this line is "h3"
 >\h3 Domain Specific Sample|class ribbon1
 
 >\div|class balloon balloonL
@@ -305,7 +306,6 @@ fn tag(tag_name: &str, argument : &str, params: &BTreeMap<String, String>, child
 		.collect()), children))
 }
 ```
-
 ## License
 
 Licensed under either of [Apache License, Version 2.0](LICENSE-APACHE) or
