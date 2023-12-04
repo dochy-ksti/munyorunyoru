@@ -1,0 +1,148 @@
+body {
+	max-width: 600px;
+	width: 100%;
+	margin: 0 auto;
+	text-align: center;
+}
+
+.ribbon1 {
+	display: inline-block;
+	position: relative;
+	height: 50px;
+	line-height: 50px;
+	text-align: center;
+	padding: 0 30px;
+	font-size: 18px;
+	background: #f57a78;
+	color: #FFF;
+	box-sizing: border-box;
+}
+
+.ribbon1:before,
+.ribbon1:after {
+	position: absolute;
+	content: '';
+	width: 0px;
+	height: 0px;
+	z-index: 1;
+}
+
+.ribbon1:before {
+	top: 0;
+	left: 0;
+	border-width: 25px 0px 25px 15px;
+	border-color: transparent transparent transparent #fff;
+	border-style: solid;
+}
+
+.ribbon1:after {
+	top: 0;
+	right: 0;
+	border-width: 25px 15px 25px 0px;
+	border-color: transparent #fff transparent transparent;
+	border-style: solid;
+}
+
+figure {
+	margin: 0;
+}
+
+figcaption {
+	color: grey;
+	font: 12px arial;
+}
+
+.balloon {
+	display: flex;
+	margin: 0 0 1.5em 0;
+}
+
+.balloonR {
+	flex-direction: row-reverse;
+}
+
+.balloon-img {
+	width: 80px;
+	height: auto;
+	flex-shrink: 0;
+}
+
+.balloon-text {
+	padding: 1em;
+	border-radius: 6px;
+	position: relative;
+	display: flex;
+	text-align: left;
+}
+
+.balloon-text-inner {
+	margin: auto;
+}
+
+.balloon-text::before,
+.balloon-text::after {
+	content: '';
+	position: absolute;
+	top: 19px;
+	font-size: 0;
+	border-top: 10px solid transparent;
+	border-bottom: 10px solid transparent;
+}
+
+.balloonL .balloon-text {
+	margin: 0 0 0 15px;
+	background: #ddbcff;
+}
+
+.balloonR .balloon-text {
+	margin: 0 15px 0;
+	background: #dbffb7;
+}
+
+.balloonL .balloon-text::before {
+	left: -16px;
+	border-right: 16px solid #ddbcff;
+}
+
+.balloonR .balloon-text::before {
+	right: -16px;
+	border-left: 16px solid #dbffb7;
+}
+blockquote {
+    position: relative;
+    padding: 10px 15px 10px 50px;
+    box-sizing: border-box;
+    font-style: italic;
+    font-weight: bold;
+	font-size: 14pt;
+    color: #464646;
+    background: #c2e8ed;
+    border: solid 1px #77c0c9;
+	width: 410px;
+	margin: 0 auto 1em;
+}
+
+blockquote:before{
+    display: inline-block;
+    position: absolute;
+    top: 12px;
+    left: 0;
+    content: "“";
+    font-family: sans-serif;
+    color: #77c0c9;
+    font-size: 70px;
+    line-height: 1;
+}
+
+blockquote p {
+    padding: 0;
+    margin: 10px 0;
+    line-height: 1.7;
+}
+
+blockquote cite {
+    display: block;
+    text-align: right;
+    color: #888888;
+    font-size: 0.9em;
+}

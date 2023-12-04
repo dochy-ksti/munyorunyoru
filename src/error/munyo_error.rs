@@ -82,3 +82,9 @@ impl From<std::io::Error> for Error{
         Self::Message(value.into())
     }
 }
+
+impl From<&str> for Error{
+    fn from(value: &str) -> Self {
+        Self::Message(anyhow::Error::msg(value.to_string()))
+    }
+}
