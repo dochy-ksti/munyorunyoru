@@ -1,7 +1,5 @@
 use std::collections::BTreeMap;
-
 use crate::{samples::html_samples::html_builder::{HtmlItem, Param, Tag}, MunyoItem};
-
 
 pub fn to_html_items(items : &[MunyoItem]) -> crate::Result<Vec<HtmlItem>>{
 	let mut vec : Vec<HtmlItem> = Vec::with_capacity(items.len());
@@ -50,12 +48,13 @@ fn balloon(is_l: bool, text: &str) -> HtmlItem {
     HtmlItem::Text(t)
 }
 
-fn tag(name: &str, argument : &str, params: &BTreeMap<String, String>, children: &[MunyoItem]) -> crate::Result<HtmlItem>{
+fn tag(tag_name: &str, argument : &str, params: &BTreeMap<String, String>, children: &[MunyoItem]) -> crate::Result<HtmlItem>{
 	let mut children = to_html_items(children)?;
 	if !argument.is_empty(){
+		// The argument will be the first child which is text. Other children follow.
 		children.insert(0,HtmlItem::Text(argument.to_string()));
 	}
-    Ok(HtmlItem::Tag(Tag::new(name.to_string(), params.into_iter()
+    Ok(HtmlItem::Tag(Tag::new(tag_name.to_string(), params.iter()
 		.map(|(name,value)| Param::new(name.to_string(), value.to_string()))
 		.collect()), children))
 }
