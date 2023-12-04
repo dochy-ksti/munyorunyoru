@@ -31,7 +31,7 @@ Munyo language can be easily converted to HTML, and in this case, you don’t ne
 It seems that writing in Munyo language directly to create HTML documents is as bad as HTML.
 
 When we convert most tags as they are, and give "Alice" and "Bob" special treatment, the redundancy will be greatly reduced.
-
+```
 h3 Domain Specific Sample|class ribbon1
 
 Alice I've arrived in Honolulu.
@@ -42,9 +42,8 @@ Bob Let’s do it!
 blockquote
 	p GOD DOES NOT PLAY DICE WITH THE UNIVERSE.
 	cite —Albert Einstein
-
+```
 It seems that only the first capital letter has been changed to lowercase, but this time, it was possible to create the cite tag that was not created last time with no code. In addition, the code has been simplified as follows.
-
 ```Rust
 use std::collections::BTreeMap;
 use crate::{samples::html_samples::html_builder::{HtmlItem, Param, Tag}, MunyoItem};
