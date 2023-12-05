@@ -151,11 +151,11 @@ The motivation is explained [here](https://github.com/dochy-ksti/munyorunyoru/bl
 
 This document is already too long as a readme, but there are still many things that have not been explained enough. Please read if you don’t mind.
 
-The above is the general usage of this library, but sometimes you can get your work done without converting text data to your own Rust data structure. [Converting to HTML is one of them](https://github.com/dochy-ksti/munyorunyoru/tree/master/src/samples/html_samples/sample4). 
+The above is the most general usage of this library, but sometimes you can get your work done without converting text data to your own Rust data structure. [Converting to HTML is one of them](https://github.com/dochy-ksti/munyorunyoru/tree/master/src/samples/html_samples/sample4). 
 
 Munyo language can be naturally converted to HTML, and in this case, you don’t need to create enum variant for each HTML tag.
 
-## Munyo source file to be directly converted to HTML
+## Munyo Source File To Be Directly Converted To HTML
 ```
 || Set default type to "Text". 
 || In this case it makes this example more redundant, 
@@ -176,7 +176,7 @@ Munyo language can be naturally converted to HTML, and in this case, you don’t
 		>\div|class balloon-text-inner
 
 			|| This line doesn't have type, 
-			|| so default type "Text" is applied.
+			|| so the default type "Text" is applied.
 			I've arrived in Honolulu.
 
 >\div|class balloon balloonR
@@ -186,6 +186,8 @@ Munyo language can be naturally converted to HTML, and in this case, you don’t
 			>\figcaption Bob
 	>\div|class balloon-text
 		>\div|class balloon-text-inner
+
+			|| This is "Text" type too
 			I'm on the Moon!
 			...
 ```
