@@ -193,7 +193,7 @@ It seems that writing a source file in Munyo language to be directly converted t
 
 When we give "Alice" and "Bob" special treatment, the redundancy will be greatly reduced.
 
-## Specialized Munyo File
+## Specialized Munyo File To Be Directly Converted To HTML
 ```
 h3 Domain Specific Sample|class ribbon1
 
