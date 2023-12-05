@@ -175,7 +175,7 @@ Munyo language can be naturally converted to HTML, and in this case, you don’t
 	>\div|class balloon-text
 		>\div|class balloon-text-inner
 
-			|| This line doesn't have type, 
+			|| This line doesn't have a type, 
 			|| so the default type "Text" is applied.
 			I've arrived in Honolulu.
 
@@ -187,7 +187,7 @@ Munyo language can be naturally converted to HTML, and in this case, you don’t
 	>\div|class balloon-text
 		>\div|class balloon-text-inner
 
-			|| This is "Text" type too
+			|| This is the "Text" type too
 			I'm on the Moon!
 			...
 ```
