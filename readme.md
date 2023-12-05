@@ -31,7 +31,7 @@ The Munyo language is basically:
 Typename arg1 arg2...|param_name1 param_value1|param_name2 param_value2...
     Typename arg1...  <-Indentation means the parent line contains the indented lines as children.
 ```
-A line is statically typed, and each line needs a backing Rust data structure, which is enum variant.
+A line is statically typed, and each line needs a backing Rust data structure, which is enum variant to deserialize with Serde.
 
 ## Rust Code
 ```Rust
@@ -143,27 +143,11 @@ fn class(class: &Class) -> Vec<Param> {
 You can define your language with Munyo and backing Rust code. You should make the language
 as efficient as possible for the data you want to write.
 
-Please read the [doc](https://docs.rs/munyo) for details.
-
 ## Motivation
 
 The motivation is explained [here](https://github.com/dochy-ksti/munyorunyoru/blob/master/motivation.md)
 
-## Async
-
-This crate also contains the [concurrent](https://docs.rs/munyo/latest/munyo/struct.Concurrent.html) version of the functions to deserialize, and runtime agnostic async fn to receive the deserialized data concurrently.
-
-## Usage
-
-Add these to your `cargo.toml`:
-
-```
-[dependencies]
-munyo = "0.3"
-serde = { version = "1", features = ["derive"] }
-```
-
-# Untyped Value
+## Direct Conversion
 
 This document is already too long as a readme, but there are still many things that have not been explained enough. Please read if you don’t mind.
 
@@ -209,7 +193,7 @@ It seems that writing a source file in Munyo language to be directly converted t
 
 When we give "Alice" and "Bob" special treatment, the redundancy will be greatly reduced.
 
-## Convert Munyo file to HTML with untyped MunyoValue
+## Specialized Munyo File
 ```
 h3 Domain Specific Sample|class ribbon1
 
@@ -222,7 +206,9 @@ blockquote
 	p GOD DOES NOT PLAY DICE.
 	cite —Albert Einstein
 ```
-It seems that only the first capital letter of the tags has been changed to lowercase, but this time, it was possible to create the "cite" tag without coding. In addition, the code has been simplified as follows.
+It seems that only the first capital letter of the tags has been changed to lowercase from the statically typed example, but this time, it was possible to create the "cite" tag without coding. In addition, the code has been simplified as follows.
+
+## Converting Munyo to HTML with untyped MunyoValue
 ```Rust
 use std::collections::BTreeMap;
 use crate::{samples::html_samples::html_builder::{HtmlItem, Param, Tag}, MunyoItem};
@@ -305,6 +291,21 @@ fn tag(tag_name: &str, argument : &str, params: &BTreeMap<String, String>, child
 		.map(|(name,value)| Param::new(name.to_string(), value.to_string()))
 		.collect()), children))
 }
+```
+There are still many things to be explained. Please read the [doc](https://docs.rs/munyo) for details.
+
+## Async
+
+This crate also contains the [concurrent](https://docs.rs/munyo/latest/munyo/struct.Concurrent.html) version of the functions to deserialize, and runtime agnostic async fn to receive the deserialized data concurrently.
+
+## Usage
+
+Add these to your `cargo.toml`:
+
+```
+[dependencies]
+munyo = "0.3"
+serde = { version = "1", features = ["derive"] }
 ```
 ## License
 
