@@ -15,7 +15,7 @@
 	|| ↑ empty line
 	An empty line translates to a &lt;BR&gt; tag.
 
-	These settings are written in a first line. See "(repository_root)/lang_spec.txt" about the settings.
+	These settings are written in a first line. See "(repository_root)/lang_spec.txt" about it.
 >\Blockquote
 	>\P
 		sample blockquote.

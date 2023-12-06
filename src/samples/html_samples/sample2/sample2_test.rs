@@ -3,7 +3,6 @@ fn test() -> crate::Result<()> {
     use super::super::html_builder::HtmlBuilder;
     use crate::from_file;
     use crate::samples::html_samples::sample2::tags::{to_html_items, Tags};
-    //use crate::{from_str_with_metabuilder, DefaultMetaBuilder};
 
     let path = "src/samples/html_samples/sample2/sample2.munyo";
     let v: Vec<Tags> = from_file(path)?;

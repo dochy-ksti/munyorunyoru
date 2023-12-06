@@ -35,34 +35,6 @@ A line is statically typed, and each line needs a backing Rust data structure, w
 
 ## Rust Code
 ```Rust
-use crate::{
-    samples::html_samples::html_builder::{HtmlItem, Param, Tag},
-    RestOf,
-};
-use serde::{Deserialize, Serialize};
-
-// This enum defines the syntax.
-#[derive(Serialize, Deserialize)]
-pub enum Item {
-    // RestOf captures all the remaining string of the line except parameters.
-    Alice(RestOf),
-    Bob(RestOf),
-    // struct captures parameters as fields.
-    H3(RestOf, Class),
-	
-    /// Blockquote can contain children
-    Blockquote(Vec<Item>),
-    P(RestOf, Class),
-}
-
-// This struct captures the parameter "class"
-#[derive(Serialize, Deserialize)]
-pub struct Class {
-	// The parameter "class" is optional
-    pub class: Option<String>,
-}
-
-
 fn test() -> crate::Result<()> {
     use super::super::html_builder::HtmlBuilder;
     use crate::from_file;
@@ -83,61 +55,84 @@ fn test() -> crate::Result<()> {
     Ok(())
 }
 
+use crate::{
+    samples::html_samples::html_builder::{HtmlItem, Param, Tag},
+    RestOf,
+};
+use serde::{Deserialize, Serialize};
+
+// This enum defines the syntax.
+#[derive(Serialize, Deserialize)]
+pub enum Item {
+    // RestOf captures all the remaining string of the line except parameters.
+    Alice(RestOf),
+    Bob(RestOf),
+    // struct captures parameters as fields.
+    H3(RestOf, Class),
+
+    /// Blockquote can contain children
+    Blockquote(Vec<Item>),
+    P(RestOf, Class),
+}
+
+// This struct captures the parameter "class"
+#[derive(Serialize, Deserialize)]
+pub struct Class {
+    pub class: Option<String>,
+}
+
 pub fn to_html_items(items: &[Item]) -> Vec<HtmlItem> {
     let mut r: Vec<HtmlItem> = vec![];
     for item in items {
         match item {
             Item::Alice(t) => {
-                balloon(true, &t.arg, &mut r);
+                r.push(balloon(true, &t.arg));
             }
             Item::Bob(t) => {
-                balloon(false, &t.arg, &mut r);
+                r.push(balloon(false, &t.arg));
             }
             Item::H3(t, c) => {
-                r.push(tag("h3", class(c), vec![text(&t.arg)]));
+                r.push(tag_with_text("h3", &t.arg, class(c)));
             }
             Item::P(t, c) => {
-                r.push(tag("p", class(c), vec![text(&t.arg)]));
-            },
-                Item::Blockquote(vec) =>{
-                r.push(tag("blockquote", vec![], to_html_items(&vec)))
+                r.push(tag_with_text("p", &t.arg, class(c)));
             }
+            Item::Blockquote(vec) => {
+				r.push(tag_with_children("blockquote", to_html_items(vec)))
+			}
         }
     }
     r
 }
 
-fn balloon(is_l: bool, text: &str, r: &mut Vec<HtmlItem>) {
+fn balloon(is_l: bool, text: &str) -> HtmlItem {
     let bl = if is_l { "balloonL" } else { "balloonR" };
     let pict = if is_l { "girl.png" } else { "boy.png" };
     let speaker = if is_l { "Alice" } else { "Bob" };
-    let t = format!(
-        r###"
-<div class="balloon {}">
-  <div class="balloon-img"><figure><img src="{}" /><figcaption>{}</figcaption></figure></div>
+    let t = format!(r###"
+<div class="balloon {bl}">
+  <div class="balloon-img"><figure><img src="{pict}" /><figcaption>{speaker}</figcaption></figure></div>
   <div class="balloon-text"><div class="balloon-text-inner">
-  {}
+    {text}
   </div></div>
-</div>"###,
-        bl, pict, speaker, text
-    );
-    r.push(self::text(&t))
+</div>"###);
+    HtmlItem::Text(t)
 }
 
-fn tag(name: &str, params: Vec<Param>, children: Vec<HtmlItem>) -> HtmlItem {
-    HtmlItem::Tag(Tag::new(name.to_string(), params), children)
-}
-
-fn text(s: &str) -> HtmlItem {
-    HtmlItem::Text(s.to_string())
+fn tag_with_text(name: &str, text : &str, params: Vec<Param>) -> HtmlItem {
+    HtmlItem::Tag(Tag::new(name.to_string(), params), vec![HtmlItem::Text(text.to_string())])
 }
 
 fn class(class: &Class) -> Vec<Param> {
-    if let Some(c) = &class.class{
+    if let Some(c) = &class.class {
         vec![Param::new("class".to_string(), c.to_string())]
-    } else{
+    } else {
         vec![]
     }
+}
+
+fn tag_with_children(name: &str, children : Vec<HtmlItem>) -> HtmlItem{
+	HtmlItem::Tag(Tag::new(name.to_string(), vec![]), children)
 }
 ```
 You can define your language with Munyo and backing Rust code. You should make the language
@@ -212,39 +207,6 @@ It seems that only the first capital letter of the tags has been changed to lowe
 
 ## Converting Munyo to HTML with untyped MunyoValue
 ```Rust
-use std::collections::BTreeMap;
-use crate::{samples::html_samples::html_builder::{HtmlItem, Param, Tag}, MunyoItem};
-
-pub fn to_html_items(items : &[MunyoItem]) -> crate::Result<Vec<HtmlItem>>{
-	let mut vec : Vec<HtmlItem> = Vec::with_capacity(items.len());
-	for item in items{
-		match item.typename.as_str(){
-			"Alice" =>{
-				if !item.children.is_empty(){
-					Err("Alice can't contain children")?
-				}
-				if !item.params.is_empty(){
-					Err("Alice can't contain params")?
-				}
-				vec.push(balloon(true, &item.argument));
-			}
-			"Bob" =>{
-				if !item.children.is_empty(){
-					Err("Bob can't contain children")?
-				}
-				if !item.params.is_empty(){
-					Err("Bob can't contain params")?
-				}
-				vec.push(balloon(false, &item.argument));
-			},
-			_ =>{
-				vec.push(tag(&item.typename, &item.argument, &item.params, &item.children)?)
-			}
-		}
-	}
-	Ok(vec)
-}
-
 fn test() -> crate::Result<()> {
     use super::super::html_builder::HtmlBuilder;
     use crate::samples::html_samples::sample4::untyped::to_html_items;
@@ -266,32 +228,81 @@ fn test() -> crate::Result<()> {
     Ok(())
 }
 
+use crate::{
+    samples::html_samples::html_builder::{HtmlItem, Param, Tag},
+    MunyoItem,
+};
+use std::collections::BTreeMap;
+
+pub fn to_html_items(items: &[MunyoItem]) -> crate::Result<Vec<HtmlItem>> {
+    let mut vec: Vec<HtmlItem> = vec![];
+    for item in items {
+        match item.typename.as_str() {
+            "Alice" => {
+                if !item.children.is_empty() {
+                    Err("Alice can't contain children")?
+                }
+                if !item.params.is_empty() {
+                    Err("Alice can't contain params")?
+                }
+                vec.push(balloon(true, &item.argument));
+            }
+            "Bob" => {
+                if !item.children.is_empty() {
+                    Err("Bob can't contain children")?
+                }
+                if !item.params.is_empty() {
+                    Err("Bob can't contain params")?
+                }
+                vec.push(balloon(false, &item.argument));
+            }
+            _ => vec.push(tag(
+                &item.typename,
+                &item.argument,
+                &item.params,
+                &item.children,
+            )?),
+        }
+    }
+    Ok(vec)
+}
+
 fn balloon(is_l: bool, text: &str) -> HtmlItem {
     let bl = if is_l { "balloonL" } else { "balloonR" };
     let pict = if is_l { "girl.png" } else { "boy.png" };
     let speaker = if is_l { "Alice" } else { "Bob" };
-    let t = format!(
-        r###"
-<div class="balloon {}">
-  <div class="balloon-img"><figure><img src="{}" /><figcaption>{}</figcaption></figure></div>
+    let t = format!(r###"
+<div class="balloon {bl}">
+  <div class="balloon-img"><figure><img src="{pict}" /><figcaption>{speaker}</figcaption></figure></div>
   <div class="balloon-text"><div class="balloon-text-inner">
-  {}
+    {text}
   </div></div>
-</div>"###,
-        bl, pict, speaker, text
-    );
+</div>"###);
     HtmlItem::Text(t)
 }
 
-fn tag(tag_name: &str, argument : &str, params: &BTreeMap<String, String>, children: &[MunyoItem]) -> crate::Result<HtmlItem>{
-	let mut children = to_html_items(children)?;
-	if !argument.is_empty(){
-		// The argument is the first child which is text.
-		children.insert(0,HtmlItem::Text(argument.to_string()));
-	}
-    Ok(HtmlItem::Tag(Tag::new(tag_name.to_string(), params.iter()
-		.map(|(name,value)| Param::new(name.to_string(), value.to_string()))
-		.collect()), children))
+fn tag(
+    tag_name: &str,
+    argument: &str,
+    params: &BTreeMap<String, String>,
+    children: &[MunyoItem],
+) -> crate::Result<HtmlItem> {
+    let mut children = to_html_items(children)?;
+    if !argument.is_empty() {
+        // The argument will be the first child which is text.
+        children.insert(0, HtmlItem::Text(argument.to_string()));
+    }
+    Ok(HtmlItem::Tag(
+        Tag::new(
+            tag_name.to_string(),
+            params
+                .iter()
+                .map(|(name, value)| Param::new(name.to_string(), value.to_string()))
+                .collect(),
+        ),
+        children,
+    ))
+}
 }
 ```
 There are still many things to be explained. Please read the [doc](https://docs.rs/munyo) for details.
