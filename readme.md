@@ -22,9 +22,9 @@ Alice Let’s observe quantum entanglement and confirm the violation of Bell’s
 Bob Let’s do it!
 
 Blockquote
-	P God doesn't play dice
-	|| <cite> tag is more appropriate.
-	P —Albert Einstein|class right
+    P God doesn't play dice
+    || <cite> tag is more appropriate.
+    P —Albert Einstein|class right
 ```
 The Munyo language is basically:
 ```
@@ -98,8 +98,8 @@ pub fn to_html_items(items: &[Item]) -> Vec<HtmlItem> {
                 r.push(tag_with_text("p", &t.arg, class(c)));
             }
             Item::Blockquote(vec) => {
-				r.push(tag_with_children("blockquote", to_html_items(vec)))
-			}
+                r.push(tag_with_children("blockquote", to_html_items(vec)))
+            }
         }
     }
     r
@@ -132,7 +132,7 @@ fn class(class: &Class) -> Vec<Param> {
 }
 
 fn tag_with_children(name: &str, children : Vec<HtmlItem>) -> HtmlItem{
-	HtmlItem::Tag(Tag::new(name.to_string(), vec![]), children)
+    HtmlItem::Tag(Tag::new(name.to_string(), vec![]), children)
 }
 ```
 You can define your language with Munyo and backing Rust code. You should make the language
@@ -163,28 +163,28 @@ Munyo language can be naturally converted to HTML, and in this case, you don’t
 >\h3 Domain Specific Sample|class ribbon1
 
 >\div|class balloon balloonL
-	>\div|class balloon-img
-		>\figure
-			>\img|src girl.png
-			>\figcaption Alice
-	>\div|class balloon-text
-		>\div|class balloon-text-inner
+    >\div|class balloon-img
+        >\figure
+            >\img|src girl.png
+            >\figcaption Alice
+    >\div|class balloon-text
+        >\div|class balloon-text-inner
 
-			|| This line doesn't have a type, 
-			|| so the default type "Text" is applied.
-			I've arrived in Honolulu.
+            || This line doesn't have a type, 
+            || so the default type "Text" is applied.
+            I've arrived in Honolulu.
 
 >\div|class balloon balloonR
-	>\div|class balloon-img
-		>\figure
-			>\img|src boy.png
-			>\figcaption Bob
-	>\div|class balloon-text
-		>\div|class balloon-text-inner
+    >\div|class balloon-img
+        >\figure
+            >\img|src boy.png
+            >\figcaption Bob
+    >\div|class balloon-text
+        >\div|class balloon-text-inner
 
-			|| This is "Text" too
-			I'm on the Moon!
-			...
+            || This is "Text" too
+            I'm on the Moon!
+            ...
 ```
 It seems that writing a source file in Munyo language to be directly converted to HTML is not a good idea.
 
@@ -200,8 +200,8 @@ Alice Let’s observe quantum entanglement and confirm the violation of Bell’s
 Bob Let’s do it!
 
 blockquote
-	p GOD DOES NOT PLAY DICE.
-	cite —Albert Einstein
+    p GOD DOES NOT PLAY DICE.
+    cite —Albert Einstein
 ```
 It seems that only the first capital letter of the tags has been changed to lowercase from the statically typed example, but this time, it was possible to create the "cite" tag without coding. In addition, the code has been simplified as follows.
 
@@ -215,7 +215,7 @@ fn test() -> crate::Result<()> {
     let path = "src/samples/html_samples/sample4/untyped.munyo";
     // deserialize a Munyo file as MunyoItems.
     // MunyoItem is the untyped data type of the Munyo language,
-	// like serde_json::value::Value
+    // like serde_json::value::Value
     let v = MunyoItem::from_file(path)?;
     let b = HtmlBuilder {
         items: to_html_items(&v)?,
