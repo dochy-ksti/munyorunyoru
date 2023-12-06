@@ -187,7 +187,7 @@ Munyo language can be naturally converted to HTML, and in this case, you don’t
 	>\div|class balloon-text
 		>\div|class balloon-text-inner
 
-			|| This is the "Text" type too
+			|| This is "Text" too
 			I'm on the Moon!
 			...
 ```
