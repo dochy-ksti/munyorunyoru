@@ -5,12 +5,14 @@
 
 For example, you can create [a domain-specific language with just a little coding](https://github.com/dochy-ksti/munyorunyoru/tree/master/src/samples/html_samples/sample3). 
 
-You can write the conversation of Alice and Bob very efiiciently with this language. Although it sounds silly, this type of task can happen in the real world.
+This language can efficiently write HTML documents which describes the conversation of Alice and Bob in a specific format.
 
 ## Generated HTML
 ![Screenshot of the HTML page created from the DSL.](dsl_sample.png)
 
 The main purpose of this library is to be used for writing data that is too large or too complex to write in JSON/TOML/YAML/etc..., so imagine a conversation between Alice and Bob that goes on long enough to become 10k bytes of string. This DSL is designed for such situations, but this sample couldn't be made that long.
+
+If Alice and Bob’s conversation is that long, it would be worth creating a little language for it.
 
 ## Munyo Source File
 ```
@@ -31,7 +33,7 @@ The Munyo language is basically:
 Typename arg1 arg2...|param_name1 param_value1|param_name2 param_value2...
     Typename arg1...  <-Indentation means the parent line contains the indented lines as children.
 ```
-A line is statically typed, and each line needs a backing Rust data structure, which is enum variant to deserialize with Serde.
+A line is statically typed, and each line needs a backing Rust data structure which is enum variant to deserialize with Serde.
 
 ## Rust Code
 ```Rust
@@ -144,7 +146,7 @@ The motivation is explained [here](https://github.com/dochy-ksti/munyorunyoru/bl
 
 ## Direct Conversion
 
-This document is already too long as a readme, but there are still many things that have not been explained enough. Please read if you don’t mind.
+This document is already too long for a readme, but there are still many things that have not been explained enough. Please read if you don’t mind.
 
 The above is the most general usage of this library, but sometimes you can get your work done without converting Munyo to your own Rust data structure. [Converting to HTML is one of them](https://github.com/dochy-ksti/munyorunyoru/tree/master/src/samples/html_samples/sample4). 
 
@@ -302,7 +304,6 @@ fn tag(
         ),
         children,
     ))
-}
 }
 ```
 There are still many things to be explained. Please read the [doc](https://docs.rs/munyo) for details.
