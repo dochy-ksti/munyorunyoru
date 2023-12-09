@@ -5,7 +5,7 @@
 
 For example, you can create [a domain-specific language with just a little coding](https://github.com/dochy-ksti/munyorunyoru/tree/master/src/samples/html_samples/sample3). 
 
-This language can efficiently write HTML documents which describes the conversation of Alice and Bob in a specific format.
+This language can efficiently write HTML documents which describe conversations of Alice and Bob in a specific format.
 
 ## Generated HTML
 ![Screenshot of the HTML page created from the DSL.](dsl_sample.png)
