@@ -1,4 +1,4 @@
-# What's DSL
+# What's DSL?
 
 There seems to be no clear definition for the term DSL. Both Makefile and Ant are DSLs, but Makefile has its own grammar, while Ant describes build files in XML. It seems that it is not necessary to have a unique grammar or to be Turing complete and capable of complex calculations to be a DSL.
 
