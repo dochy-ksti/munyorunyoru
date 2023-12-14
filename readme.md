@@ -140,6 +140,10 @@ fn tag_with_children(name: &str, children : Vec<HtmlItem>) -> HtmlItem{
 You can define your language with Munyo and backing Rust code. You should make the language
 as efficient as possible for the data you want to write.
 
+## What is DSL
+
+The term "DSL" in this document may confuse you. [Here](https://github.com/dochy-ksti/munyorunyoru/blob/master/whats_dsl.md) is the explanation.
+
 ## Motivation
 
 The motivation is explained [here](https://github.com/dochy-ksti/munyorunyoru/blob/master/motivation.md)
