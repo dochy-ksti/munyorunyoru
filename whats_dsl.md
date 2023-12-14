@@ -17,11 +17,13 @@ for item in code{
 ```
 When the code is written in text, the format used to write the text is called a language.
 
-On the other hand, data refers to what is used in the form below:
+Data refers to what is used in the form below:
 ```Rust
 function(data)
 ```
-In Munyo language, you can write both data and code, but it's more specialized to write code.
+Code is a subset of data.
+
+In Munyo language, you can naturally write both data and code, but it's more specialized to write code.
 
 If a language can be used for general programming, I think it should be called a programming language, and if it has a specific purpose, it should be called a domain-specific language.
 
@@ -57,12 +59,12 @@ Since it is difficult to interoperate when described in two languages in separat
 // You can use the keys of this HashMap to check whether it's executed only once.
 one_time_functions.insert(
     "enter_the_number_in_meters_and_convert_it_to_feet", 
-    |_| call_the_rust_function());
+    call_the_rust_function);
 
 // This can be used to check whether they are called more than once.
 normal_functions.insert(
     "a_function_that_is_called_multiple_times", 
-    |_| call_the_rust_function());
+    call_another_rust_function);
 
 for item in code{
 	if normal_functions.contains_key(&item.typename){
