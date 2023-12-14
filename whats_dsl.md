@@ -21,7 +21,7 @@ On the other hand, data refers to what is used in the form below:
 ```Rust
 function(data)
 ```
-In Munyo language, you can write both data and code, but specifically it's designed to write code naturally.
+In Munyo language, you can write both data and code, but it's more specialized to write code.
 
 If a language can be used for general programming, I think it should be called a programming language, and if it has a specific purpose, it should be called a domain-specific language.
 
