@@ -22,8 +22,8 @@ Data refers to what is used in the form below:
 function(data)
 ```
 Code is a subset of data.
-
-In Munyo language, you can naturally write both data and code, but it's more specialized to write code.
+m
+In Munyo language, you can write data and code naturally, but it's more specialized to write code.
 
 If a language can be used for general programming, I think it should be called a programming language, and if it has a specific purpose, it should be called a domain-specific language.
 
@@ -54,14 +54,14 @@ I think basically you don't need to embed scripting languages.
 
 You can use Rust functions through the match statement, so you can use Rust for logic.
 
-Since it is difficult to interoperate when described in two languages in separated files, a mechanism is needed to check whether the function is executed only once by examining all Munyo files.
+Since it is difficult to interoperate when described in two languages in separated files, a mechanism is needed to check whether the function is used only once by examining all Munyo files.
 ```Rust
-// You can use the keys of this HashMap to check whether it's executed only once.
+// You can use the keys of this HashMap to check whether it's used only once.
 one_time_functions.insert(
     "enter_the_number_in_meters_and_convert_it_to_feet", 
     call_the_rust_function);
 
-// This can be used to check whether they are called more than once.
+// This can be used to check whether they are used more than once.
 normal_functions.insert(
     "a_function_that_is_called_multiple_times", 
     call_another_rust_function);
