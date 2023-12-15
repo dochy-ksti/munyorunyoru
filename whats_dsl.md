@@ -22,7 +22,7 @@ Data refers to what is used in the form below:
 function(data)
 ```
 Code is a subset of data.
-m
+
 In Munyo language, you can write data and code naturally, but it's more specialized to write code.
 
 If a language can be used for general programming, I think it should be called a programming language, and if it has a specific purpose, it should be called a domain-specific language.
