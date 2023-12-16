@@ -48,6 +48,8 @@ io.write("Please enter the value in meters: \n")
 meter = io.read()
 answer = meter * 3.28
 print( meter .. " meters is " .. answer .. " feet.")
+
+|| '\' and '|' are swapped to '@' and '`'
 >@MunyoValue`name value`name2 value2
 ```
 I think basically you don't need to embed scripting languages.
@@ -76,3 +78,43 @@ for item in code{
 	}
 }
 ```
+
+## Why you need DSL
+
+When you write data in Rust, the compilation time becomes longer and the size of the executable file becomes larger. Generally, when executing code that constructs data in a compiled language, the execution speed is often significantly slower than reading and analyzing text file to construct data.
+```Rust
+// Directly writing data in compiled languages is slow
+let data = Data{ a : 10, b : 20, children : vec![ Data{ a : 30, ...}, ...]}
+```
+
+Since code is also data, problems can occur if it is written too long. Besides, in something like a game script, functions such as “stop execution temporarily and resume execution when the A button is pressed” and “jump globally depending on the selected option” are required, which is difficult to achieve with general-purpose programming languages.
+
+Let's see how to implement these functions in Munyo.
+```
+|| file_a.munyo
+|| # means "display text message" in this DSL.
+# Press A button.
+Stop
+# Choose A or B.
+Select
+	Case A|goto label_a
+	Case B|goto file_b/label_b
+Label label_a
+# You chose A.
+
+|| file_b.munyo
+Label label_b
+# You chose B.
+```
+First, you need to collect all the labels from all the Munyo scripts, and remember the positions of the labels. The position is:
+```Rust
+struct Position{
+	filename : String,
+	indexes : Vec<usize>,
+}
+```
+Munyo files are translated to Vec\<Item>, and Items can contain children, which is also Vec\<Item>, so you need indexes to determine the position of an Item. (Maybe this DSL only needs the first index...)
+
+While running this DSL, the runner must track the position it executes to resume when it stopped. The runner also needs to execute from the given position to implement goto(and stop).
+
+So, I think there is a difference between logic that should be written in DSL and logic that should be written in Rust, and it is a difficult problem to distinguish between them.
