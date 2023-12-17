@@ -2,7 +2,7 @@
 
 There seems to be no clear definition for the term DSL. Both Makefile and Ant are DSLs, but Makefile has its own grammar, while Ant describes build files in XML. It seems that it is not necessary to have a unique grammar or to be Turing complete and capable of complex calculations to be a DSL.
 
-First, I will explain my understanding of what language is. Language refers to what is ultimately executed in the form below:
+First, I will explain my understanding of what language is. Language refers to what is executed in the form below:
 ```Rust
 for item in code{
 	match item{ /* do something */ }
@@ -86,7 +86,6 @@ When you write data in Rust, the compilation time becomes longer and the size of
 // Directly writing data in compiled languages is slow
 let data = Data{ a : 10, b : 20, children : vec![ Data{ a : 30, ...}, ...]}
 ```
-
 Since code is also data, problems can occur if it is written too long. Besides, in something like a game script, functions such as “stop execution temporarily and resume execution when the A button is pressed” and “jump globally depending on the selected option” are required, which is difficult to achieve with general-purpose programming languages.
 
 Let's see how to implement these functions in Munyo.
@@ -106,7 +105,7 @@ Label label_a
 Label label_b
 # You chose B.
 ```
-First, you need to collect all the labels from all the Munyo scripts, and remember the positions of the labels. The position is:
+First, you need to collect all the labels from all the Munyo files, and remember the positions of the labels. The position is:
 ```Rust
 struct Position{
 	filename : String,
