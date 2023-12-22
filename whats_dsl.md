@@ -79,7 +79,7 @@ for item in code{
 }
 ```
 
-## Why you need DSL
+## Why you need DSLs
 
 When you write data in Rust, the compilation time becomes longer and the size of the executable file becomes larger. Generally, when executing code that constructs data in a compiled language, the execution speed is often significantly slower than reading and analyzing text file to construct data.
 ```Rust
@@ -117,3 +117,28 @@ Munyo files are translated to Vec\<Item>, and Items can contain children, which 
 While running this DSL, the runner must track the position it executes to resume when it stopped. The runner also needs to execute from the given position to implement goto(and stop).
 
 So, I think there is a difference between logic that should be written in DSL and logic that should be written in Rust, and it is a difficult problem to distinguish between them.
+
+## Are natural languages languages?
+
+In my difinition, languages are executed with match, dynamic dispatch, or something similar to that(matching with hashtables, CPUs that examine the opcode and branch...).
+
+Natural languages also take this form:
+```
+for word in text{ ... }
+```
+Currently, we don't know how human brains work, but we know how AI works. In the AI world, a word is a vector.
+```
+for word in text{
+	execute(word, &mut neurons)
+}
+```
+No match/dynamic dispatch/etc..., so formally, a natural language is not a language but data.
+
+However, a word vector is something like this:
+```
+word "in"
+    ↓
+a the of  in to at...
+0  0   0  1  0  0...
+```
+I think this is effectively a match statement, so in my definition, natural languages are languages, at least in the AI world.
