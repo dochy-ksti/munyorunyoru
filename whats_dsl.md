@@ -120,7 +120,7 @@ So, I think there is a difference between logic that should be written in DSL an
 
 ## Are natural languages languages?
 
-In my difinition, languages are executed with match, dynamic dispatch, or something similar to that(matching with hashtables, CPUs that examine the opcode and branch...).
+In my difinition, languages are executed with match, dynamic dispatch, or something similar to that(hashtables for matching, CPUs that examine the opcode and branch...).
 
 Natural languages also take this form:
 ```
@@ -132,7 +132,7 @@ for word in text{
 	execute(word, &mut neurons)
 }
 ```
-No match/dynamic dispatch/etc..., so formally, a natural language is not a language but data.
+No match/dynamic dispatch/etc., so formally, a natural language is not a language but data.
 
 However, a word vector is something like this:
 ```
