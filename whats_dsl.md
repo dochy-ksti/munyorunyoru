@@ -15,7 +15,7 @@ for item in code{
 	item.run(context);
 }
 ```
-When the code is written in text, the format used to write the text is called a language.
+When the code is written in text before conversion, the format used to write the text is called a language.
 
 Data refers to what is used in the form below:
 ```Rust
