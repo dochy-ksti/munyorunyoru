@@ -4,15 +4,17 @@ There seems to be no clear definition for the term DSL. Both Makefile and Ant ar
 
 First, I will explain my understanding of what language is. Language refers to what is executed in the form below:
 ```Rust
+// It needs to be sequencial
 for item in code{
+	// Processing branches depending on the kind of the item
 	match item{ /* do something */ }
 }
 
 // or
 
 for item in code{
-	// Object oriented style
-	item.run(context);
+	// Dynamic dispatch
+	item.run(&mut context);
 }
 ```
 When the code is written in text before conversion, the format used to write the text is called a language.
@@ -29,9 +31,9 @@ If a language can be used for general programming, I think it should be called a
 
 ## How should logic be described in Munyo language?
 
-I would like to suggest how to write logic in Munyo language here.
+I would like to suggest how to write logic in the Munyo language here.
 
-In Munyo language, you can write something like this:
+In the Munyo language, you can write something like this:
 ```Rust
 set x 10
 set y 20
@@ -60,12 +62,12 @@ Since it is difficult to interoperate when described in two languages in separat
 ```Rust
 // You can use the keys of this HashMap to check whether it's used only once.
 one_time_functions.insert(
-    "enter_the_number_in_meters_and_convert_it_to_feet", 
+    "enter_the_number_in_meters_and_convert_it_to_feet".to_string(), 
     call_the_rust_function);
 
 // This can be used to check whether they are used more than once.
 normal_functions.insert(
-    "a_function_that_is_called_multiple_times", 
+    "a_function_that_is_called_multiple_times".to_string(), 
     call_another_rust_function);
 
 for item in code{
@@ -123,11 +125,11 @@ So, I think there is a difference between logic that should be written in DSL an
 In my difinition, languages are executed with match, dynamic dispatch, or something similar to that(hashtables for matching, CPUs that examine the opcode and branch...).
 
 Natural languages also take this form:
-```
+```Rust
 for word in text{ ... }
 ```
 Currently, we don't know how human brains work, but we know how AI works. In the AI world, a word is a vector.
-```
+```Rust
 for word in text{
 	execute(word, &mut neurons)
 }
