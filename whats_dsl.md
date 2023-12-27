@@ -23,7 +23,7 @@ Data refers to what is used in the form below:
 ```Rust
 function(data)
 ```
-Code is a subset of data. I think that the essence of language is that data determine the processing.
+Code is a subset of data. I think that the essence of language is that data determine how processing is done.
 
 In Munyo language, you can write data and code naturally, but it's more specialized to write code.
 
