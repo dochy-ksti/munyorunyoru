@@ -23,11 +23,11 @@ Data refers to what is used in the form below:
 ```Rust
 function(data)
 ```
-Code is a subset of data. I think that the essence of language is that data determine how processing is done.
+Code is a subset of data. I think the essence of language is that data determine how processing is done.
 
 In Munyo language, you can write data and code naturally, but it's more specialized to write code.
 
-If a language can be used for general programming, I think it should be called a programming language, and if it has a specific purpose, it should be called a domain-specific language.
+If a language can be used for programming, I think it should be called a programming language, and if it has a specific purpose, it should be called a domain-specific language. They shouldn't be mutually exclusive.
 
 ## How should logic be described in Munyo language?
 
