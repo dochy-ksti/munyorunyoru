@@ -27,8 +27,9 @@ impl<'a, 'de> ArgDeserializer<'a, 'de> {
         }
     }
 
-    fn parse<T: FromStr>(&mut self) -> Result<T, T::Err> {
-        self.args.arg().parse()
+    fn parse<T: FromStr>(&mut self) -> Result<T, (String, T::Err)> {
+        let arg = self.args.arg();
+		arg.parse().map_err(|e| (arg, e))
     }
 
     pub(crate) fn end(&self) -> Result<(), DeserializeError> {
@@ -43,9 +44,9 @@ trait ResultHelper<T, U> {
     fn me(self, f: impl Fn(U) -> String) -> Result<T, DeserializeError>;
 }
 
-impl<T, U> ResultHelper<T, U> for Result<T, U> {
+impl<T, U> ResultHelper<T, U> for Result<T, (String, U)> {
     fn me(self, f: impl Fn(U) -> String) -> Result<T, DeserializeError> {
-        self.map_err(|e| err(&f(e)))
+        self.map_err(|(arg, e)| err(&format!("{} '{}'", f(e), arg)))
     }
 }
 

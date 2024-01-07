@@ -48,7 +48,7 @@ impl<'a, 'de> ParamDeserializer<'a, 'de> {
             Err(e) => Result3::DeserializeError(e),
             Ok(arg) => match arg.parse() {
                 Ok(r) => Result3::Ok(r),
-                Err(e) => Result3::Err(e),
+                Err(e) => Result3::Err(arg, e),
             },
         }
     }
@@ -65,7 +65,7 @@ impl<'a, 'de> ParamDeserializer<'a, 'de> {
 enum Result3<T, E> {
     Ok(T),
     DeserializeError(DeserializeError),
-    Err(E),
+    Err(String, E),
 }
 
 trait Result3Helper<T, U> {
@@ -77,7 +77,7 @@ impl<T, U> Result3Helper<T, U> for Result3<T, U> {
         match self {
             Self::Ok(r) => Ok(r),
             Self::DeserializeError(e) => Err(e),
-            Self::Err(e) => Err(err(&f(e))),
+            Self::Err(arg, e) => Err(err(&format!("{} '{}'", f(e), arg))),
         }
     }
 }

@@ -8,7 +8,7 @@ use crate::{
     error::{deserialize_error::DeserializeError, munyo_error::PathItem},
     lang::{
         builder_tree::{BuilderTree, TreeItem},
-        from_str_with_metabuilder::{into_parse_error, parse_text},
+        from_str_with_metabuilder::{parse_text, into_parse_error2},
     },
     Error,
 };
@@ -47,7 +47,7 @@ impl<'de> MunyoDeserializer<'de> {
     fn into_error(text: &str, e: DeserializeError, path_item: &PathItem) -> Error {
         match e {
             DeserializeError::Fail(e) => {
-                let e = into_parse_error(e, text);
+                let e = into_parse_error2(e, text);
                 Error::Deserialize(path_item.clone(), e)
             }
             DeserializeError::Msg(e) => Error::Message(e),

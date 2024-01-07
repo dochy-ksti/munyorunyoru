@@ -3,7 +3,7 @@ use crate::{
     error::{
         line_col_lookup::LineColLookup,
         parse_error::ParseError,
-        parse_fail::{PairHelper, ParseFail, ParseFailHelper2},
+        parse_fail::{PairHelper, ParseFail, ParseFailHelper2}, parse_error2::ParseError2,
     },
     lang::{builder_tree::BuilderTree, inner_lang::build_empty_line_item},
 };
@@ -37,6 +37,16 @@ pub(crate) fn into_parse_error(fail: ParseFail, text: &str) -> ParseError {
     ParseError::new(
         r.line,
         r.col,
+        text[r.line_start..r.line_end].to_string(),
+        fail.message,
+    )
+}
+
+pub(crate) fn into_parse_error2(fail: ParseFail, text: &str) -> ParseError2 {
+    let lookup = LineColLookup::new(text);
+    let r = lookup.line_col(fail.start_index).unwrap();
+    ParseError2::new(
+        r.line,
         text[r.line_start..r.line_end].to_string(),
         fail.message,
     )

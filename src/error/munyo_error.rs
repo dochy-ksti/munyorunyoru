@@ -2,7 +2,7 @@ use std::{fmt::Display, path::PathBuf};
 
 use thiserror::Error;
 
-use super::parse_error::ParseError;
+use super::{parse_error::ParseError, parse_error2::ParseError2};
 
 /// Error type of Munyo
 #[derive(Error, Debug)]
@@ -15,7 +15,7 @@ pub enum Error {
     Parse(PathItem, ParseError),
 	/// Error occurred in the deserialization
     #[error("`{0}`:{1}")]
-    Deserialize(PathItem, ParseError),
+    Deserialize(PathItem, ParseError2),
 	/// Error occurred in the serialization
     #[error("{0}")]
     Serialize(anyhow::Error),
