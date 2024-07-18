@@ -50,7 +50,6 @@ fn parse_define_stmt(
     let mut is_single = false;
     let mut is_double = false;
     let mut is_triple = false;
-    let start_index = pairs.peek().unwrap().start_index();
 
     state
         .set_indent(indent_level)
@@ -81,9 +80,7 @@ fn parse_define_stmt(
     } else if is_double {
         state.set_doubled_default_types(indent_level, default_type, empty_line_type)
     } else if is_triple {
-        state
-            .set_tripled_default_types(indent_level, default_type, empty_line_type)
-            .map_err(|s| ParseFail::msg(start_index, s))?;
+        state.set_tripled_default_types(indent_level, default_type, empty_line_type)
     } else {
         unreachable!()
     }
