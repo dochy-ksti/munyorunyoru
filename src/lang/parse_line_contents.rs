@@ -47,7 +47,10 @@ fn parse_define_stmt(
 ) -> Result<(), ParseFail> {
     let mut default_type: String = String::new();
     let mut empty_line_type: String = String::new();
-    let mut is_doubled = false;
+    let mut is_single = false;
+    let mut is_double = false;
+    let mut is_triple = false;
+    let start_index = pairs.peek().unwrap().start_index();
 
     state
         .set_indent(indent_level)
@@ -56,9 +59,9 @@ fn parse_define_stmt(
     for pair in pairs {
         match pair.as_rule() {
             Rule::define_stmt_start_symbol => match pair.as_str() {
-                ">>>" => Err(parse_fail(&pair, ">>> is reserved and currently unusable."))?,
-                ">>" => is_doubled = true,
-                ">" => is_doubled = false,
+                ">>>" => is_triple = true,
+                ">>" => is_double = true,
+                ">" => is_single = true,
                 _ => unreachable!(),
             },
             Rule::content => {
@@ -73,10 +76,16 @@ fn parse_define_stmt(
         }
     }
 
-    if is_doubled {
-        state.set_doubled_default_types(indent_level, default_type, empty_line_type)
-    } else {
+    if is_single {
         state.set_single_default_types(indent_level, default_type, empty_line_type)
+    } else if is_double {
+        state.set_doubled_default_types(indent_level, default_type, empty_line_type)
+    } else if is_triple {
+        state
+            .set_tripled_default_types(indent_level, default_type, empty_line_type)
+            .map_err(|s| ParseFail::msg(start_index, s))?;
+    } else {
+        unreachable!()
     }
     Ok(())
 }

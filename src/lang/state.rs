@@ -6,6 +6,7 @@ pub(crate) struct State {
     indent_level: usize,
     default_stack: Vec<DefaultTypes>,
     leveled_default: Vec<Option<(String, String)>>,
+	super_leveled_default: Vec<Option<(String, String)>>,
 }
 
 pub(crate) struct DefaultTypes {
@@ -30,6 +31,7 @@ impl State {
             indent_level: 0,
             default_stack: vec![],
             leveled_default: vec![],
+			super_leveled_default: vec![],
         }
     }
     pub(crate) fn indent_level(&self) -> usize {
@@ -38,7 +40,7 @@ impl State {
 
     pub(crate) fn set_indent(&mut self, indent_level: usize) -> Result<(), String> {
         if self.indent_level + 2 <= indent_level {
-            Err("Indent is too deep.")?
+            Err("The indent is too deep.")?
         }
         self.indent_level = indent_level;
         self.set_stacks_indent_level(indent_level);
@@ -88,10 +90,31 @@ impl State {
         self.leveled_default[indent_level] = Some((default_type, empty_line_type))
     }
 
+	pub(crate) fn set_tripled_default_types(
+        &mut self,
+        indent_level: usize,
+        default_type: String,
+        empty_line_type: String,
+    ) -> Result<(), String>{
+        while self.super_leveled_default.len() <= indent_level {
+            self.super_leveled_default.push(None);
+        }
+
+		if self.super_leveled_default[indent_level] != None{
+			Err("Triple-default-type is overwritten")?
+		}
+
+        self.super_leveled_default[indent_level] = Some((default_type, empty_line_type));
+		Ok(())
+    }
+
     pub(crate) fn default_types(&self) -> (&str, &str) {
         if let Some(Some((def, emp))) = self.leveled_default.get(self.indent_level) {
             return (def, emp);
         }
+		if let Some(Some((def,emp))) = self.super_leveled_default.get(self.indent_level){
+			return (def,emp);
+		}
         if let Some(last) = self.default_stack.last() {
             return (&last.default_type, &last.empty_line_type);
         }
