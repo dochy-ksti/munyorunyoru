@@ -7,7 +7,7 @@ license = "MIT OR Apache-2.0"
 description = "A data language which aims to be the most efficient way to handwrite data."
 repository = "https://github.com/dochy-ksti/munyorunyoru"
 readme = "readme.md"
-keywords = ["DSL", "HTML", "async", "ML"]
+keywords = ["DSL", "HTML", "async"]
 categories = ["parser-implementations"]
 
 [dependencies]
