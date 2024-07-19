@@ -100,10 +100,18 @@ impl State {
     }
 
     pub(crate) fn default_types(&self) -> (&str, &str) {
-        if let Some(Some((def, emp))) = self.leveled_default.get(self.indent_level) {
+		fn get(leveled_default : &Vec<Option<(String,String)>>, indent_level : usize) -> Option<(&str, &str)>{
+			if let Some(Some((def, emp))) = leveled_default.get(indent_level){
+				if def.len() != 0 || emp.len() != 0{
+					return Some((def, emp));
+				}
+			}
+			None
+		}
+        if let Some((def, emp)) = get(&self.leveled_default, self.indent_level) {
             return (def, emp);
         }
-        if let Some(Some((def, emp))) = self.super_leveled_default.get(self.indent_level) {
+        if let Some((def, emp)) = get(&self.super_leveled_default, self.indent_level) {
             return (def, emp);
         }
         if let Some(last) = self.default_stack.last() {

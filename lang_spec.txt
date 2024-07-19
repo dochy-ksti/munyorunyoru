@@ -13,6 +13,9 @@ Arguments are optional.
 
 	type-name argument|   param-name argument|...
 
+type-name can't have whitespaces,tabs,'|'. You can use other characters, 
+but if you want to use it with serde, you need to follow Rust's identifier naming rules.
+
 *Line continuation
 
 	name argument\
@@ -147,6 +150,28 @@ monyo
 
 The child level is also affected, but the parent level is unaffected.
 
+When you triple the '>':
+
+	>>>default-type-name|empty-line-type-name
+
+It's applied to to all lines below it at the same indentation level.
+
+foo
+	>>>triple
+	tripled
+bar
+	still tripled
+		child isnt affected
+
+This is recognized as:
+
+foo
+	>>>triple
+	triple tripled
+bar
+	triple still tripled
+		child isnt affected
+
 When you use '>' multiple times in the current level, it's overwritten.
 
 	>munyo|manyo
@@ -213,7 +238,7 @@ penyo argument
 >>punyo
 punyo argument
 
-If '>>' is used on the other level, it's stacked:
+If '>>' is used on another level, it's stacked:
 
 >>ganbo
 argument
@@ -231,7 +256,7 @@ ganbo argument
 	punyo argument
 		punyo argument
 ganbo argument
-||'punyo' affects decendants, but the parent is still 'ganbo'
+|| ↑ 'punyo' affects decendants, but the parent is still 'ganbo'
 	ganbo argument
 	|| ↑ This line is not a descendant of 'punyo', but 'ganbo'
 
@@ -258,24 +283,41 @@ ganbo argument
 	ganbo argument
 || ↑ The parent definition is still alive.
 
-'>' definition is always prioritized over '>>' when conflicted.
+'>' definition is always prioritized over '>>' and '>>>' when conflicted.
+'>>>' definition is always prioritized over '>>' when conflicted.
 
 >tama
 >>pema
 argument
 
-It's recognized as
+>tama
+>>>pema
+argument2
+
+>>>pema
+>>puma
+argument3
+
+They are recognized as:
 
 >tama
 >>pema
 tama argument
 
+>tama
+>>>pema
+tama argument2
+
+>>>pema
+>>puma
+pema argument3
+
+
 *Special characters
 
 '\' and '|' are special characters. If you want to use them in a raw text, use '\\' and '\|'. They are considered normal characters '\' and '|'.
-'>','>>' are special characters when they are used on the start of the line. You can use '\>' and '\>>' at the start of the line.
+'>','>>','>>>' are special characters when they are used on the start of the line. You can use '\>','\>>' and '\>>>' at the start of the line.
 '\r','\n','\t' are supported. They are ASCII code 13, 10, 9 respectively.
-'>>>' and '\>>>' on the start of a line are reserved.
 The usages of '\' which aren't discribed in this specification is not valid.
 
 *Miscellaneous

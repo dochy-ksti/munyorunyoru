@@ -24,7 +24,8 @@ em
 Nono Default
 em
 sing penyopenyo|param huga
-Nonon Default
+ma Nonon Default
+mo
 hu pumapuma
 katu
 hu mumu
@@ -38,3 +39,13 @@ katu
 	reoverwrite mahomaho
 	maho
 hu tako hachiro
+	double doublekana?
+	triple trikana?
+	overwritesingle singlekana?
+	triple singlecanceled?
+	double triplecanceled?
+	retriple retriple?
+		double oku
+hu tako kurou
+	retriple triple nokoru?
+	retriple2 retriple2?
