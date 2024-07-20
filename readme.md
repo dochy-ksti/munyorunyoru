@@ -324,7 +324,7 @@ Add these to your `cargo.toml`:
 
 ```
 [dependencies]
-munyo = "0.3"
+munyo = "0.4"
 serde = { version = "1", features = ["derive"] }
 ```
 ## License

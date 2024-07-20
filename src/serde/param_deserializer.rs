@@ -309,14 +309,15 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ParamDeserializer<'a, 'de> {
         self,
         _name: &'static str,
         _variants: &'static [&'static str],
-        _visitor: V,
+        visitor: V,
     ) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(err(
-            "deserializing enum in the parameter position is not supported",
-        ))
+        visitor.visit_enum(serde::de::value::StringDeserializer::new(self.arg()?))
+        //Err(err(
+        //  "deserializing enum in the parameter position is not supported",
+        //))
     }
 
     fn deserialize_identifier<V>(self, _visitor: V) -> Result<V::Value, Self::Error>

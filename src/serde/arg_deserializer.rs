@@ -29,7 +29,7 @@ impl<'a, 'de> ArgDeserializer<'a, 'de> {
 
     fn parse<T: FromStr>(&mut self) -> Result<T, (String, T::Err)> {
         let arg = self.args.arg();
-		arg.parse().map_err(|e| (arg, e))
+        arg.parse().map_err(|e| (arg, e))
     }
 
     pub(crate) fn end(&self) -> Result<(), DeserializeError> {
@@ -232,8 +232,8 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ArgDeserializer<'a, 'de> {
             Err(err("only one children can be deserialized"))
         } else {
             let children = std::mem::take(&mut self.b.children);
-            let r = visitor.visit_seq(VecAccess::new(self.de, children));
             self.children_deserialized = true;
+            let r = visitor.visit_seq(VecAccess::new(self.de, children));
             r
         }
     }
@@ -288,14 +288,15 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ArgDeserializer<'a, 'de> {
         self,
         _name: &'static str,
         _variants: &'static [&'static str],
-        _visitor: V,
+        visitor: V,
     ) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
-        Err(err(
-            "deserializing enum is not supported in the argument position",
-        ))
+        visitor.visit_enum(serde::de::value::StringDeserializer::new(self.args.arg()))
+        //Err(err(
+        //  "deserializing enum is not supported in the argument position",
+        //))
     }
 
     fn deserialize_identifier<V>(self, _visitor: V) -> Result<V::Value, Self::Error>

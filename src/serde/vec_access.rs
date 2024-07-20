@@ -40,10 +40,10 @@ impl<'de, 'a> SeqAccess<'de> for VecAccess<'a, 'de> {
         let r = seed
             .deserialize(&mut d)
             .map(Some)
-            .map_err(|e| map_err(e, start_index));
+            .map_err(|e| map_err(e, start_index))?;
 
         d.end().map_err(|e| map_err(e, start_index))?;
-        r
+        Ok(r)
     }
 }
 
