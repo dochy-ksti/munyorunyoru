@@ -254,10 +254,12 @@ pub mod error;
 pub mod file_io;
 pub mod lang;
 mod pub_apis;
-pub mod samples;
+
 mod serde;
 #[cfg(test)]
 mod tests;
+
+pub mod samples;
 
 #[doc(inline)]
 pub use crate::builder::default_builder::MunyoItem;

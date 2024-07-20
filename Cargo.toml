@@ -21,8 +21,10 @@ num_cpus = "1"
 serde = { version = "1", features = ["derive"] }
 tempfile = "3"
 
+
 [workspace]
 members = []
 
 [dev-dependencies]
 futures = { version = "0.3", features = ["executor"] }
+strum = { version = "0.26", features = ["derive"] }
