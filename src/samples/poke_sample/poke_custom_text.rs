@@ -1,5 +1,5 @@
 #![allow(dead_code)]
-use super::custom::Custom;
+use super::poke_values::PokeValues;
 
 const POKE_CUSTOM_TEXT: &'static str = r###"
 || <- This is the syntax for comments.
@@ -29,8 +29,9 @@ const POKE_CUSTOM_TEXT: &'static str = r###"
 #[test]
 fn test() -> crate::Result<()> {
     let r: Vec<Top> = crate::from_str(POKE_CUSTOM_TEXT)?;
-
+    let r: Vec<Season> = r.into_iter().map(top_to_season).collect();
     println!("{:?}", r);
+
     Ok(())
 }
 
@@ -39,19 +40,9 @@ enum Top {
     Season(usize, usize, Vec<Second>),
 }
 
-struct Season {
-	year : usize,
-	month : usize,
-	teams : Vec<Team>
-}
-
 #[derive(Debug, serde::Deserialize)]
 enum Second {
     Team(usize, Vec<Third>),
-}
-
-struct Team{
-	pokemons : Vec<Pokemon>
 }
 
 #[derive(Debug, serde::Deserialize)]
@@ -60,7 +51,7 @@ enum Third {
         PokeName,
         PokeType,
         PokeItem,
-        Custom,
+        PokeValues,
         PokeMove,
         PokeMove,
         PokeMove,
@@ -68,16 +59,6 @@ enum Third {
         Param,
         Vec<Fourth>,
     ),
-}
-
-struct Pokemon{
-	name : PokeName,
-	poke_type : PokeType,
-	item : PokeItem,
-	custom : Custom,
-	moves : Vec<PokeMove>,
-	ability : Option<Ability>,
-	variations : Vec<Fourth>,
 }
 
 #[derive(Debug, serde::Deserialize)]
@@ -129,4 +110,74 @@ struct Param {
 #[derive(Debug, serde::Deserialize)]
 enum Ability {
     Protosynthesis,
+}
+
+#[derive(Debug)]
+struct Season {
+    year: usize,
+    month: usize,
+    teams: Vec<Team>,
+}
+#[derive(Debug)]
+struct Team {
+    rank: usize,
+    pokemons: Vec<Pokemon>,
+}
+#[derive(Debug)]
+struct Pokemon {
+    name: PokeName,
+    poke_type: PokeType,
+    item: PokeItem,
+    custom: PokeValues,
+    moves: Vec<PokeMove>,
+    ability: Option<Ability>,
+    variations: Vec<Fourth>,
+}
+
+fn convert(top: Vec<Top>) -> Vec<Season> {
+    top.into_iter().map(top_to_season).collect()
+}
+
+fn top_to_season(top: Top) -> Season {
+    match top {
+        Top::Season(year, month, vec) => Season {
+            year,
+            month,
+            teams: vec.into_iter().map(second_to_team).collect(),
+        },
+    }
+}
+
+fn second_to_team(second: Second) -> Team {
+    match second {
+        Second::Team(rank, vec) => Team {
+            rank,
+            pokemons: vec.into_iter().map(third_to_pokemon).collect(),
+        },
+    }
+}
+
+fn third_to_pokemon(third: Third) -> Pokemon {
+    match third {
+        Third::Pokemon(
+            name,
+            poke_type,
+            item,
+            custom,
+            move1,
+            move2,
+            move3,
+            move4,
+            param,
+            variations,
+        ) => Pokemon {
+            name,
+            poke_type,
+            item,
+            custom,
+            moves: vec![move1, move2, move3, move4],
+            ability: param.ability,
+            variations,
+        },
+    }
 }

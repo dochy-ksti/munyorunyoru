@@ -13,7 +13,7 @@ for item in code{
 // or
 
 for item in code{
-	// Dynamic dispatch
+	// dynamic dispatch
 	item.run(&mut context);
 }
 ```
@@ -23,7 +23,10 @@ Data refers to what is used in the form below:
 ```Rust
 function(data)
 ```
-Code is a subset of data. I think the essence of language is that data determine how processing is done.
+Code is a subset of data. 
+
+I think the essence of language is that data determine how processing is done. It basically means the language processor examines the type of items and 
+branches into different processes. But if it's implemented with "if"s, something tells me that's not a language, so it needs "match/dynamic dispatch, etc.".
 
 In Munyo language, you can write data and code naturally, but it's more specialized to write code.
 
@@ -83,9 +86,9 @@ for item in code{
 
 ## Why you need DSLs
 
-When you write data in Rust, the compilation time becomes longer and the size of the executable file becomes larger. Generally, when executing code that constructs data in a compiled language, the execution speed is often significantly slower than reading and analyzing text file to construct data.
+When you write data in Rust, the compilation time becomes longer and the size of the executable file becomes larger. When executing code that constructs data in a compiled language, the execution speed is often significantly slower than reading and analyzing text file to construct data.
 ```Rust
-// Directly writing data in compiled languages is slow
+// Directly writing data in compiled languages can be slow
 let data = Data{ a : 10, b : 20, children : vec![ Data{ a : 30, ...}, ...]}
 ```
 Since code is also data, problems can occur if it is written too long. Besides, in something like a game script, functions such as “stop execution temporarily and resume execution when the A button is pressed” and “jump globally depending on the selected option” are required, which is difficult to achieve with general-purpose programming languages.
@@ -143,4 +146,4 @@ word "in"
 a the of  in to at...
 0  0   0  1  0  0...
 ```
-A word vector is essentially an index of a word list, and AI performs completely different processing based on that index. I think this is essentially a match statement. So, in my definition, natural languages are languages, at least in the AI world.
+A word vector is essentially an index of a word list, and AI performs very different processing based on that index. I think this is essentially a match statement. So, in my definition, natural languages are languages, at least in the AI world.

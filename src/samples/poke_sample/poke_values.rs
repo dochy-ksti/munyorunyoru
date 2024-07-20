@@ -7,18 +7,17 @@ use pest_derive::Parser;
 use serde::de::Deserialize;
 
 #[derive(PartialEq, Debug, Clone)]
-pub struct Custom {
-    /// 個体値 0-15 + 努力値0-32。A0厳選とかも表す
-    pub h: u8, //hは種族値+60, ほかは種族値+5がベース値。
+pub struct PokeValues {
+    pub h: u8, 
     pub a: u8,
     pub b: u8,
     pub c: u8,
     pub d: u8,
     pub s: u8,
-    pub seikaku: Option<Nature>,
+    pub nature: Option<Nature>,
 }
 
-impl Custom {
+impl PokeValues {
     fn is_510_or_less(&self) -> bool {
         fn calc_doryokuchi(a: u8) -> u32 {
             if a <= 15 {
@@ -43,7 +42,7 @@ impl Custom {
     }
 }
 
-impl Default for Custom {
+impl Default for PokeValues {
     fn default() -> Self {
         Self {
             h: 15,
@@ -52,7 +51,7 @@ impl Default for Custom {
             c: 15,
             d: 15,
             s: 15,
-            seikaku: None,
+            nature: None,
         }
     }
 }
@@ -74,7 +73,7 @@ pub struct Nature {
     pub down: Stat,
 }
 
-impl<'de> Deserialize<'de> for Custom {
+impl<'de> Deserialize<'de> for PokeValues {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: serde::Deserializer<'de>,
@@ -121,8 +120,8 @@ poke_custom ={
 "###]
 struct PokeCustomParser;
 
-fn parse_doryokuchi(input: &str) -> Result<Custom, String> {
-    let mut r: Custom = Default::default();
+fn parse_doryokuchi(input: &str) -> Result<PokeValues, String> {
+    let mut r: PokeValues = Default::default();
     let mut up: Option<Stat> = None;
     let mut down: Option<Stat> = None;
     let mut pairs = PokeCustomParser::parse(Rule::poke_custom, input).map_err(|e| e.to_string())?;
@@ -152,12 +151,12 @@ fn parse_doryokuchi(input: &str) -> Result<Custom, String> {
         }
     }
     if up != None && down != None {
-        r.seikaku = Some(Nature {
+        r.nature = Some(Nature {
             up: up.unwrap(),
             down: down.unwrap(),
         });
     } else if up == None && down == None {
-        r.seikaku = None
+        r.nature = None
     } else {
         Err("'+' and '-' is not valid")?
     }
@@ -224,7 +223,7 @@ fn conv_doryokuchi(a: u32) -> Result<u8, String> {
 fn test_parse_doryokuchi() -> crate::Result<()> {
     #[derive(serde::Deserialize, PartialEq, Debug)]
     enum Enum {
-        E(Custom),
+        E(PokeValues),
     }
     let v: Vec<Enum> = crate::from_str(
         r###"
