@@ -1,9 +1,8 @@
 #![allow(dead_code)]
 
-use super::{
-    poke_ability_custom_syntax::{OptPokeAbility, PokeAbility},
-    poke_values::PokeValues,
-};
+use std::str::FromStr;
+use serde::Deserialize;
+use super::poke_values::PokeValues;
 
 const POKE_CUSTOM_TEXT: &'static str = r###"
 || <- This is the syntax for comments.
@@ -197,5 +196,36 @@ fn third_to_pokemon(third: Third) -> Pokemon {
                 other_terastals,
             }
         }
+    }
+}
+
+
+#[derive(PartialEq, Debug, Clone, Copy)]
+struct OptPokeAbility {
+    opt_ability: Option<PokeAbility>,
+}
+
+#[derive(PartialEq, Debug, Clone, Copy, strum::EnumString)]
+enum PokeAbility {
+    Protosynthesis,
+}
+
+impl<'de> Deserialize<'de> for OptPokeAbility {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        // To deserialize a string, use type inference for String.
+        let s: String = Deserialize::deserialize(deserializer)?;
+
+        let opt_ability = if s.is_empty() {
+            None
+        } else {
+            Some(
+                PokeAbility::from_str(&s)
+                    .map_err(|_s| serde::de::Error::custom(format!("Ability {s} is not found")))?,
+            )
+        };
+        Ok(OptPokeAbility { opt_ability })
     }
 }
