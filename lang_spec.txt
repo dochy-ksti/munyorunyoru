@@ -3,86 +3,111 @@ Munyo is a indent-based simple data language.
 type-name argument|param-name argument|param-name...
 	type-name argument|param-name argument|param-name...
 
-Child items must be indented. Indents must be tab(ASCII code 9).
-Separaters are single whitespace and '|'(ASCII code 124). Two whitespaces are recognized as the argument starts with one whitespace.
-Arguments are optional.
+↑ Child items must be indented. Indents must be tab(ASCII code 9).
 
 	type-name|param-name|param-name arg|...
 
-'param-name' can have preceding whitespaces.
+↑ Arguments are optional.
+
+In original Munyo, argument consumes every whitespace before '|' except the separater which is one whitespace after 'type-name'.
+
+	some_type  someargument   |param-name arg...
+
+↑ The argument of 'some_type' is ' someargument   '.
 
 	type-name argument|   param-name argument|...
 
-type-name can't have whitespaces,tabs,'|'. You can use other characters, 
-but if you want to use it with serde, you need to follow Rust's identifier naming syntax.
+↑ 'param-name' can have preceding whitespaces.
+
+Whitespaces can't be used for 'type-name'/'param-name' because of the limitations of the syntax.
+You can use other characters(with special syntax like '\t','\n', etc.), but if you want to use it with serde, you need to follow Rust's identifier naming syntax for 'type-name'/'param-name'.
+
+↓ When you use Munyo with serde, a type have multiple arguments.
+
+	type-name argument1 argument2...|param-name argument|...
+
+	type-name argument1 argument2 |param-name argument |...
+
+↑ One whitespace can be added after between 'argument' and '|' if it's used with serde without 'RestOf'. Two whitespaces are recognized as another argument which contains one whitespace.
+
+If you used (with 'RestOf' / without serde), the last whitespace will be consumed by the argument.
 
 *Line continuation
 
 	name argument\
 	continuation of the argument...
 
-Backslash with line-break means argument\ncontinuation. Two arguments are separated with the line-break code and tabs are ignored.
+↑ Backslash with line-break means argument\ncontinuation. Two arguments are separated with the line-break code and tabs are ignored.
 
 	name argument\
 continuation...
 
-Tabs are ignored, which means it's no problem when indents are unaligned. 
+↑ Tabs are ignored, which means it's no problem when indents are unaligned. 
 
 	name argument\
 	 continuation of the argument...
 
-If the newline starts with whitespace, the continuation starts with whitespace.
+↑ If the newline starts with whitespace, the continuation starts with whitespace.
 
 	name argument|
 	continuation
 
-'|' with line-break means argumentcontinuation. Nothing separates them. Tabs are ignored.
+↑ '|' with line-break means argumentcontinuation. Nothing separates them. Tabs are ignored.
 
 	type-name argument
 	|param-name argument
 	|param-name argument...
 
-Lines starts with '|' are continuation of the previous line. The param belongs to the last type in the prior lines. Tabs are ignored.
+↑ Lines starts with '|' are continuation of the previous line. The param belongs to the last type in the prior lines. Tabs are ignored.
 
 	name argument\
 	|param-name arg...
 
-When the previous line has a backslash with line-break, the argument ends with 'LF'.
+↑ When the previous line has a backslash with line-break, the argument ends with 'LF'.
 
 	name argument|
 	|param-name arg...
 
-This has the same meaning with
+↑↓ This has the same meaning with
 
 	name argument
 	|param-name arg...
 
 *Comment
 
-When you use '||', the text from there to the line-break is commented out.
+↓ When you use '||', the text from there to the line-break is commented out.
 
 	munyo arg|| this is comment.
 
-If you want to end with '|', and write comments after that, you can use '|||'
+↓ If you want to end with '|', and write comments after that, you can use '|||'
 
 	munyo arg||| comment
 	continuation
 
-If you want to end with '\', and write comments after that, you can use '||\'
+↓ If you want to end with '\', and write comments after that, you can use '||\'
 
 	munyo arg||\ comment
 	continuation
+
+↓ When you use serde without 'RestOf', you can add one whitespace between arg and '||'
+
+	munyo arg || comment
+
+↓ You can also add one whitespace between arg of param and '||'
+
+	munyo arg | param arg || comment
 
 *Default type and empty line type
 
 	>default-type-name
 
-Lines start with '>'(ASCII code 62) define default-types.
-When default-type is defined, typenames must be omitted.
+↑ Lines start with '>'(ASCII code 62) define default-types.
+
+↓ When default-type is defined, typenames must be omitted.
 
 	argument|param-name arg...
 
-If you want to specify the typename in this context, you need '>\'.
+↓ If you want to specify the typename in this context, you need '>\'.
 
 	>\type-name argument|param-name...
 
@@ -96,7 +121,7 @@ you can define empty-line-type.
 
 	type-name argument...
 
-That's recognized as
+↑↓ That's recognized as
 
 	type-name argument...
 	empty-line-type
@@ -106,7 +131,7 @@ You can define both with
 
 	>default-type-name|empty-line-type-name
 
-This affects only the current level.
+This affects only the current indentation level.
 
 	>munyo|manyo
 	argument
@@ -115,7 +140,7 @@ This affects only the current level.
 		menyo
 monyo
 
-This is recognized as
+↑↓ This is recognized as
 
 	>munyo|emp
 	munyo argument
@@ -124,7 +149,7 @@ This is recognized as
 		menyo
 monyo
 
-Child and parent levels aren't affected.
+↑ Child and parent levels aren't affected.
 
 When you double the '>':
 
@@ -148,7 +173,7 @@ This is recognized as:
 		emp|| Empty-line items are aligned with the last line's indent level. How many tabs the line has are not relevant.
 monyo
 
-The child level is also affected, but the parent level is unaffected.
+↑ The child level is also affected, but the parent level is unaffected.
 
 When you triple the '>':
 
@@ -163,7 +188,7 @@ bar
 	still tripled
 		child isnt affected
 
-This is recognized as:
+↑↓ This is recognized as
 
 foo
 	>>>triple
@@ -172,7 +197,7 @@ bar
 	triple still tripled
 		child isnt affected
 
-When you use '>' multiple times in the current level, it's overwritten.
+↓ When you use '>' multiple times in the current level, it's overridden.
 
 	>munyo|manyo
 	argument
@@ -180,7 +205,7 @@ When you use '>' multiple times in the current level, it's overwritten.
 	>penyo|ponyo
 	argument
 
-That's recognized as:
+↑↓ That's recognized as:
 
 	>munyo|manyo
 	munyo argument
@@ -189,7 +214,7 @@ That's recognized as:
 	penyo argument
 	ponyo
 
-You can overwrite them with empty items.
+↓ You can override them with empty items.
 
 	>munyo|manyo
 	munyo argument
@@ -210,35 +235,37 @@ You can overwrite them with empty items.
 	>
 	|| ↑ Both default and empty-line item is canceled
 
-When there's no item but comments in a line, it's not considered an empty line.
+'>>>' can be overridden in the same way as '>'.
+
+↓ When there's no item but comments in a line, it's not considered an empty line.
 
 	>|emp
 	
 	||This line has comments, so no empty-line item appeared here.
 
-This is recognized as:
+↑↓ This is recognized as:
 
 	>|emp
 	emp
 	||This line has comments, so no empty-line item appeared here.
 
-When '>>' is used multiple times, it's overwritten or stacked.
+When '>>' is used multiple times, it's overridden or stacked.
 
-If '>>' is used on the same level, it's overwritten:
+↓ If '>>' is used on the same level, it's overridden:
 
 >>penyo
 argument
 >>punyo
 argument
 
-This is recognized as:
+↑↓ This is recognized as:
 
 >>penyo
 penyo argument
 >>punyo
 punyo argument
 
-If '>>' is used on another level, it's stacked:
+↓ If '>>' is used on another level, it's stacked:
 
 >>ganbo
 argument
@@ -248,7 +275,7 @@ argument
 argument
 	argument
 
-This is recognized as:
+↑↓ This is recognized as:
 
 >>ganbo
 ganbo argument
@@ -260,7 +287,7 @@ ganbo argument
 	ganbo argument
 	|| ↑ This line is not a descendant of 'punyo', but 'ganbo'
 
-You can overwrite the definition on the same level.
+↓ You can override the definition on the same level.
 
 >>ganbo
 argument
@@ -271,7 +298,7 @@ argument
 argument
 	argument
 
-This is recognized as:
+↑↓ This is recognized as:
 
 >>ganbo
 ganbo argument
@@ -283,8 +310,8 @@ ganbo argument
 	ganbo argument
 || ↑ The parent definition is still alive.
 
-'>' definition is always prioritized over '>>' and '>>>' when conflicted.
-'>>>' definition is always prioritized over '>>' when conflicted.
+↓ '>' definition is always prioritized over '>>' and '>>>' when conflicted.
+↓ '>>>' definition is always prioritized over '>>' when conflicted.
 
 >tama
 >>pema

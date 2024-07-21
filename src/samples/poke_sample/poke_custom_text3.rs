@@ -1,5 +1,9 @@
 #![allow(dead_code)]
-use super::poke_values::PokeValues;
+
+use super::{
+    poke_ability_custom_syntax::{OptPokeAbility, PokeAbility},
+    poke_values::PokeValues,
+};
 
 const POKE_CUSTOM_TEXT: &'static str = r###"
 || <- This is the syntax for comments.
@@ -10,7 +14,7 @@ const POKE_CUSTOM_TEXT: &'static str = r###"
 	1 || The #1 ranked team
 		>>>Pokemon
 		Koraidon Fire AssaultVest H204A+196B4C-0D12S92 FlameCharge FlareBlitz DrainPunch Uturn
-		FlutterMane Fairy ChoiceSpecs H148A-(0)B100C188D4S+68 MoonBlast ShadowBall DrainingKiss PerishSong | ability Protosynthesis 
+		FlutterMane Fairy ChoiceSpecs H148A-(0)B100C188D4S+68 MoonBlast ShadowBall DrainingKiss PerishSong Protosynthesis
 			|| The following are some variations of the customization of this Pokémon(not necessary, just for illustration purposes)
 			>Item
 			BoostEnergy
@@ -57,7 +61,7 @@ enum Third {
         PokeMove,
         PokeMove,
         PokeMove,
-        Param,
+        OptPokeAbility,
         Vec<Fourth>,
     ),
 }
@@ -108,7 +112,7 @@ struct Param {
     ability: Option<Ability>,
 }
 
-#[derive(Debug, serde::Deserialize)]
+#[derive(Debug, serde::Deserialize, strum::EnumString)]
 enum Ability {
     Protosynthesis,
 }
@@ -131,7 +135,7 @@ struct Pokemon {
     item: PokeItem,
     custom: PokeValues,
     moves: Vec<PokeMove>,
-    ability: Option<Ability>,
+    ability: Option<PokeAbility>,
     other_items: Vec<PokeItem>,
     other_terastals: Vec<PokeType>,
 }
@@ -170,7 +174,7 @@ fn third_to_pokemon(third: Third) -> Pokemon {
             move2,
             move3,
             move4,
-            param,
+            opt_ability,
             variations,
         ) => {
             let mut other_items: Vec<PokeItem> = vec![];
@@ -181,13 +185,14 @@ fn third_to_pokemon(third: Third) -> Pokemon {
                     Fourth::Terastal(t) => other_terastals.push(t),
                 }
             }
+
             Pokemon {
                 name,
                 poke_type,
                 item,
                 custom,
                 moves: vec![move1, move2, move3, move4],
-                ability: param.ability,
+                ability: opt_ability.opt_ability,
                 other_items,
                 other_terastals,
             }

@@ -26,7 +26,7 @@ function(data)
 Code is a subset of data. 
 
 I think the essence of language is that data determine how processing is done. It basically means the language processor examines the type of items and 
-branches into different processes. But if it's implemented with "if"s, something tells me that's not a language, so it needs "match/dynamic dispatch, etc.".
+branches into different processes. But if it's implemented with "if"s, something tells me that's not a language, so it needs "match, dynamic dispatch, etc.".
 
 In Munyo language, you can write data and code naturally, but it's more specialized to write code.
 

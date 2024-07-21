@@ -34,7 +34,11 @@ impl<'a, 'de> ParamDeserializer<'a, 'de> {
         if let Some(field) = self.fields.get(self.field_counter) {
             self.field_counter += 1;
             if let Some(arg) = self.params.get(*field) {
-                Ok(arg.to_string())
+				if arg.ends_with(' '){
+					Ok(arg[..arg.len()-1].to_string())
+				} else{
+                	Ok(arg.to_string())
+				}
             } else {
                 Err(err(&format!("param {} is not found", *field)))
             }

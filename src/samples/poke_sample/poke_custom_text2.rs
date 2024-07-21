@@ -1,4 +1,6 @@
 #![allow(dead_code)]
+use std::str::FromStr;
+
 use super::poke_values::PokeValues;
 
 const POKE_CUSTOM_TEXT: &'static str = r###"
@@ -10,7 +12,7 @@ const POKE_CUSTOM_TEXT: &'static str = r###"
 	1 || The #1 ranked team
 		>>>Pokemon
 		Koraidon Fire AssaultVest H204A+196B4C-0D12S92 FlameCharge FlareBlitz DrainPunch Uturn
-		FlutterMane Fairy ChoiceSpecs H148A-(0)B100C188D4S+68 MoonBlast ShadowBall DrainingKiss PerishSong | ability Protosynthesis 
+		FlutterMane Fairy ChoiceSpecs H148A-(0)B100C188D4S+68 MoonBlast ShadowBall DrainingKiss PerishSong Protosynthesis 
 			|| The following are some variations of the customization of this Pokémon(not necessary, just for illustration purposes)
 			>Item
 			BoostEnergy
@@ -57,7 +59,7 @@ enum Third {
         PokeMove,
         PokeMove,
         PokeMove,
-        Param,
+        String,
         Vec<Fourth>,
     ),
 }
@@ -108,7 +110,7 @@ struct Param {
     ability: Option<Ability>,
 }
 
-#[derive(Debug, serde::Deserialize)]
+#[derive(Debug, serde::Deserialize, strum::EnumString)]
 enum Ability {
     Protosynthesis,
 }
@@ -170,7 +172,7 @@ fn third_to_pokemon(third: Third) -> Pokemon {
             move2,
             move3,
             move4,
-            param,
+            last,
             variations,
         ) => {
             let mut other_items: Vec<PokeItem> = vec![];
@@ -181,13 +183,23 @@ fn third_to_pokemon(third: Third) -> Pokemon {
                     Fourth::Terastal(t) => other_terastals.push(t),
                 }
             }
+
+			//The last Strings can be empty. It's not syntax error if there's no arguments there.
+            let ability = if last.is_empty() {
+                None
+            } else {
+                Some(
+                    Ability::from_str(&last)
+                        .unwrap_or_else(|_| panic!("Ability {last} is not found")),
+                )
+            };
             Pokemon {
                 name,
                 poke_type,
                 item,
                 custom,
                 moves: vec![move1, move2, move3, move4],
-                ability: param.ability,
+                ability,
                 other_items,
                 other_terastals,
             }
