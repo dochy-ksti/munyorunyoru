@@ -20,8 +20,8 @@ This is data of competitive Pokémon battle team composition. [Full Sample](http
 			Ground
 			Water
 		|| A team contains 6 Pokémons...
-	2
-	||...
+	2 ||...
+	|| Players ranked 200 or higher tend to publish their Pokémon compositions in their blogs voluntarily.
 2024 5
 	1
 	||...
@@ -92,7 +92,7 @@ I don't have much to say about the second indentation level.
 2024 6 
 	>>>Team
 	1 || #1 ranked team
-	|| ↑ Indentation means the line is a child of the last line which is one less indented
+	|| ↑ Indentation means the line is a child of the line which is one less indented.
 ```
 ```Rust
 #[derive(Debug, serde::Deserialize)]
@@ -220,3 +220,187 @@ When the parser implementation returns the error message, Munyo output it with l
 252 is the max number for the Pokemon parameter customization.
 
 To implement customized parser and to output useful error messages are both crucial for the most efficient data language.
+
+The goal of this language is to reduce redundancy in text data to the greatest extent possible.
+On the other hand, the backing code is not the simplest, but as you can see, it's not very complex, I think.
+
+Pokemons have abilities, but some Pokemons have only one ability. You don't need to write it for them.
+
+If you need optional parameters, you can use 'param'
+```
+typename arg1 arg2...| param_name arg
+```
+↑ This is the syntax of parameters in Munyo.
+
+The data already used it.
+```
+FlutterMane Fairy... | ability Protosynthesis 
+```
+
+```Rust
+#[derive(serde::Deserialize)]
+struct Param {
+    ability: Option<Ability>,
+}
+
+#[derive(serde::Deserialize)]
+enum Ability {
+    Protosynthesis,
+}
+
+#[derive(serde::Deserialize)]
+enum Third {
+    Pokemon(
+        PokeName,
+        PokeType,
+        PokeItem,
+        PokeValues,
+        PokeMove,
+        PokeMove,
+        PokeMove,
+        PokeMove,
+        Param,  // <- already used here
+        Vec<Fourth>,
+    ),
+}
+```
+Structs in Enum variants are recognized as parameters.
+
+The name of the struct can be anything. It doesn't affect in Munyo.
+
+It must be 'serde::Deserialize', and the field names are used in Munyo.
+```Rust
+#[derive(serde::Deserialize)]
+struct Param {
+    ability: Option<Ability>,
+}
+//FlutterMane Fairy... | ability Protosynthesis 
+//                       || ↑ the field name
+```
+It can be Option, which means ommittable.
+
+It has only one omittable parameter, which means the parameter name 'ability' is also ommittable.
+```
+FlutterMane Fairy ChoiceSpecs H148A-(0)B100C188D4S+68 MoonBlast... Protosynthesis
+|| ↑ Attach the ability name at the last if the Pokemon need it.
+```
+I created the omitted versions. [Version 1](https://github.com/dochy-ksti/munyorunyoru/blob/master/src/samples/poke_sample/poke_comp2.rs) is simple but it doesn't have line number in the error message because
+the error message is returned in the conversion process, which doesn't have the information of the line number. [Version 2](https://github.com/dochy-ksti/munyorunyoru/blob/master/src/samples/poke_sample/poke_comp3.rs) implements a simple parser to output the line number. When an error is returned in a parsing process, Munyo automatically attach the line number. Check them out if you'd like.
+
+Pokemons basically have four moves. I implemented it naïvely.
+```Rust
+enum Third {
+    Pokemon(
+        PokeName,
+        PokeType,
+        PokeItem,
+        PokeValues,
+        PokeMove, // <- four moves
+        PokeMove,
+        PokeMove,
+        PokeMove, // <-
+        Param,  
+        Vec<Fourth>,
+    ),
+}
+```
+That's more robust, but If you want to make an item have multiple subitems, 
+basically you need to employ child items(or make another parser).
+
+The fourth items are the example for it, although they are not needed for the Pokemon data.
+```
+		FlutterMane Fairy ChoiceSpecs H148A-(0)B100C188D4S+68 MoonBlast ShadowBall DrainingKiss PerishSong | ability Protosynthesis 
+			>Item
+			BoostEnergy
+			FocusSash
+			>Terastal
+			Normal
+			Ground
+			Water
+```
+While '>>>' defines the typename on the indentation level, '>' defines the typename at the current level.
+```
+Foo
+	>>>TripledType
+	A
+		>SingledType
+		B
+		>
+		Canceled
+		>SingledType2
+		C
+	StillAffected
+		HereIsNotCurrentLevel		
+	>>>Triple2
+	D
+```
+This becomes below:
+```
+Foo
+	>>>TripledType
+	TripledType A
+		>SingledType
+		SingledType B
+		> 
+		|| ↑ Single '>' with no name means canceling the definition.
+		Canceled || <- Canceled is the typename of this line
+		>SingledType2
+		SingleType2 C
+	TripledType StillAffected
+		ThisIsNotCurrentLevel
+		|| ↑ Singled definition doesn't affect on cousin levels.
+	>>>Triple2
+	|| ↑ Tripled definition also changable and cancellable
+	Triple2 D
+```
+
+```
+			>Item
+			BoostEnergy
+			FocusSash
+			>Terastal
+			Normal
+			Ground
+			Water
+```
+This means the Pokemon have 2 'Item's and 3 'Terastal's as its children.
+
+The conversion is below.
+```Rust
+fn third_to_pokemon(third: Third) -> Pokemon {
+    match third {
+        Third::Pokemon(
+            name,
+            poke_type,
+            item,
+            custom,
+            move1,
+            move2,
+            move3,
+            move4,
+            param,
+            variations,
+        ) => {
+            let mut other_items: Vec<PokeItem> = vec![];
+            let mut other_terastals: Vec<PokeType> = vec![];
+            for v in variations {
+                match v {
+                    Fourth::Item(item) => other_items.push(item),
+                    Fourth::Terastal(t) => other_terastals.push(t),
+                }
+            }
+            Pokemon {
+                name,
+                poke_type,
+                item,
+                custom,
+                moves: vec![move1, move2, move3, move4],
+                ability: param.ability,
+                other_items,
+                other_terastals,
+            }
+        }
+    }
+}
+```
+let mut vec = vec![] may not be a excellent code, but not very complex, I think.
