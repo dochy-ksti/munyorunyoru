@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 use super::poke_values::PokeValues;
 
-const POKE_CUSTOM_TEXT: &'static str = r###"
+const POKE_TEXT: &'static str = r###"
 || <- This is the syntax for comments.
 || In the competitive Pokémon world, rankings are announced once a month.
 >>>Season
@@ -29,7 +29,7 @@ const POKE_CUSTOM_TEXT: &'static str = r###"
 
 #[test]
 fn test() -> crate::Result<()> {
-    let r: Vec<Top> = crate::from_str(POKE_CUSTOM_TEXT)?;
+    let r: Vec<Top> = crate::from_str(POKE_TEXT)?;
     let r: Vec<Season> = r.into_iter().map(top_to_season).collect();
     println!("{:?}", r);
 

@@ -9,18 +9,20 @@ type-name argument|param-name argument|param-name...
 
 ↑ Arguments are optional.
 
-In original Munyo, argument consumes every whitespace before '|' except the separater which is one whitespace after 'type-name'.
+In original Munyo, arguments consume everything before ('|' / EOL) except the separater
+which is one whitespace after 'type-name'/'param-name'
 
-	some_type  someargument   |param-name arg...
+	some_type  some argument   |some_param some param arg
 
-↑ The argument of 'some_type' is ' someargument   '.
+↑ The argument of 'some_type' is ' some argument   ' and 'some_param' is 'some param arg'
 
 	type-name argument|   param-name argument|...
 
 ↑ 'param-name' can have preceding whitespaces.
 
 Whitespaces can't be used for 'type-name'/'param-name' because of the limitations of the syntax.
-You can use other characters(with special syntax like '\t','\n', etc.), but if you want to use it with serde, you need to follow Rust's identifier naming syntax for 'type-name'/'param-name'.
+You can use other characters(with special syntax like '\t','\n', etc.), but if you want to use 
+Munyo with serde, you need to follow Rust's identifier naming syntax for 'type-name'/'param-name'.
 
 ↓ When you use Munyo with serde, a type have multiple arguments.
 
@@ -28,7 +30,8 @@ You can use other characters(with special syntax like '\t','\n', etc.), but if y
 
 	type-name argument1 argument2 |param-name argument |...
 
-↑ One whitespace can be added after between 'argument' and '|' if it's used with serde without 'RestOf'. Two whitespaces are recognized as another argument which contains one whitespace.
+↑ One whitespace can be added between 'argument' and '|' if it's used with serde without 'RestOf'.
+Two whitespaces are recognized as another argument which contains one whitespace.
 
 If you used (with 'RestOf' / without serde), the last whitespace will be consumed by the argument.
 
@@ -37,7 +40,8 @@ If you used (with 'RestOf' / without serde), the last whitespace will be consume
 	name argument\
 	continuation of the argument...
 
-↑ Backslash with line-break means argument\ncontinuation. Two arguments are separated with the line-break code and tabs are ignored.
+↑ Backslash with line-break means argument\ncontinuation. 
+The argument is separated with the code LF(ASCII code 10) and tabs are ignored.
 
 	name argument\
 continuation...
@@ -58,7 +62,8 @@ continuation...
 	|param-name argument
 	|param-name argument...
 
-↑ Lines starts with '|' are continuation of the previous line. The param belongs to the last type in the prior lines. Tabs are ignored.
+↑ Lines starts with '|' are continuation of the previous line. The param belongs to
+the last type in the prior lines. Tabs are ignored.
 
 	name argument\
 	|param-name arg...
