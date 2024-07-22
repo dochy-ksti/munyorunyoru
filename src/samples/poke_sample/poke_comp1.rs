@@ -41,9 +41,41 @@ enum Top {
     Season(usize, usize, Vec<Second>),
 }
 
+#[derive(Debug)]
+struct Season {
+    year: usize,
+    month: usize,
+    teams: Vec<Team>,
+}
+
+fn top_to_season(top: Top) -> Season {
+    match top {
+        Top::Season(year, month, vec) => Season {
+            year,
+            month,
+            teams: vec.into_iter().map(second_to_team).collect(),
+        },
+    }
+}
+
 #[derive(Debug, serde::Deserialize)]
 enum Second {
     Team(usize, Vec<Third>),
+}
+
+#[derive(Debug)]
+struct Team {
+    rank: usize,
+    pokemons: Vec<Pokemon>,
+}
+
+fn second_to_team(second: Second) -> Team {
+    match second {
+        Second::Team(rank, vec) => Team {
+            rank,
+            pokemons: vec.into_iter().map(third_to_pokemon).collect(),
+        },
+    }
 }
 
 #[derive(Debug, serde::Deserialize)]
@@ -62,68 +94,6 @@ enum Third {
     ),
 }
 
-#[derive(Debug, serde::Deserialize)]
-enum Fourth {
-    Item(PokeItem),
-    Terastal(PokeType),
-}
-
-#[derive(Debug, serde::Deserialize)]
-enum PokeType {
-    Fire,
-    Fairy,
-    Normal,
-    Ground,
-    Water,
-}
-
-#[derive(Debug, serde::Deserialize)]
-enum PokeName {
-    Koraidon,
-    FlutterMane,
-}
-
-#[derive(Debug, serde::Deserialize)]
-enum PokeItem {
-    AssaultVest,
-    ChoiceSpecs,
-    BoostEnergy,
-    FocusSash,
-}
-
-#[derive(Debug, serde::Deserialize)]
-enum PokeMove {
-    FlameCharge,
-    FlareBlitz,
-    DrainPunch,
-    Uturn,
-    MoonBlast,
-    ShadowBall,
-    DrainingKiss,
-    PerishSong,
-}
-
-#[derive(Debug, serde::Deserialize)]
-struct Param {
-    ability: Option<Ability>,
-}
-
-#[derive(Debug, serde::Deserialize)]
-enum Ability {
-    Protosynthesis,
-}
-
-#[derive(Debug)]
-struct Season {
-    year: usize,
-    month: usize,
-    teams: Vec<Team>,
-}
-#[derive(Debug)]
-struct Team {
-    rank: usize,
-    pokemons: Vec<Pokemon>,
-}
 #[derive(Debug)]
 struct Pokemon {
     name: PokeName,
@@ -134,29 +104,6 @@ struct Pokemon {
     ability: Option<Ability>,
     other_items: Vec<PokeItem>,
     other_terastals: Vec<PokeType>,
-}
-
-fn convert(top: Vec<Top>) -> Vec<Season> {
-    top.into_iter().map(top_to_season).collect()
-}
-
-fn top_to_season(top: Top) -> Season {
-    match top {
-        Top::Season(year, month, vec) => Season {
-            year,
-            month,
-            teams: vec.into_iter().map(second_to_team).collect(),
-        },
-    }
-}
-
-fn second_to_team(second: Second) -> Team {
-    match second {
-        Second::Team(rank, vec) => Team {
-            rank,
-            pokemons: vec.into_iter().map(third_to_pokemon).collect(),
-        },
-    }
 }
 
 fn third_to_pokemon(third: Third) -> Pokemon {
@@ -193,4 +140,55 @@ fn third_to_pokemon(third: Third) -> Pokemon {
             }
         }
     }
+}
+
+#[derive(Debug, serde::Deserialize)]
+enum PokeName {
+    Koraidon,
+    FlutterMane,
+}
+
+#[derive(Debug, serde::Deserialize)]
+enum PokeType {
+    Fire,
+    Fairy,
+    Normal,
+    Ground,
+    Water,
+}
+
+#[derive(Debug, serde::Deserialize)]
+enum PokeItem {
+    AssaultVest,
+    ChoiceSpecs,
+    BoostEnergy,
+    FocusSash,
+}
+
+#[derive(Debug, serde::Deserialize)]
+enum PokeMove {
+    FlameCharge,
+    FlareBlitz,
+    DrainPunch,
+    Uturn,
+    MoonBlast,
+    ShadowBall,
+    DrainingKiss,
+    PerishSong,
+}
+
+#[derive(Debug, serde::Deserialize)]
+struct Param {
+    ability: Option<Ability>,
+}
+
+#[derive(Debug, serde::Deserialize)]
+enum Ability {
+    Protosynthesis,
+}
+
+#[derive(Debug, serde::Deserialize)]
+enum Fourth {
+    Item(PokeItem),
+    Terastal(PokeType),
 }
