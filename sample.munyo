@@ -49,7 +49,7 @@ penyopenyo|param huga
 >|| comment...
 Nonon Default
 
->hu|katu
+>  hu  |  katu  || whitespaces are trimmed for define_stmt
 pumapuma
 
 >>Cantoverwrite|emem

@@ -1,4 +1,5 @@
 Let's see how to write data effeciently in Munyo. 
+
 This is data of competitive Pokémon battle team composition. [Full Sample](https://github.com/dochy-ksti/munyorunyoru/blob/master/src/samples/poke_sample/poke_comp1.rs)
 ```
 || <- This is the syntax for comments.

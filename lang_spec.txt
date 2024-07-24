@@ -138,7 +138,7 @@ You can define both with
 
 This affects only the current indentation level.
 
-	>munyo|manyo
+	>munyo|emp
 	argument
 
 	argument
@@ -310,7 +310,7 @@ ganbo argument
 	>>punyo
 	punyo argument
 	>>
-	argument|| Probably syntax error
+	argument || ← Probably syntax error
 ganbo argument
 	ganbo argument
 || ↑ The parent definition is still alive.
@@ -344,6 +344,9 @@ tama argument2
 >>puma
 pema argument3
 
+In define statements, default-type-name and empty-line-type-name can have leading and trailing whitespaces.
+
+>   default-type-name  |   empty-line-type-name  || comments...
 
 *Special characters
 

@@ -75,6 +75,9 @@ fn parse_define_stmt(
         }
     }
 
+	let default_type = default_type.trim_matches(' ').to_string();
+	let empty_line_type = empty_line_type.trim_matches(' ').to_string();
+
     if is_single {
         state.set_single_default_types(indent_level, default_type, empty_line_type)
     } else if is_double {
