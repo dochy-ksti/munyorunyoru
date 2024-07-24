@@ -60,7 +60,7 @@ enum Top {
 ||  ↑typename ↑2024 ↑6     ↑ the container of the data for child lines
 ```
 ↑ The first argument(2024) is consumed to the first 'usize'. The second(6) is to the second.
-If a line have children, the last item must be Vec the enum which captures the child lines.
+If a line have children, the last item must be Vec of the enum which captures the child lines.
 
 Because the arguments don't have names, you need to convert them to be a decent data structure.
 
@@ -234,7 +234,7 @@ Pokemons have abilities, but some Pokemons have only one ability. You don't need
 
 If you need optional parameters, you can use 'param'
 ```
-typename arg1 arg2...| param_name arg
+typename arg1 arg2...| param_name arg | param_name2 arg2...
 ```
 ↑ This is the syntax of parameters in Munyo.
 
