@@ -2,9 +2,10 @@
 
 There seems to be no clear definition for the term DSL. Both Makefile and Ant are DSLs, but Makefile has its own grammar, while Ant describes build files in XML. It seems that it is not necessary to have a unique grammar or to be Turing complete and capable of complex calculations to be a DSL.
 
-First, I will explain my understanding of what language is. Language refers to what is executed in the form below:
+First, I want to explain my definition of language. Language refers to what is executed in the form below:
 ```Rust
-// It needs to be sequencial
+// Languages are basically sequencial.
+// If the language can branch/jump, it needs a more potent mechanism than 'for'.
 for item in code{
 	// Processing branches depending on the kind of the item
 	match item{ /* do something */ }
@@ -17,7 +18,7 @@ for item in code{
 	item.run(&mut context);
 }
 ```
-When the code is written in text before conversion, the format used to write the text is called a language.
+When the 'code' is written in text before conversion, the format used to write the text is called a language.
 
 Data refers to what is used in the form below:
 ```Rust
@@ -28,15 +29,15 @@ Code is a subset of data.
 I think the essence of language is that data determine how processing is done. It basically means the language processor examines the type of items and 
 branches into different processes. But if it's implemented with "if"s, something tells me that's not a language, so it needs "match, dynamic dispatch, etc.".
 
-In Munyo language, you can write data and code naturally, but it's more specialized to write code.
+A line has type in Munyo for that purpose.
 
-If a language can be used for programming, I think it should be called a programming language, and if it has a specific purpose, it should be called a domain-specific language. They shouldn't be mutually exclusive.
+If a language can be used for programming, it should be called a programming language, and if it has a specific purpose, it should be called a domain-specific language. They shouldn't be mutually exclusive.
 
-## How should logic be described in Munyo language?
+## How should logic be described in Munyo?
 
-I would like to suggest how to write logic in the Munyo language here.
+I would like to suggest how to write logic in Munyo.
 
-In the Munyo language, you can write something like this:
+In Munyo, you can write something like this:
 ```Rust
 set x 10
 set y 20
@@ -48,6 +49,8 @@ However, I think this approach is too dificult.
 
 It is also possible to embed languages such as Lua in the Munyo language. However, in the Munyo language, '\\' and ‘|’ are special characters, so you will need to swap them with other characters(before parsing Munyo and before executing Lua script).
 ```
+|| Set the default type of every line 'Lua'.
+|| To capture every text in a line, You can use RestOf(See HTML sample3)
 >>Lua
 io.write("Please enter the value in meters: \n")
 meter = io.read()
@@ -57,6 +60,8 @@ print( meter .. " meters is " .. answer .. " feet.")
 || '\' and '|' are swapped to '@' and '`'
 >@MunyoValue`name value`name2 value2
 ```
+[HTML sample3](https://github.com/dochy-ksti/munyorunyoru/tree/master/src/samples/html_samples/sample3)
+
 I think basically you don't need to embed scripting languages.
 
 You can use Rust functions through the match statement, so you can use Rust for logic.
@@ -146,4 +151,4 @@ word "in"
 a the of  in to at...
 0  0   0  1  0  0...
 ```
-A word vector is essentially an index of a word list, and AI performs very different processing based on that index. I think this is essentially a match statement. So, in my definition, natural languages are languages, at least in the AI world.
+A word vector is essentially an index of a word list, and AI performs very different processing based on that index. I think this is essentially a match statement, so in my definition, natural languages are languages, at least in the AI world.

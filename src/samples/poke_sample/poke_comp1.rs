@@ -118,11 +118,11 @@ fn third_to_pokemon(third: Third) -> Pokemon {
             move3,
             move4,
             param,
-            variations,
+            children,
         ) => {
             let mut other_items: Vec<PokeItem> = vec![];
             let mut other_terastals: Vec<PokeType> = vec![];
-            for v in variations {
+            for v in children {
                 match v {
                     Fourth::Item(item) => other_items.push(item),
                     Fourth::Terastal(t) => other_terastals.push(t),

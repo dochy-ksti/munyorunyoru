@@ -4,6 +4,81 @@ use std::str::FromStr;
 use serde::Deserialize;
 use super::poke_values::PokeValues;
 
+#[derive(PartialEq, Debug, Clone, Copy, strum::EnumString)]
+enum PokeAbility {
+    Protosynthesis,
+}
+
+#[derive(PartialEq, Debug, Clone, Copy)]
+struct OptPokeAbility {
+    opt_ability: Option<PokeAbility>,
+}
+
+impl<'de> Deserialize<'de> for OptPokeAbility {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        // To deserialize a string, use type inference for String.
+        let s: String = Deserialize::deserialize(deserializer)?;
+
+		// Munyo captures an empty string when there's no arguments there.
+        let opt_ability = if s.is_empty() {
+            None
+        } else {
+            Some(
+				// Munyo outputs the message with the line number and the line text when it's passed through Error::custom.
+                PokeAbility::from_str(&s)
+                    .map_err(|_s| serde::de::Error::custom(format!("Ability {s} is not found")))?,
+            )
+        };
+        Ok(OptPokeAbility { opt_ability })
+    }
+}
+
+
+fn third_to_pokemon(third: Third) -> Pokemon {
+    match third {
+        Third::Pokemon(
+            name,
+            poke_type,
+            item,
+            custom,
+            move1,
+            move2,
+            move3,
+            move4,
+            opt_ability, // The customized Item
+            children,
+        ) => {
+            let mut other_items: Vec<PokeItem> = vec![];
+            let mut other_terastals: Vec<PokeType> = vec![];
+            for v in children {
+                match v {
+                    Fourth::Item(item) => other_items.push(item),
+                    Fourth::Terastal(t) => other_terastals.push(t),
+                }
+            }
+
+            Pokemon {
+                name,
+                poke_type,
+                item,
+                custom,
+                moves: vec![move1, move2, move3, move4],
+                ability: opt_ability.opt_ability,
+                other_items,
+                other_terastals,
+            }
+        }
+    }
+}
+
+
+
+
+
+
 const POKE_TEXT: &'static str = r###"
 || <- This is the syntax for comments.
 || In the competitive Pokémon world, rankings are announced once a month.
@@ -159,73 +234,5 @@ fn second_to_team(second: Second) -> Team {
             rank,
             pokemons: vec.into_iter().map(third_to_pokemon).collect(),
         },
-    }
-}
-
-fn third_to_pokemon(third: Third) -> Pokemon {
-    match third {
-        Third::Pokemon(
-            name,
-            poke_type,
-            item,
-            custom,
-            move1,
-            move2,
-            move3,
-            move4,
-            opt_ability,
-            variations,
-        ) => {
-            let mut other_items: Vec<PokeItem> = vec![];
-            let mut other_terastals: Vec<PokeType> = vec![];
-            for v in variations {
-                match v {
-                    Fourth::Item(item) => other_items.push(item),
-                    Fourth::Terastal(t) => other_terastals.push(t),
-                }
-            }
-
-            Pokemon {
-                name,
-                poke_type,
-                item,
-                custom,
-                moves: vec![move1, move2, move3, move4],
-                ability: opt_ability.opt_ability,
-                other_items,
-                other_terastals,
-            }
-        }
-    }
-}
-
-
-#[derive(PartialEq, Debug, Clone, Copy)]
-struct OptPokeAbility {
-    opt_ability: Option<PokeAbility>,
-}
-
-#[derive(PartialEq, Debug, Clone, Copy, strum::EnumString)]
-enum PokeAbility {
-    Protosynthesis,
-}
-
-impl<'de> Deserialize<'de> for OptPokeAbility {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        // To deserialize a string, use type inference for String.
-        let s: String = Deserialize::deserialize(deserializer)?;
-
-        let opt_ability = if s.is_empty() {
-            None
-        } else {
-            Some(
-                PokeAbility::from_str(&s)
-                    .map_err(|_s| serde::de::Error::custom(format!("Ability {s} is not found")))?,
-            )
-        };
-        Ok(OptPokeAbility { opt_ability })
     }
 }

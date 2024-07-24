@@ -348,7 +348,7 @@ Foo
 		SingleType2 C
 	TripledType StillAffected
 		ThisIsNotCurrentLevel
-		|| ↑ Singled definition doesn't affect on cousin levels.
+		|| ↑ Singled definitions don't affect on cousin levels.
 	>>>Triple2
 	|| ↑ Tripled definition also changable and cancellable
 	Triple2 D
@@ -363,9 +363,9 @@ Foo
 			Ground
 			Water
 ```
-This means the Pokemon have 2 'Item's and 3 'Terastal's as its children.
+This means the Pokemon has 2 'Item's and 3 'Terastal's as its children.
 
-The conversion is below.
+The conversion is below:
 ```Rust
 fn third_to_pokemon(third: Third) -> Pokemon {
     match third {
@@ -379,11 +379,11 @@ fn third_to_pokemon(third: Third) -> Pokemon {
             move3,
             move4,
             param,
-            variations,
+            children,
         ) => {
             let mut other_items: Vec<PokeItem> = vec![];
             let mut other_terastals: Vec<PokeType> = vec![];
-            for v in variations {
+            for v in children {
                 match v {
                     Fourth::Item(item) => other_items.push(item),
                     Fourth::Terastal(t) => other_terastals.push(t),
@@ -403,4 +403,4 @@ fn third_to_pokemon(third: Third) -> Pokemon {
     }
 }
 ```
-let mut vec = vec![] may not be a excellent code, but not very complex, I think.
+`let mut vec = vec![]` is not ellegant, but powerful.

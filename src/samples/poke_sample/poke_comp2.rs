@@ -3,6 +3,74 @@ use std::str::FromStr;
 
 use super::poke_values::PokeValues;
 
+#[derive(Debug, serde::Deserialize, strum::EnumString)]
+enum Ability {
+    Protosynthesis,
+}
+
+#[derive(Debug, serde::Deserialize)]
+enum Third {
+    Pokemon(
+        PokeName,
+        PokeType,
+        PokeItem,
+        PokeValues,
+        PokeMove,
+        PokeMove,
+        PokeMove,
+        PokeMove,
+        String, // The last string captures Ability
+        Vec<Fourth>,
+    ),
+}
+
+fn third_to_pokemon(third: Third) -> Pokemon {
+    match third {
+        Third::Pokemon(
+            name,
+            poke_type,
+            item,
+            custom,
+            move1,
+            move2,
+            move3,
+            move4,
+            last,
+            children,
+        ) => {
+            let mut other_items: Vec<PokeItem> = vec![];
+            let mut other_terastals: Vec<PokeType> = vec![];
+            for v in children {
+                match v {
+                    Fourth::Item(item) => other_items.push(item),
+                    Fourth::Terastal(t) => other_terastals.push(t),
+                }
+            }
+
+            //The last String can be empty. Munyo captures empty string if there's no arguments there.
+            let ability = if last.is_empty() {
+                None
+            } else {
+                Some(
+                    // You can return Error if you don't like panics.
+                    Ability::from_str(&last)
+                        .unwrap_or_else(|_| panic!("Ability {last} is not found")),
+                )
+            };
+            Pokemon {
+                name,
+                poke_type,
+                item,
+                custom,
+                moves: vec![move1, move2, move3, move4],
+                ability,
+                other_items,
+                other_terastals,
+            }
+        }
+    }
+}
+
 const POKE_TEXT: &'static str = r###"
 || <- This is the syntax for comments.
 || In the competitive Pokémon world, rankings are announced once a month.
@@ -12,7 +80,7 @@ const POKE_TEXT: &'static str = r###"
 	1 || The #1 ranked team
 		>>>Pokemon
 		Koraidon Fire AssaultVest H204A+196B4C-0D12S92 FlameCharge FlareBlitz DrainPunch Uturn
-		FlutterMane Fairy ChoiceSpecs H148A-(0)B100C188D4S+68 MoonBlast ShadowBall DrainingKiss PerishSong Protosynthesis 
+		FlutterMane Fairy ChoiceSpecs H148A-(0)B100C188D4S+68 MoonBlast ShadowBall DrainingKiss PerishSong Protosynthesis
 			|| The following are some variations of the customization of this Pokémon(not necessary, just for illustration purposes)
 			>Item
 			BoostEnergy
@@ -46,22 +114,6 @@ enum Top {
 #[derive(Debug, serde::Deserialize)]
 enum Second {
     Team(usize, Vec<Third>),
-}
-
-#[derive(Debug, serde::Deserialize)]
-enum Third {
-    Pokemon(
-        PokeName,
-        PokeType,
-        PokeItem,
-        PokeValues,
-        PokeMove,
-        PokeMove,
-        PokeMove,
-        PokeMove,
-        String,
-        Vec<Fourth>,
-    ),
 }
 
 #[derive(Debug, serde::Deserialize)]
@@ -110,11 +162,6 @@ struct Param {
     ability: Option<Ability>,
 }
 
-#[derive(Debug, serde::Deserialize, strum::EnumString)]
-enum Ability {
-    Protosynthesis,
-}
-
 #[derive(Debug)]
 struct Season {
     year: usize,
@@ -158,51 +205,5 @@ fn second_to_team(second: Second) -> Team {
             rank,
             pokemons: vec.into_iter().map(third_to_pokemon).collect(),
         },
-    }
-}
-
-fn third_to_pokemon(third: Third) -> Pokemon {
-    match third {
-        Third::Pokemon(
-            name,
-            poke_type,
-            item,
-            custom,
-            move1,
-            move2,
-            move3,
-            move4,
-            last,
-            variations,
-        ) => {
-            let mut other_items: Vec<PokeItem> = vec![];
-            let mut other_terastals: Vec<PokeType> = vec![];
-            for v in variations {
-                match v {
-                    Fourth::Item(item) => other_items.push(item),
-                    Fourth::Terastal(t) => other_terastals.push(t),
-                }
-            }
-
-			//The last Strings can be empty. It's not syntax error if there's no arguments there.
-            let ability = if last.is_empty() {
-                None
-            } else {
-                Some(
-                    Ability::from_str(&last)
-                        .unwrap_or_else(|_| panic!("Ability {last} is not found")),
-                )
-            };
-            Pokemon {
-                name,
-                poke_type,
-                item,
-                custom,
-                moves: vec![move1, move2, move3, move4],
-                ability,
-                other_items,
-                other_terastals,
-            }
-        }
     }
 }
