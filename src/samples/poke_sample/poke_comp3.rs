@@ -4,7 +4,7 @@ use std::str::FromStr;
 use serde::Deserialize;
 use super::poke_values::PokeValues;
 
-#[derive(PartialEq, Debug, Clone, Copy, strum::EnumString)]
+#[derive(PartialEq, Debug, Clone, Copy, strum::EnumString, /* serde::Deserialize */)]
 enum PokeAbility {
     Protosynthesis,
 }
@@ -26,11 +26,13 @@ impl<'de> Deserialize<'de> for OptPokeAbility {
         let opt_ability = if s.is_empty() {
             None
         } else {
-            Some(
+			Some(
 				// Munyo outputs the message with the line number and the line text when it's passed through Error::custom.
-                PokeAbility::from_str(&s)
-                    .map_err(|_s| serde::de::Error::custom(format!("Ability {s} is not found")))?,
+                 PokeAbility::from_str(&s)
+                     .map_err(|_s| serde::de::Error::custom(format!("Ability {s} is not found")))?,
             )
+			// you can use serde::Deserialize too
+			//Some(Deserialize::deserialize(serde::de::value::StringDeserializer::new(s))?)
         };
         Ok(OptPokeAbility { opt_ability })
     }
