@@ -25,12 +25,19 @@ impl Arguments {
     /// May be empty.
     ///
     /// All remained arguments including whitespaces are returned.
-    pub(crate) fn rest(&mut self) -> String {
+    pub(crate) fn rest_mut(&mut self) -> String {
         self.s.reverse();
         let r = std::mem::take(&mut self.s);
 
         unchecked(r)
     }
+
+    pub(crate) fn copy_rest(&self) -> String{
+		let mut s = self.s.clone();
+		s.reverse();
+
+		unchecked(s)
+	}
 
     pub(crate) fn is_empty(&self) -> bool {
         self.s.is_empty()
@@ -62,7 +69,7 @@ fn discard_space(s: &mut Vec<u8>) {
     let c = s.last().unwrap();
     if c == &b' ' {
         s.pop();
-    } 
+    }
 }
 
 fn get_nonspace(s: &mut Vec<u8>) -> String {

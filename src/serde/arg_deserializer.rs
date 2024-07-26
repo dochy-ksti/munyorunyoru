@@ -32,10 +32,22 @@ impl<'a, 'de> ArgDeserializer<'a, 'de> {
         arg.parse().map_err(|e| (arg, e))
     }
 
+    fn check_if_all_args_are_used(&self) -> Result<(), DeserializeError> {
+        if self.args.is_empty() == false {
+            let rest = self.args.copy_rest();
+            return Err(err(&format!(
+                "All args must be used. remaining args \"{}\"",
+                rest
+            )));
+        }
+        Ok(())
+    }
+
     pub(crate) fn end(&self) -> Result<(), DeserializeError> {
         if self.children_deserialized == false && self.b.children.is_empty() == false {
             return Err(err("All children must be deserialized"));
         }
+        self.check_if_all_args_are_used()?;
         Ok(())
     }
 }
@@ -273,13 +285,7 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ArgDeserializer<'a, 'de> {
     where
         V: serde::de::Visitor<'de>,
     {
-        if self.args.is_empty() == false {
-            let rest = self.args.rest();
-            return Err(err(&format!(
-                "All args must be used. remaining args \"{}\"",
-                rest
-            )));
-        }
+        self.check_if_all_args_are_used()?;
         let mut p = ParamDeserializer::new(self.de, &self.b.item.params, fields);
         visitor.visit_seq(&mut p)
     }
@@ -294,9 +300,7 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ArgDeserializer<'a, 'de> {
         V: serde::de::Visitor<'de>,
     {
         visitor.visit_enum(serde::de::value::StringDeserializer::new(self.args.arg()))
-        //Err(err(
-        //  "deserializing enum is not supported in the argument position",
-        //))
+
     }
 
     fn deserialize_identifier<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
@@ -313,6 +317,6 @@ impl<'a, 'b, 'de> Deserializer<'de> for &'b mut ArgDeserializer<'a, 'de> {
         V: serde::de::Visitor<'de>,
     {
         // hidden function.
-        visitor.visit_string(self.args.rest())
+        visitor.visit_string(self.args.rest_mut())
     }
 }
