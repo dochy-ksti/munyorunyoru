@@ -205,7 +205,7 @@ number = {
 }
 
 bracketed_number ={
-	"(" ~ number+ ~ ")"
+	"(" ~ number ~ ")"
 }
 
 chunk = {

@@ -8,7 +8,7 @@ use serde::de::Deserialize;
 
 #[derive(PartialEq, Debug, Clone)]
 pub struct PokeValues {
-    pub h: u8, 
+    pub h: u8,
     pub a: u8,
     pub b: u8,
     pub c: u8,
@@ -106,7 +106,7 @@ number = {
 }
 
 bracketed_number ={
-	"(" ~ number+ ~ ")"
+	"(" ~ number ~ ")"
 }
 
 chunk = {
