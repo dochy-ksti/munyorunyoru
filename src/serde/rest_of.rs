@@ -9,9 +9,11 @@ pub struct RestOf {
     pub arg: String,
 }
 
-impl RestOf{
+impl RestOf {
     /// Creates RestOf
-	pub fn new(arg : String) -> Self{ Self{ arg } }
+    pub fn new(arg: String) -> Self {
+        Self { arg }
+    }
 }
 
 impl serde::ser::Serialize for RestOf {
@@ -23,7 +25,20 @@ impl serde::ser::Serialize for RestOf {
     }
 }
 
-struct IgnoredAnyVisitor;
+/// When you create a custom parser, if you need to get the rest of the line like RestOf, You can do that with this Visitor.
+/// ```
+/// impl<'de> serde::Deserialize<'de> for CustomData {
+/// 	fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+/// 	where D: serde::Deserializer<'de>,
+/// 	{
+/// 		// Get the rest of the line
+/// 		let s: String = deserializer.deserialize_ignored_any(munyo::IgnoredAnyVisitor)?;
+/// # 		Ok(CustomData{ s })
+/// # 	}
+/// # }
+/// # struct CustomData{ s : String }
+/// ```
+pub struct IgnoredAnyVisitor;
 
 impl<'de> Visitor<'de> for IgnoredAnyVisitor {
     type Value = String;

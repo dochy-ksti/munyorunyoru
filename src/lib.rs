@@ -4,11 +4,11 @@
 #![warn(unused_crate_dependencies)]
 #![warn(missing_docs)]
 
-//! Munyo is a language. 
+//! Munyo is a language.
 //! Since the API documentation isn't enough to use it, I wrote various materials.
-//! 
-//! See [readme](https://github.com/dochy-ksti/munyorunyoru/blob/master/readme.md) 
-//! [samples](https://github.com/dochy-ksti/munyorunyoru/tree/master/src/samples) 
+//!
+//! See [readme](https://github.com/dochy-ksti/munyorunyoru/blob/master/readme.md)
+//! [samples](https://github.com/dochy-ksti/munyorunyoru/tree/master/src/samples)
 //! [lang_spec](https://github.com/dochy-ksti/munyorunyoru/blob/master/lang_spec.txt)
 //! [What's DSL?](https://github.com/dochy-ksti/munyorunyoru/blob/master/whats_dsl.md)
 
@@ -30,7 +30,7 @@ pub use crate::file_io::concurrent::Concurrent;
 pub use crate::lang::from_str_with_metabuilder::from_str_with_metabuilder;
 pub use crate::pub_apis::{from_file, from_str, from_str_with_path, to_string};
 pub use crate::serde::deserializer::MunyoDeserializer;
-pub use crate::serde::rest_of::RestOf;
+pub use crate::serde::rest_of::{IgnoredAnyVisitor, RestOf};
 pub use crate::serde::serializer::MunyoSerializer;
 
 pub use crate::error::munyo_error::Error;
