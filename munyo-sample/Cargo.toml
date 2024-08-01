@@ -11,3 +11,5 @@ pest = "2"
 pest_derive = "2"
 munyo = "*"
 strum = { version = "0.26", features = ["derive"] }
+bitflags = "2"
+anyhow = { version = "1", features = ["backtrace"] }

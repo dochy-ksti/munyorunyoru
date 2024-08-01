@@ -338,6 +338,8 @@ dependencies = [
 name = "munyo-sample"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
+ "bitflags",
  "munyo 0.6.1",
  "pest",
  "pest_derive",

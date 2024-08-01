@@ -184,7 +184,7 @@ Pokemon customization traditionally has the specific representation:
 ```
 H204A+196B4C-0D12S92
 ```
-To parse this, you need to implement the parser. Munyo can't do this for you. [My implementation of the parser](https://github.com/dochy-ksti/munyorunyoru/blob/master/src/samples/poke_sample/poke_values.rs)
+To parse this, you need to implement the parser. Munyo can't do this for you. [My implementation of the parser](https://github.com/dochy-ksti/munyorunyoru/blob/master/munyo-sample/src/samples/poke_sample/poke_values.rs)
 ```Rust
 #[derive(Parser)]
 #[grammar_inline = r###"
@@ -288,8 +288,8 @@ It has only one omittable parameter, which means the parameter name 'ability' ca
 FlutterMane Fairy ChoiceSpecs H148A-(0)B100C188D4S+68 MoonBlast... Protosynthesis
 || ↑ Attach only the ability name at the last if the Pokemon need it.
 ```
-I created the omitted versions. [Version 1](https://github.com/dochy-ksti/munyorunyoru/blob/master/src/samples/poke_sample/poke_comp2.rs) is simple but it doesn't have line number in the error message because
-the error message is returned in the conversion process, which doesn't have the information of the line number. [Version 2](https://github.com/dochy-ksti/munyorunyoru/blob/master/src/samples/poke_sample/poke_comp3.rs) implements a simple custom data structure to output the line number. When an error is returned in a parsing process, Munyo automatically attach the line number. Check them out if you'd like.
+I created the omitted versions. [Version 1](https://github.com/dochy-ksti/munyorunyoru/blob/master/munyo-sample/src/samples/poke_sample/poke_comp2.rs) is simple but it doesn't have line number in the error message because
+the error message is returned in the conversion process, which doesn't have the information of the line number. [Version 2](https://github.com/dochy-ksti/munyorunyoru/blob/master/munyo-sample/src/samples/poke_sample/poke_comp3.rs) implements a simple custom data structure to output the line number. When an error is returned in a parsing process, Munyo automatically attach the line number. Check them out if you'd like.
 
 Pokemons basically have four moves. I implemented it naïvely.
 ```Rust
