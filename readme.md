@@ -420,7 +420,7 @@ The motivation is explained [here](https://github.com/dochy-ksti/munyorunyoru/bl
 
 Since Munyo is a language, the API document isn't enough to use it. Various materials are available.
 
-[Samples](https://github.com/dochy-ksti/munyorunyoru/tree/master/src/samples) 
+[Samples](https://github.com/dochy-ksti/munyorunyoru/tree/master/munyo-sample/src/samples) 
 
 [Language Specifications](https://github.com/dochy-ksti/munyorunyoru/blob/master/lang_spec.txt)
 

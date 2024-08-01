@@ -60,7 +60,7 @@ print( meter .. " meters is " .. answer .. " feet.")
 || '\' and '|' are swapped to '@' and '`'
 >@MunyoValue`name value`name2 value2
 ```
-[HTML sample3](https://github.com/dochy-ksti/munyorunyoru/tree/master/src/samples/html_samples/sample3)
+[HTML sample3](https://github.com/dochy-ksti/munyorunyoru/tree/master/munyo-sample/src/samples/html_samples/sample3)
 
 I think basically you don't need to embed scripting languages.
 
