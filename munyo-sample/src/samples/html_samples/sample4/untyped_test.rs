@@ -2,7 +2,7 @@
 fn test() -> crate::Result<()> {
     use super::super::html_builder::HtmlBuilder;
     use crate::samples::html_samples::sample4::untyped::to_html_items;
-    use crate::MunyoItem;
+    use munyo::MunyoItem;
 
     let path = "src/samples/html_samples/sample4/untyped.munyo";
     // deserialize Munyo file as MunyoItems.

@@ -1,8 +1,7 @@
-use crate::{
-    samples::html_samples::html_builder::{HtmlItem, Param, Tag},
-    RestOf,
-};
+use crate::samples::html_samples::html_builder::{HtmlItem, Param, Tag};
+use munyo::RestOf;
 use serde::{Deserialize, Serialize};
+
 
 #[derive(Serialize, Deserialize)]
 pub enum Tags {

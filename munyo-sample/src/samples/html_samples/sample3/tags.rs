@@ -1,7 +1,5 @@
-use crate::{
-    samples::html_samples::html_builder::{HtmlItem, Param, Tag},
-    RestOf,
-};
+use crate::samples::html_samples::html_builder::{HtmlItem, Param, Tag};
+use munyo::RestOf;
 use serde::{Deserialize, Serialize};
 
 // This enum defines the syntax.

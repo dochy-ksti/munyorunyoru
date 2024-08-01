@@ -1,7 +1,7 @@
 #[test]
 fn test() -> crate::Result<()> {
     use super::super::html_builder::HtmlBuilder;
-    use crate::from_file;
+    use munyo::from_file;
     use crate::samples::html_samples::sample3::tags::{to_html_items, Item};
 
     let path = "src/samples/html_samples/sample3/sample3.munyo";

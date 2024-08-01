@@ -225,7 +225,7 @@ fn test_parse_doryokuchi() -> crate::Result<()> {
     enum Enum {
         E(PokeValues),
     }
-    let v: Vec<Enum> = crate::from_str(
+    let v: Vec<Enum> = munyo::from_str(
         r###"
 E H4A-(0)B4C252D4S+244"###,
     )?;

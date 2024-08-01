@@ -1,6 +1,6 @@
 [package]
 name = "munyo"
-version = "0.6.1"
+version = "0.7.0"
 edition = "2021"
 authors = ["juzy <dochy.ksti@gmail.com>"]
 license = "MIT OR Apache-2.0"
@@ -23,8 +23,7 @@ tempfile = "3"
 
 
 [workspace]
-members = []
+members = ["munyo-sample"]
 
 [dev-dependencies]
 futures = { version = "0.3", features = ["executor"] }
-strum = { version = "0.26", features = ["derive"] }

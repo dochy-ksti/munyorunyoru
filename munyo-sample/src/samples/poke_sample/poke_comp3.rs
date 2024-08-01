@@ -1,28 +1,43 @@
 #![allow(dead_code)]
-use std::str::FromStr;
 
+use std::str::FromStr;
+use serde::Deserialize;
 use super::poke_values::PokeValues;
 
-#[derive(Debug, serde::Deserialize, strum::EnumString)]
-enum Ability {
+#[derive(PartialEq, Debug, Clone, Copy, strum::EnumString, /* serde::Deserialize */)]
+enum PokeAbility {
     Protosynthesis,
 }
 
-#[derive(Debug, serde::Deserialize)]
-enum Third {
-    Pokemon(
-        PokeName,
-        PokeType,
-        PokeItem,
-        PokeValues,
-        PokeMove,
-        PokeMove,
-        PokeMove,
-        PokeMove,
-        String, // The last string captures Ability
-        Vec<Fourth>,
-    ),
+#[derive(PartialEq, Debug, Clone, Copy)]
+struct OptPokeAbility {
+    opt_ability: Option<PokeAbility>,
 }
+
+impl<'de> Deserialize<'de> for OptPokeAbility {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        // To deserialize a string, use type inference for String.
+        let s: String = Deserialize::deserialize(deserializer)?;
+
+		// Munyo captures an empty string when there's no arguments there.
+        let opt_ability = if s.is_empty() {
+            None
+        } else {
+			Some(
+				// Munyo outputs the message with the line number and the line text when it's passed through Error::custom.
+                 PokeAbility::from_str(&s)
+                     .map_err(|_s| serde::de::Error::custom(format!("Ability {s} is not found")))?,
+            )
+			// you can use serde::Deserialize too
+			//Some(Deserialize::deserialize(serde::de::value::StringDeserializer::new(s))?)
+        };
+        Ok(OptPokeAbility { opt_ability })
+    }
+}
+
 
 fn third_to_pokemon(third: Third) -> Pokemon {
     match third {
@@ -35,7 +50,7 @@ fn third_to_pokemon(third: Third) -> Pokemon {
             move2,
             move3,
             move4,
-            last,
+            opt_ability, // The customized Item
             children,
         ) => {
             let mut other_items: Vec<PokeItem> = vec![];
@@ -47,29 +62,24 @@ fn third_to_pokemon(third: Third) -> Pokemon {
                 }
             }
 
-            //The last String can be empty. Munyo captures empty string if there's no arguments there.
-            let ability = if last.is_empty() {
-                None
-            } else {
-                Some(
-                    // You can return Error if you don't like panics.
-                    Ability::from_str(&last)
-                        .unwrap_or_else(|_| panic!("Ability {last} is not found")),
-                )
-            };
             Pokemon {
                 name,
                 poke_type,
                 item,
                 custom,
                 moves: vec![move1, move2, move3, move4],
-                ability,
+                ability: opt_ability.opt_ability,
                 other_items,
                 other_terastals,
             }
         }
     }
 }
+
+
+
+
+
 
 const POKE_TEXT: &'static str = r###"
 || <- This is the syntax for comments.
@@ -99,7 +109,7 @@ const POKE_TEXT: &'static str = r###"
 
 #[test]
 fn test() -> crate::Result<()> {
-    let r: Vec<Top> = crate::from_str(POKE_TEXT)?;
+    let r: Vec<Top> = munyo::from_str(POKE_TEXT)?;
     let r: Vec<Season> = r.into_iter().map(top_to_season).collect();
     println!("{:?}", r);
 
@@ -114,6 +124,22 @@ enum Top {
 #[derive(Debug, serde::Deserialize)]
 enum Second {
     Team(usize, Vec<Third>),
+}
+
+#[derive(Debug, serde::Deserialize)]
+enum Third {
+    Pokemon(
+        PokeName,
+        PokeType,
+        PokeItem,
+        PokeValues,
+        PokeMove,
+        PokeMove,
+        PokeMove,
+        PokeMove,
+        OptPokeAbility,
+        Vec<Fourth>,
+    ),
 }
 
 #[derive(Debug, serde::Deserialize)]
@@ -162,6 +188,11 @@ struct Param {
     ability: Option<Ability>,
 }
 
+#[derive(Debug, serde::Deserialize, strum::EnumString)]
+enum Ability {
+    Protosynthesis,
+}
+
 #[derive(Debug)]
 struct Season {
     year: usize,
@@ -180,7 +211,7 @@ struct Pokemon {
     item: PokeItem,
     custom: PokeValues,
     moves: Vec<PokeMove>,
-    ability: Option<Ability>,
+    ability: Option<PokeAbility>,
     other_items: Vec<PokeItem>,
     other_terastals: Vec<PokeType>,
 }

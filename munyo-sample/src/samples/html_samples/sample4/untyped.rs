@@ -1,7 +1,6 @@
-use crate::{
-    samples::html_samples::html_builder::{HtmlItem, Param, Tag},
-    MunyoItem,
-};
+use munyo::MunyoItem;
+
+use crate::samples::html_samples::html_builder::{HtmlItem, Param, Tag};
 use std::collections::BTreeMap;
 
 pub fn to_html_items(items: &[MunyoItem]) -> crate::Result<Vec<HtmlItem>> {
@@ -58,7 +57,7 @@ fn tag(
     argument: &str,
     params: &BTreeMap<String, String>,
     children: &[MunyoItem],
-) -> crate::Result<HtmlItem> {
+) -> munyo::Result<HtmlItem> {
     let mut children = to_html_items(children)?;
     if !argument.is_empty() {
         // The argument will be the first child which is text.

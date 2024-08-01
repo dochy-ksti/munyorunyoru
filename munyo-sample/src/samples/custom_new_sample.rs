@@ -126,9 +126,9 @@ fn test() -> crate::Result<()> {
         ParamStruct::new("name".to_string(), Color::new(5, 5, 5)),
     );
     let vec = vec![Enum::CustomStruct(s)];
-    let s = crate::to_string(&vec)?;
+    let s = munyo::to_string(&vec)?;
     println!("{}", &s);
-    let r: Vec<Enum> = crate::from_str(&s)?;
+    let r: Vec<Enum> = munyo::from_str(&s)?;
     assert_eq!(vec, r);
     Ok(())
 }

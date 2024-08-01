@@ -29,7 +29,7 @@ const POKE_TEXT: &'static str = r###"
 
 #[test]
 fn test() -> crate::Result<()> {
-    let r: Vec<Top> = crate::from_str(POKE_TEXT)?;
+    let r: Vec<Top> = munyo::from_str(POKE_TEXT)?;
     let r: Vec<Season> = r.into_iter().map(top_to_season).collect();
     println!("{:?}", r);
 

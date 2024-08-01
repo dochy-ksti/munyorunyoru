@@ -1,7 +1,7 @@
 #[test]
 fn test() -> crate::Result<()> {
     use super::super::html_builder::HtmlBuilder;
-    use crate::from_file;
+    use munyo::from_file;
     use crate::samples::html_samples::sample1::tags::{to_html_items, Tags};
 
     let v: Vec<Tags> = from_file("src/samples/html_samples/sample1/sample1.munyo")?;

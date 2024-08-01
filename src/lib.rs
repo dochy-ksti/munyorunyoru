@@ -22,7 +22,6 @@ mod serde;
 #[cfg(test)]
 mod tests;
 
-pub mod samples;
 
 #[doc(inline)]
 pub use crate::builder::default_builder::MunyoItem;

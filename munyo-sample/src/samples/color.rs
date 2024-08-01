@@ -100,10 +100,9 @@ fn test_color() -> crate::Result<()> {
     enum Enum {
         E(Color),
     }
-    let v: Vec<Enum> = crate::from_str(
+    let v: Vec<Enum> = munyo::from_str(
         r###"
-E #100_200_10"###
-//E #100_300_10
+E #100_200_10"###, //E #100_300_10
     )?;
     assert_eq!(&v[0], &Enum::E(Color::new(100, 200, 10)));
     Ok(())
