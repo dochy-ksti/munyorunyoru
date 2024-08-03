@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
 pub enum Tags {
+	// RestOf consumes the rest of the line.
     H3(RestOf, Class),
     P(RestOf),
     Blockquote(Vec<Tags>),

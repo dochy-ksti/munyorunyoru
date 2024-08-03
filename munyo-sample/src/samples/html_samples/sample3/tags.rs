@@ -39,8 +39,8 @@ pub fn to_html_items(items: &[Item]) -> Vec<HtmlItem> {
                 r.push(tag_with_text("p", &t.arg, class(c)));
             }
             Item::Blockquote(vec) => {
-				r.push(tag_with_children("blockquote", to_html_items(vec)))
-			}
+                r.push(tag_with_children("blockquote", to_html_items(vec)))
+            }
         }
     }
     r
@@ -73,5 +73,5 @@ fn class(class: &Class) -> Vec<Param> {
 }
 
 fn tag_with_children(name: &str, children : Vec<HtmlItem>) -> HtmlItem{
-	HtmlItem::Tag(Tag::new(name.to_string(), vec![]), children)
+    HtmlItem::Tag(Tag::new(name.to_string(), vec![]), children)
 }
