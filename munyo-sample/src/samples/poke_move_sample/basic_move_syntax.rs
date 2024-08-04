@@ -38,7 +38,7 @@ impl<'de> Deserialize<'de> for BasicMoveSyntax {
         fn parse(s: &str) -> Result<BasicMoveSyntax, DeserializeFail> {
             // Munyo doesn't accept two consecutive whitespaces,
             // but it basically accepts one trailing whitespace.
-            // If you want to follow the rule, split_terminator is it.
+            // If you want to follow the rule, split_terminator is a desired function.
             let mut iter = s.split_terminator(' ');
 
             let mut accuracy: u32 = 100;

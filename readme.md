@@ -291,6 +291,8 @@ FlutterMane Fairy ChoiceSpecs H148A-(0)B100C188D4S+68 MoonBlast... Protosynthesi
 I created the omitted versions. [Version 1](https://github.com/dochy-ksti/munyorunyoru/blob/master/munyo-sample/src/samples/poke_sample/poke_comp2.rs) is simple but it doesn't have line number in the error message because
 the error message is returned in the conversion process, which doesn't have the information of the line number. [Version 2](https://github.com/dochy-ksti/munyorunyoru/blob/master/munyo-sample/src/samples/poke_sample/poke_comp3.rs) implements a simple custom data structure to output the line number. When an error is returned in a parsing process, Munyo automatically attach the line number. Check them out if you'd like.
 
+You can write a custom parser which can get any number of arguments in a line and the types of the arguments can be automatically detected. See the [sample](https://github.com/dochy-ksti/munyorunyoru/blob/master/munyo-sample/src/samples/poke_move_sample/basic_move_syntax.rs) if you'd like.
+
 Pokemons basically have four moves. I implemented it naïvely.
 ```Rust
 enum Third {
