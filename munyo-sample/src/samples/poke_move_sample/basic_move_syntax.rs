@@ -5,13 +5,12 @@ use serde::Deserialize;
 use crate::{
     error::DeserializeFail,
     samples::poke_move_sample::{
-        custom_parsers::{parse_basic_move_chunk, BasicMoveChunk}, move_property::MoveProperty
+        custom_parsers::{parse_basic_move_chunk, BasicMoveChunk},
+        move_property::MoveProperty,
     },
 };
 
 use super::data_types::{AilmentChange, BasicMove, DamageType, PokeMove, PokeType, StatusChange};
-
-
 
 #[derive(Debug, serde::Deserialize)]
 pub(crate) enum Top {
@@ -32,12 +31,15 @@ impl<'de> Deserialize<'de> for BasicMoveSyntax {
     where
         D: serde::Deserializer<'de>,
     {
-		// deserialize_ignored_any can consume the rest of the line as a String.
-		// to do that, you need 'munyo::IgnoredAnyVisitor'
+        // deserialize_ignored_any can consume the rest of the line as a String.
+        // to do that, you need 'munyo::IgnoredAnyVisitor'
         let s: String = deserializer.deserialize_ignored_any(munyo::IgnoredAnyVisitor)?;
 
         fn parse(s: &str) -> Result<BasicMoveSyntax, DeserializeFail> {
-            let mut iter = s.split(' ');
+            // Munyo doesn't accept two consecutive whitespaces,
+            // but it basically accepts one trailing whitespace.
+            // If you want to follow the rule, split_terminator is it.
+            let mut iter = s.split_terminator(' ');
 
             let mut accuracy: u32 = 100;
             let mut pp: Option<u32> = None;
@@ -46,6 +48,10 @@ impl<'de> Deserialize<'de> for BasicMoveSyntax {
             let mut prop = MoveProperty::empty();
 
             while let Some(v) = iter.next() {
+                // If you want to accept consecutive whitespaces.
+                // if v.is_empty() { continue; }
+
+                // The custom parser gets the type of the argument and the value it contains
                 match parse_basic_move_chunk(v)? {
                     BasicMoveChunk::Accuracy { percent } => {
                         accuracy = percent;
@@ -61,6 +67,8 @@ impl<'de> Deserialize<'de> for BasicMoveSyntax {
                 }
             }
 
+            // accuracy is 100% if not defined.
+            // PP must be defined.
             let r = BasicMoveSyntax {
                 accuracy,
                 pp: pp.ok_or("Couldn't find 'PP'")?,

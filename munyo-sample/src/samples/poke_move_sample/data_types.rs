@@ -22,17 +22,17 @@ pub(crate) struct BasicMove {
 
 #[derive(Debug, Clone, Copy, serde::Deserialize, strum::EnumString)]
 pub(crate) enum PokeMove {
-    オーバーヒート,
-    あくのはどう,
-    かえんほうしゃ,
-    バークアウト,
+    Overheat,
+    DarkPulse,
+    FlameThrower,
+    Snarl,
 }
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, serde::Deserialize, strum::EnumString)]
 pub(crate) enum PokeType {
     #[default]
-    炎,
-    悪,
+    Fire,
+    Dark,
 }
 
 #[derive(Debug)]
