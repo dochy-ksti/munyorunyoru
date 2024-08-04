@@ -48,4 +48,8 @@ When you implement TupleVisitor, you can accept arguments more freely without im
 
 Example about how to parse the arguments freely with your custom parser. You can let a line have any number of arguments whose types are automatically detected by the representations of the arguments.
 
-With this method, you can accept any arguments with your custom parser, and get the line numbers of errors, but typenames must follow Rust identifier naming syntax. If you want to ignore it, you need to use [from_str_with_metabuilder](https://github.com/dochy-ksti/munyorunyoru/blob/master/src/lang/from_str_with_metabuilder.rs).
+How to comsume the rest of the line.[basic_move_syntax.rs](https://github.com/dochy-ksti/munyorunyoru/blob/master/munyo-sample/src/samples/poke_move_sample/basic_move_syntax.rs)
+
+How to automatically detect the types and its values.[custom_parser.rs](https://github.com/dochy-ksti/munyorunyoru/blob/master/munyo-sample/src/samples/poke_move_sample/custom_parsers.rs)
+
+With this method, you can accept any arguments with your custom parser, and get the line numbers of errors, but typenames must follow Rust identifier naming syntax. If you want to ignore the Rust syntax, you need to use [from_str_with_metabuilder](https://github.com/dochy-ksti/munyorunyoru/blob/master/src/lang/from_str_with_metabuilder.rs).

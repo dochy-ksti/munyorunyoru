@@ -157,7 +157,6 @@ pub(crate) fn parse_status_change(
     })
 }
 
-/// bracketed number がない場合 100%を返す。 100以上だとエラー
 pub(crate) fn parse_bracketed_percent(
     mut pairs: pest::iterators::Pairs<Rule>,
 ) -> Result<u32, DeserializeFail> {
