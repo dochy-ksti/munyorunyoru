@@ -1,10 +1,7 @@
-pub(crate) mod basic_move;
-pub(crate) mod poke_move;
+#![allow(dead_code)]
 pub(crate) mod basic_move_syntax;
-pub(crate) mod basic_move_chunk_syntax;
-pub(crate) mod status_change;
-pub(crate) mod ailment_change;
 pub(crate) mod move_property;
-pub(crate) mod stat_ailment;
-pub(crate) mod stat_type;
-pub(crate) mod poke_type;
+
+pub(crate) mod data_types;
+pub(crate) mod test_poke_move_sample;
+pub(crate) mod custom_parsers;

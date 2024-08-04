@@ -5,26 +5,13 @@ use serde::Deserialize;
 use crate::{
     error::DeserializeFail,
     samples::poke_move_sample::{
-        ailment_change::AilmentChange,
-        basic_move::{top_to_basic_move_special, BasicMove},
-        basic_move_chunk_syntax::BasicMoveChunk,
-        move_property::MoveProperty,
-        status_change::StatusChange,
+        custom_parsers::{parse_basic_move_chunk, BasicMoveChunk}, move_property::MoveProperty
     },
 };
 
-use super::{
-    basic_move_chunk_syntax::parse_basic_move_chunk, poke_move::PokeMove, poke_type::PokeType,
-};
+use super::data_types::{AilmentChange, BasicMove, DamageType, PokeMove, PokeType, StatusChange};
 
-#[test]
-fn test() -> munyo::Result<()> {
-    let r: Vec<Top> = munyo::from_file("src/samples/poke_move_sample/basic_move_t.munyo")?;
-    let r: Vec<BasicMove> = r.into_iter().map(top_to_basic_move_special).collect();
-    println!("{:?}", r);
 
-    Ok(())
-}
 
 #[derive(Debug, serde::Deserialize)]
 pub(crate) enum Top {
@@ -32,7 +19,6 @@ pub(crate) enum Top {
 }
 
 #[derive(Debug)]
-/// ダメージを与え、追加効果をいくつか持つだけの、特殊な処理を必要としない基本的な技
 pub(crate) struct BasicMoveSyntax {
     pub(crate) accuracy: u32,
     pub(crate) pp: u32,
@@ -46,6 +32,8 @@ impl<'de> Deserialize<'de> for BasicMoveSyntax {
     where
         D: serde::Deserializer<'de>,
     {
+		// deserialize_ignored_any can consume the rest of the line as a String.
+		// to do that, you need 'munyo::IgnoredAnyVisitor'
         let s: String = deserializer.deserialize_ignored_any(munyo::IgnoredAnyVisitor)?;
 
         fn parse(s: &str) -> Result<BasicMoveSyntax, DeserializeFail> {
@@ -85,5 +73,21 @@ impl<'de> Deserialize<'de> for BasicMoveSyntax {
         }
 
         parse(&s).map_err(|e| serde::de::Error::custom(e.msg()))
+    }
+}
+
+pub(crate) fn top_to_basic_move_special(top: Top) -> BasicMove {
+    match top {
+        Top::Move(name, poke_type, power, s) => BasicMove {
+            name,
+            poke_type: poke_type,
+            damage_type: DamageType::Special,
+            power,
+            accuracy: s.accuracy,
+            pp: s.pp,
+            status_changes: s.status_changes,
+            ailment_changes: s.ailment_changes,
+            properties: s.properties,
+        },
     }
 }

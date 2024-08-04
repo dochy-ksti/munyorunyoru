@@ -20,25 +20,25 @@ You can write multiline text without line-continuation because every line has de
 
 Like Markdown, empty lines has meanings because empty-line-type "BR" is defined and it's converted to the &lt;BR&gt; tag. [output.html](https://github.com/dochy-ksti/munyorunyoru/blob/master/munyo-sample/src/samples/html_samples/sample2/output.html) 
 
-HTML source is useful for example purpose, but you need web-browsers to visually understand htmls. Download the source and open with your browser.
+HTML source text is useful for illustrative purposes, but you need web browsers to visually understand HTMLs. Download the sources and open them with your browser.
 
 ### [html_sample_3](https://github.com/dochy-ksti/munyorunyoru/tree/master/munyo-sample/src/samples/html_samples/sample3)
 
-Creating new tags by adding the tags in the language processor. [tags.rs](https://github.com/dochy-ksti/munyorunyoru/blob/master/munyo-sample/src/samples/html_samples/sample3/tags.rs)
+Creating new tags by adding the tags to the language processor. [tags.rs](https://github.com/dochy-ksti/munyorunyoru/blob/master/munyo-sample/src/samples/html_samples/sample3/tags.rs)
 
-The tags "Alice" and "Bob" make writing the conversations of them more easier. [sample3.munyo](https://github.com/dochy-ksti/munyorunyoru/blob/master/munyo-sample/src/samples/html_samples/sample3/sample3.munyo)
+The tags "Alice" and "Bob" make writing the conversations of them easier. [sample3.munyo](https://github.com/dochy-ksti/munyorunyoru/blob/master/munyo-sample/src/samples/html_samples/sample3/sample3.munyo)
 
 ### [html_sample_4](https://github.com/dochy-ksti/munyorunyoru/tree/master/munyo-sample/src/samples/html_samples/sample4)
 
-With MunyoItem, you can use Munyo without "serde". That means you can use every tag without specifying the data structure of the tags. [untyped.rs](https://github.com/dochy-ksti/munyorunyoru/blob/master/munyo-sample/src/samples/html_samples/sample4/untyped.rs), [untyped.munyo](https://github.com/dochy-ksti/munyorunyoru/blob/master/munyo-sample/src/samples/html_samples/sample4/untyped.munyo)
+With MunyoItem, you can use Munyo without "serde". That means you can use every tag without specifying the data structure of the tag. [untyped.rs](https://github.com/dochy-ksti/munyorunyoru/blob/master/munyo-sample/src/samples/html_samples/sample4/untyped.rs), [untyped.munyo](https://github.com/dochy-ksti/munyorunyoru/blob/master/munyo-sample/src/samples/html_samples/sample4/untyped.munyo)
 
-MunyoItem isn't constrained with Rust syntax, so you can use "#" as typename, for example. But when an error occurs, you can't get the line number of it. If you want the line numbers of errors and want to ignore Rust syntax, you need to use [from_str_with_metabuilder](https://github.com/dochy-ksti/munyorunyoru/blob/master/src/lang/from_str_with_metabuilder.rs). But currently, the materials about how to use it are unavailable.
+MunyoItem isn't constrained with Rust syntax, so you can use "#" as a typename, for example. But when errors occur, you can't get the line numbers of them. If you want the line numbers of errors and want to ignore Rust syntax, you need to use [from_str_with_metabuilder](https://github.com/dochy-ksti/munyorunyoru/blob/master/src/lang/from_str_with_metabuilder.rs). But currently, the materials about how to use it are unavailable.
 
 ## [poke_sample](https://github.com/dochy-ksti/munyorunyoru/tree/master/munyo-sample/src/samples/poke_sample)
 
 Explained in the [readme.md](https://github.com/dochy-ksti/munyorunyoru/) of the main crate.
 
-This is only meant for writing data efficiently, so it's practical, I think.
+This is only meant for writing data efficiently, so it's a practical example, I think.
 
 ## [custom_new_sample](https://github.com/dochy-ksti/munyorunyoru/blob/master/munyo-sample/src/samples/custom_new_sample.rs)
 
@@ -46,6 +46,6 @@ When you implement TupleVisitor, you can accept arguments more freely without im
 
 ## [poke_move_sample](https://github.com/dochy-ksti/munyorunyoru/tree/master/munyo-sample/src/samples/poke_move_sample)
 
-Example about how to parse the entire line with custom parser. You can let a line have any number of arguments whose types are automatically detected by the representations of the arguments.
+Example about how to parse the arguments freely with your custom parser. You can let a line have any number of arguments whose types are automatically detected by the representations of the arguments.
 
-This is actually practical, I think.
+With this method, you can accept any arguments with your custom parser, and get the line numbers of errors, but typenames must follow Rust identifier naming syntax. If you want to ignore it, you need to use [from_str_with_metabuilder](https://github.com/dochy-ksti/munyorunyoru/blob/master/src/lang/from_str_with_metabuilder.rs).
