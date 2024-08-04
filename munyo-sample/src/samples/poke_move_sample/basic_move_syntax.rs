@@ -5,7 +5,7 @@ use serde::Deserialize;
 use crate::{
     error::DeserializeFail,
     samples::poke_move_sample::{
-        custom_parsers::{parse_basic_move_chunk, BasicMoveChunk},
+        custom_parser::{parse_basic_move_chunk, BasicMoveChunk},
         move_property::MoveProperty,
     },
 };
