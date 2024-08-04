@@ -10,4 +10,5 @@ pub mod html_samples;
 #[cfg(test)]
 pub mod poke_sample;
 
+#[cfg(test)]
 pub mod poke_move_sample;

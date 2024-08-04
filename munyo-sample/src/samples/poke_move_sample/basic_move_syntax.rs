@@ -51,7 +51,7 @@ impl<'de> Deserialize<'de> for BasicMoveSyntax {
                 // If you want to accept consecutive whitespaces.
                 // if v.is_empty() { continue; }
 
-                // The custom parser gets the type of the argument and the value it contains
+                // The custom parser gets the type of the argument and the values it contains
                 match parse_basic_move_chunk(v)? {
                     BasicMoveChunk::Accuracy { percent } => {
                         accuracy = percent;
@@ -80,7 +80,7 @@ impl<'de> Deserialize<'de> for BasicMoveSyntax {
             Ok(r)
         }
 
-        parse(&s).map_err(|e| serde::de::Error::custom(e.msg()))
+        parse(&s).map_err(|e| serde::de::Error::custom(e.error))
     }
 }
 
