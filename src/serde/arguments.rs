@@ -14,8 +14,7 @@ impl Arguments {
     /// Args are splitted by whitespaces.
     /// This method takes an arg and moves the cursor to the next arg.
     pub(crate) fn arg(&mut self) -> String {
-        //may be useful, but may be needless friendliness.
-        //discard_spaces(&mut self.s);
+        discard_spaces(&mut self.s);
 
         let s = get_nonspace(&mut self.s);
         discard_space(&mut self.s);
@@ -48,7 +47,7 @@ fn unchecked(vec: Vec<u8>) -> String {
     unsafe { String::from_utf8_unchecked(vec) }
 }
 
-fn _discard_spaces(s: &mut Vec<u8>) {
+fn discard_spaces(s: &mut Vec<u8>) {
     loop {
         if s.is_empty() {
             return;

@@ -36,11 +36,8 @@ impl<'de> Deserialize<'de> for BasicMoveSyntax {
         let s: String = deserializer.deserialize_ignored_any(munyo::IgnoredAnyVisitor)?;
 
         fn parse(s: &str) -> Result<BasicMoveSyntax, DeserializeFail> {
-            // Munyo doesn't accept two consecutive whitespaces,
-            // but it basically accepts one trailing whitespace.
-            // If you want to follow the rule, split_terminator is a desired function.
-            let mut iter = s.split_terminator(' ');
-
+            
+            let mut iter = s.split(' ');
             let mut accuracy: u32 = 100;
             let mut pp: Option<u32> = None;
             let mut status_changes: Vec<StatusChange> = vec![];
@@ -48,8 +45,8 @@ impl<'de> Deserialize<'de> for BasicMoveSyntax {
             let mut prop = MoveProperty::empty();
 
             while let Some(v) = iter.next() {
-                // If you want to accept consecutive whitespaces.
-                // if v.is_empty() { continue; }
+                // accept consecutive whitespaces.
+                if v.is_empty() { continue; }
 
                 // The custom parser gets the type of the argument and the values it contains
                 match parse_basic_move_chunk(v)? {

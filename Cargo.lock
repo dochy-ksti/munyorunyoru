@@ -303,24 +303,7 @@ dependencies = [
 
 [[package]]
 name = "munyo"
-version = "0.6.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "434197cea3d7c00afa39f9201b0f69f63c30789f46ee5a95b1aa04991f484e81"
-dependencies = [
- "anyhow",
- "async-channel",
- "num_cpus",
- "pest",
- "pest_derive",
- "serde",
- "shrink_pool",
- "tempfile",
- "thiserror",
-]
-
-[[package]]
-name = "munyo"
-version = "0.7.0"
+version = "0.8.0"
 dependencies = [
  "anyhow",
  "async-channel",
@@ -340,7 +323,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "bitflags",
- "munyo 0.6.1",
+ "munyo",
  "pest",
  "pest_derive",
  "serde",

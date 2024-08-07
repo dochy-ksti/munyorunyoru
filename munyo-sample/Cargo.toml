@@ -9,7 +9,7 @@ edition = "2021"
 serde = { version = "1", features = ["derive"] }
 pest = "2"
 pest_derive = "2"
-munyo = "*"
+munyo = { path = "../" }
 strum = { version = "0.26", features = ["derive"] }
 bitflags = "2"
 anyhow = { version = "1", features = ["backtrace"] }

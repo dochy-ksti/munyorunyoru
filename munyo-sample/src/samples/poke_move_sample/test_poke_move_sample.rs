@@ -7,10 +7,10 @@ const SPECIAL_MOVES: &str = r###"
 || Every move here inflicts special-type damage.
 >>>Move
 || MoveName | Type | Power | Additional Information
-FlameThrower Fire 90 Burn(10%) PP15
-Overheat Fire 130 90% JC-2 PP5
-Snarl Dark 55 95% C-1 PP15 Sound
-DarkPulse Dark 80 Flinch(20%) PP15
+FlameThrower Fire 90 Burn(10%) PP15  
+Overheat     Fire 130 90% JC-2  PP5
+Snarl        Dark 55 95% C-1    PP15 Sound 
+DarkPulse    Dark 80 Flinch(20%) PP15
 
 || C-1 means lowering opponent's Special-Atk by 1
 || JC-2 means lowering your Special-Atk by 2
