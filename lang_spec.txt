@@ -9,7 +9,7 @@ type-name argument|param-name argument|param-name...
 
 ↑ Arguments are optional.
 
-In original Munyo, arguments consume everything before ('|' / EOL) except the separater
+In original Munyo, arguments consume everything before ('|' / EndOfLine) except the separater
 which is one whitespace(ASCII code 32) after 'type-name'/'param-name'
 
 	some_type  some argument   |some_param some param arg
@@ -24,14 +24,14 @@ Whitespaces can't be used for 'type-name'/'param-name' because of the limitation
 You can use other characters(with special syntax like '\t','\n', etc.), but if you want to use 
 Munyo with serde, you need to follow Rust's identifier naming syntax for 'type-name'/'param-name'.
 
-↓ When you use Munyo with serde, a type can have multiple arguments.
+↓ When you use Munyo with serde, a type can have multiple arguments separated by whitespaces.
 
 	type-name argument1 argument2...|param-name argument|...
 
-	type-name argument1  argument2 |param-name   param-argument  |...
+	type-name argument1    argument2   | param-name   param-argument  |...
 
 ↑ When it's used with serde without 'RestOf', whitespaces can be added between arguments, 
-'argument' and '|', 'param-name' and 'param-argument', and "param-argument' and '|'.
+'argument' and ('|' or EOL), 'param-name' and 'param-argument', and "param-argument' and ('|' or EOL).
 Those whitespaces are not consumed by arguments.
 
 When you use 'RestOf', the rest of the arguments are consumed including whitespaces.
