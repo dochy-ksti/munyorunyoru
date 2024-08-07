@@ -1,5 +1,21 @@
 Here is the explanations of the samples in this crate.
 
+## [poke_sample](https://github.com/dochy-ksti/munyorunyoru/tree/master/munyo-sample/src/samples/poke_sample)
+
+Explained in the [readme.md](https://github.com/dochy-ksti/munyorunyoru/) of the main crate.
+
+This is only meant for writing data efficiently.
+
+## [poke_move_sample](https://github.com/dochy-ksti/munyorunyoru/tree/master/munyo-sample/src/samples/poke_move_sample)
+
+Example about how to parse the arguments freely with your custom parser. You can let a line have any number of arguments whose types are automatically detected by the representations of the arguments.
+
+How to comsume the rest of the line as arguments. [basic_move_syntax.rs](https://github.com/dochy-ksti/munyorunyoru/blob/master/munyo-sample/src/samples/poke_move_sample/basic_move_syntax.rs)
+
+How to automatically detect the types and its values.[custom_parser.rs](https://github.com/dochy-ksti/munyorunyoru/blob/master/munyo-sample/src/samples/poke_move_sample/custom_parsers.rs)
+
+With this method, you can accept any arguments with your custom parser, and get the line numbers of errors, but typenames must follow Rust identifier naming syntax. If you want to ignore the Rust syntax, you need to use [from_str_with_metabuilder](https://github.com/dochy-ksti/munyorunyoru/blob/master/src/lang/from_str_with_metabuilder.rs). But currently, the materials about how to use it are unavailable.
+
 ## [html_samples](https://github.com/dochy-ksti/munyorunyoru/tree/master/munyo-sample/src/samples/html_samples)
 
 Samples which converts Munyo to HTML. The conversion is simple because Munyo and HTML has very similar structures. Besides, HTML is a visually attractive format, so it's chosen for samples. What we do in the samples is essentially handwriting HTML, so they are not practical examples.
@@ -36,22 +52,6 @@ With MunyoItem, you can use Munyo without "serde". That means you can use every 
 
 MunyoItem isn't constrained with Rust syntax, so you can use "#" as a typename, for example. But when errors occur, you can't get the line numbers of them. If you want the line numbers of errors and want to ignore Rust syntax, you need to use [from_str_with_metabuilder](https://github.com/dochy-ksti/munyorunyoru/blob/master/src/lang/from_str_with_metabuilder.rs). But currently, the materials about how to use it are unavailable.
 
-## [poke_sample](https://github.com/dochy-ksti/munyorunyoru/tree/master/munyo-sample/src/samples/poke_sample)
-
-Explained in the [readme.md](https://github.com/dochy-ksti/munyorunyoru/) of the main crate.
-
-This is only meant for writing data efficiently, so it's a practical example, I think.
-
 ## [custom_new_sample](https://github.com/dochy-ksti/munyorunyoru/blob/master/munyo-sample/src/samples/custom_new_sample.rs)
 
 When you implement TupleVisitor, you can accept arguments more freely without implementing parser. I don't think this has practical usages.
-
-## [poke_move_sample](https://github.com/dochy-ksti/munyorunyoru/tree/master/munyo-sample/src/samples/poke_move_sample)
-
-Example about how to parse the arguments freely with your custom parser. You can let a line have any number of arguments whose types are automatically detected by the representations of the arguments.
-
-How to comsume the rest of the line.[basic_move_syntax.rs](https://github.com/dochy-ksti/munyorunyoru/blob/master/munyo-sample/src/samples/poke_move_sample/basic_move_syntax.rs)
-
-How to automatically detect the types and its values.[custom_parser.rs](https://github.com/dochy-ksti/munyorunyoru/blob/master/munyo-sample/src/samples/poke_move_sample/custom_parsers.rs)
-
-With this method, you can accept any arguments with your custom parser, and get the line numbers of errors, but typenames must follow Rust identifier naming syntax. If you want to ignore the Rust syntax, you need to use [from_str_with_metabuilder](https://github.com/dochy-ksti/munyorunyoru/blob/master/src/lang/from_str_with_metabuilder.rs).

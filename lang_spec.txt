@@ -12,9 +12,9 @@ type-name argument|param-name argument|param-name...
 In original Munyo, arguments consume everything before ('|' / EndOfLine) except the separater
 which is one whitespace(ASCII code 32) after 'type-name'/'param-name'
 
-	some_type  some argument   |some_param some param arg
+	some_type  some argument   |some_param  some param arg
 
-↑ The argument of 'some_type' is ' some argument   ' and 'some_param' is 'some param arg'
+↑ The argument of 'some_type' is ' some argument   ' and 'some_param' is ' some param arg'
 
 	type-name argument|   param-name argument|...
 
