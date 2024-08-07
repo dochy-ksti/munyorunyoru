@@ -1,3 +1,5 @@
+Here is the explanations of the samples in this crate.
+
 ## [html_samples](https://github.com/dochy-ksti/munyorunyoru/tree/master/munyo-sample/src/samples/html_samples)
 
 Samples which converts Munyo to HTML. The conversion is simple because Munyo and HTML has very similar structures. Besides, HTML is a visually attractive format, so it's chosen for samples. What we do in the samples is essentially handwriting HTML, so they are not practical examples.

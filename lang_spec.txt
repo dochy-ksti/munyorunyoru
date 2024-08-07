@@ -3,7 +3,7 @@ Munyo is a indent-based simple data language.
 type-name argument|param-name argument|param-name...
 	type-name argument|param-name argument|param-name...
 
-↑ Child items must be indented. Indents must be tab(ASCII code 9).
+↑ Child items must be indented. Indents must be Tab(ASCII code 9). Whitespaces can't be used for the indentation.
 
 	type-name|param-name|param-name arg|...
 
@@ -24,16 +24,17 @@ Whitespaces can't be used for 'type-name'/'param-name' because of the limitation
 You can use other characters(with special syntax like '\t','\n', etc.), but if you want to use 
 Munyo with serde, you need to follow Rust's identifier naming syntax for 'type-name'/'param-name'.
 
-↓ When you use Munyo with serde, a type have multiple arguments.
+↓ When you use Munyo with serde, a type can have multiple arguments.
 
 	type-name argument1 argument2...|param-name argument|...
 
-	type-name argument1 argument2 |param-name argument |...
+	type-name argument1  argument2 |param-name   param-argument  |...
 
-↑ One whitespace can be added between 'argument' and '|' if it's used with serde without 'RestOf'.
-Two whitespaces are recognized as another argument which contains one whitespace.
+↑ When it's used with serde without 'RestOf', whitespaces can be added between arguments, 
+'argument' and '|', 'param-name' and 'param-argument', and "param-argument' and '|'.
 
-If you used (with 'RestOf' / without serde), the last whitespace will be consumed by the argument.
+When you use 'RestOf', the rest of the arguments are consumed including whitespaces, 
+so you need to trim them if you don't need them.
 
 *Line continuation
 

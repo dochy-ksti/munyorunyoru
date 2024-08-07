@@ -8,7 +8,7 @@
 //! Since the API documentation isn't enough to use it, I wrote various materials.
 //!
 //! See [readme](https://github.com/dochy-ksti/munyorunyoru/blob/master/readme.md)
-//! [samples](https://github.com/dochy-ksti/munyorunyoru/tree/master/munyo-sample/src/samples)
+//! [samples](https://github.com/dochy-ksti/munyorunyoru/tree/master/munyo-sample/)
 //! [lang_spec](https://github.com/dochy-ksti/munyorunyoru/blob/master/lang_spec.txt)
 //! [What's DSL?](https://github.com/dochy-ksti/munyorunyoru/blob/master/whats_dsl.md)
 

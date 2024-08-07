@@ -92,14 +92,15 @@ fn top_to_season(top: Top) -> Season {
 ```
 You need 'match' with single branch to handle it.
 
-I don't have much to say about the second indentation level.
+You need indentation to write a child item.
 ```
 >>>Season
 2024 6 
 	>>>Team
 	1 || #1 ranked team
-	|| ↑ Indentation means the line is a child of the line which is one less indented.
+	|| ↑ Indentation means the line is a child of the one less indented line.
 ```
+The character for the indentation must be TAB(ASCII code 9). You may need to change the settings for your text editor.
 ```Rust
 #[derive(Debug, serde::Deserialize)]
 enum Second {
@@ -180,11 +181,13 @@ If you write items not in the enum variants, Munyo outputs error messages like
 When error occurs, Munyo always output the line number and the line.
 In this case, serde also found out the cause correctly.
 
-Pokemon customization traditionally has the specific representation:
+Pokemon customization has a traditional representation:
 ```
 H204A+196B4C-0D12S92
 ```
-To parse this, you need to implement the parser. Munyo can't do this for you. [My implementation of the parser](https://github.com/dochy-ksti/munyorunyoru/blob/master/munyo-sample/src/samples/poke_sample/poke_values.rs)
+To parse this, you need to implement the parser. Munyo can't do this for you. My recommendation is [pest](https://github.com/pest-parser/pest). 
+
+[My implementation of the parser](https://github.com/dochy-ksti/munyorunyoru/blob/master/munyo-sample/src/samples/poke_sample/poke_values.rs)
 ```Rust
 #[derive(Parser)]
 #[grammar_inline = r###"
@@ -218,7 +221,7 @@ poke_custom ={
 
 "###]
 ```
-When the parser implementation returns the error message, Munyo output it with the line number and the line text:
+When the parser implementation returns the error message, Munyo output it with the line number and the text of the line:
 ```
 10: 260 is bigger than 252
         	FlutterMane Fairy ChoiceSpecs H148A-(0)B100C260D4S+68 MoonBlast ShadowBall DrainingKiss PerishSong | ability Protosynthesis 
@@ -291,7 +294,7 @@ FlutterMane Fairy ChoiceSpecs H148A-(0)B100C188D4S+68 MoonBlast... Protosynthesi
 I created the omitted versions. [Version 1](https://github.com/dochy-ksti/munyorunyoru/blob/master/munyo-sample/src/samples/poke_sample/poke_comp2.rs) is simple but it doesn't have line number in the error message because
 the error message is returned in the conversion process, which doesn't have the information of the line number. [Version 2](https://github.com/dochy-ksti/munyorunyoru/blob/master/munyo-sample/src/samples/poke_sample/poke_comp3.rs) implements a simple custom data structure to output the line number. When an error is returned in a parsing process, Munyo automatically attach the line number. Check them out if you'd like.
 
-You can write a custom parser which can get any number of arguments in a line and the types of the arguments can be automatically detected. See the [sample](https://github.com/dochy-ksti/munyorunyoru/blob/master/munyo-sample/src/samples/poke_move_sample/basic_move_syntax.rs) if you'd like.
+If you need more efficient syntax, you can write a custom parser which can get any number of arguments in a line and the types of the arguments can be automatically detected. See another [sample](https://github.com/dochy-ksti/munyorunyoru/blob/master/munyo-sample/src/samples/poke_move_sample/basic_move_syntax.rs) if you'd like.
 
 Pokemons basically have four moves. I implemented it naïvely.
 ```Rust
@@ -313,7 +316,7 @@ enum Third {
 That's more robust, but If you want to make an item have multiple subitems, 
 basically you need to employ child items(or make a custom parser).
 
-The fourth indentation level is the example for it, although they are not needed for the Pokemon data.
+The fourth indentation level is the example for it, although they are not needed for this Pokemon data.
 ```
 		FlutterMane Fairy ChoiceSpecs H148A-(0)B100C188D4S+68 MoonBlast ShadowBall DrainingKiss PerishSong | ability Protosynthesis 
 			>Item
@@ -412,21 +415,19 @@ fn third_to_pokemon(third: Third) -> Pokemon {
 ```
 `let mut vec = vec![]` is not ellegant, but powerful.
 
-## Motivation
-
-The motivation is explained [here](https://github.com/dochy-ksti/munyorunyoru/blob/master/motivation.md)
-
 ## Other Materials
 
 [API Document](https://docs.rs/munyo/latest/munyo/)
 
-Since Munyo is a language, the API document isn't enough to use it. Various materials are available.
+Since Munyo is a language, the API document isn't enough to use it. Other materials are available.
 
-[Samples](https://github.com/dochy-ksti/munyorunyoru/tree/master/munyo-sample/src/samples) 
+[Samples](https://github.com/dochy-ksti/munyorunyoru/tree/master/munyo-sample/) 
 
 [Language Specifications](https://github.com/dochy-ksti/munyorunyoru/blob/master/lang_spec.txt)
 
-[What's DSL?](https://github.com/dochy-ksti/munyorunyoru/blob/master/whats_dsl.md)
+## Motivation
+
+The motivation is explained [here](https://github.com/dochy-ksti/munyorunyoru/blob/master/motivation.md)
 
 ## Async
 
